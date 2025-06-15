@@ -7,58 +7,128 @@
 
 ## Response Format
 
-```json
-// Success: {success: true, data: {}, message, timestamp}
-// Error: {success: false, error: {code, message, details}, timestamp}
-// Pagination: {success: true, data: [], pagination: {page, limit, total, totalPages, hasNext, hasPrev}}
+```typescript
+// Success Response Type
+interface ApiResponse<T> {
+  success: true;
+  data: T;
+  message?: string;
+  timestamp: string;
+}
+
+// Error Response Type
+interface ApiErrorResponse {
+  success: false;
+  error: {
+    code: string;
+    message: string;
+    details?: any;
+  };
+  timestamp: string;
+}
+
+// Paginated Response Type
+interface PaginatedResponse<T> {
+  success: true;
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+  timestamp: string;
+}
+```
+
+## Type Definitions
+
+```typescript
+// Prisma-generated types
+interface Artist {
+  id: number;
+  name: string;
+  bio: string | null;
+  imageUrl: string | null;
+  socialLinks: Record<string, string>; // JSON object
+  isFeatured: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Release {
+  id: number;
+  artistId: number;
+  title: string;
+  type: 'album' | 'single' | 'ep';
+  releaseDate: Date;
+  coverArtUrl: string | null;
+  streamingLinks: Record<string, string>; // JSON object
+  description: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  artist?: Artist; // Include relation when needed
+}
+
+interface News {
+  id: number;
+  title: string;
+  content: string;
+  author: string;
+  slug: string | null;
+  publishedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
 ```
 
 ## Artists Endpoints
 
 ### GET /api/artists
-**Query**: `page`, `limit`, `featured`, `search`  
-**Response**: Array of artists with pagination  
-```json
-// Artist object: {id, name, bio, image_url, social_links{}, is_featured, created_at, updated_at}
-```
+**Query**: `page?, limit?, featured?, search?`  
+**Response**: `PaginatedResponse<Artist>`  
+**Type Safety**: Prisma-generated Artist type
 
 ### GET /api/artists/:id  
 **Path**: Artist ID  
-**Response**: Single artist object  
+**Response**: `ApiResponse<Artist & { releases: Release[] }>`  
 **Errors**: 404 if not found
 
 ### POST /api/artists
-**Status**: Future feature (Phase 2+)
+**Status**: Future feature (Phase 2+)  
+**Body**: Joi validation with Prisma types
 
 ## Releases Endpoints
 
 ### GET /api/releases
-**Query**: `page`, `limit`, `artist_id`, `type`, `release_date`, `sort`  
-**Response**: Array of releases with pagination
-```json
-// Release object: {id, artist_id, title, type, release_date, cover_art_url, streaming_links{}, description, created_at, updated_at, artist{}}
-```
+**Query**: `page?, limit?, artist_id?, type?, release_date?, sort?`  
+**Response**: `PaginatedResponse<Release & { artist: Artist }>`  
+**Type Safety**: Prisma relation with include
 
 ### GET /api/releases/:id
-**Response**: Single release object with artist info
+**Response**: `ApiResponse<Release & { artist: Artist }>`  
+**Type Safety**: Full type inference
 
 ### GET /api/artists/:id/releases  
-**Query**: Same as `/api/releases` except `artist_id`
+**Query**: Same as `/api/releases` except `artist_id`  
+**Response**: `PaginatedResponse<Release>`
 
 ## News Endpoints
 
 ### GET /api/news
-**Query**: `page`, `limit`, `published`  
-**Response**: Array of news articles with pagination
-```json
-// News object: {id, title, content, author, slug, published_at, created_at, updated_at}
-```
+**Query**: `page?, limit?, published?`  
+**Response**: `PaginatedResponse<News>`  
+**Filtering**: Only published articles when `published=true`
 
 ### GET /api/news/:id
-**Response**: Single news article
+**Response**: `ApiResponse<News>`  
+**Type Safety**: Prisma-generated News type
 
 ### GET /api/news/slug/:slug  
-**Response**: Single news article by slug
+**Response**: `ApiResponse<News>`  
+**Validation**: Slug format validation
 
 ## Contact Endpoints
 
@@ -106,6 +176,30 @@
 # JavaScript: fetch('/api/artists') with error handling
 ```
 
+### Type Safety Benefits
+```typescript
+// Frontend hook with full type inference
+const { data: artists } = useQuery<PaginatedResponse<Artist>>({
+  queryKey: ['artists', { featured: true }],
+  queryFn: () => fetchArtists({ featured: true })
+});
+
+// Prisma query with type safety
+const artist = await prisma.artist.findUnique({
+  where: { id: 1 },
+  include: { releases: true }
+}); // TypeScript knows exact return type
+
+// Joi validation with Prisma types
+const createArtistSchema = Joi.object<Partial<Artist>>({
+  name: Joi.string().min(1).max(255).required(),
+  bio: Joi.string().max(5000),
+  socialLinks: Joi.object().pattern(Joi.string(), Joi.string().uri())
+});
+```
+
 ### Future Enhancements (Phase 2+)
-- JWT authentication, admin CRUD endpoints, file uploads
-- Advanced search, real-time notifications, API versioning, GraphQL
+- JWT authentication with Prisma user sessions
+- Admin CRUD endpoints with role-based types
+- File uploads with type-safe metadata
+- GraphQL with generated schemas from Prisma

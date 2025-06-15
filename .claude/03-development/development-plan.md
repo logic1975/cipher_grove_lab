@@ -71,27 +71,27 @@
 - [ ] News table with timestamps, slug generation, published states
   - **TEST**: Auto-timestamps, validation, field limits
 
-### Step 2.4: CRUD Operations (8h)
-- [ ] Artists, Releases, News CRUD + validation layer
-  - **TEST**: Empty strings, nulls, SQL injection, duplicates, large datasets
+### Step 2.4: Prisma CRUD Operations (8h)
+- [ ] Artists, Releases, News CRUD with Prisma Client + Joi validation layer
+  - **TEST**: Type safety, Prisma constraints, JSON field validation, relationship integrity
 
-**Phase 2 Success**: Tables + relationships, CRUD operations, validation, edge cases
+**Phase 2 Success**: Prisma schema, type-safe CRUD operations, comprehensive validation
 
 ---
 
 ## Phase 3: Backend API (Days 5-8)
 
-### Step 3.1: Server Structure (4h)
-- [ ] Express middleware, CORS, error handling, logging
-  - **TEST**: CORS, rate limiting, validation, error handling
+### Step 3.1: Enhanced Server Structure (4h)
+- [ ] Express + Helmet + CORS + express-rate-limit + Prisma middleware
+  - **TEST**: Security headers, CORS, rate limiting, Prisma error handling
 
-### Step 3.2: Artists API (6h)
-- [ ] GET/POST/PUT/DELETE /api/artists, pagination
-  - **TEST**: Valid/invalid IDs, pagination edge cases, malformed requests
+### Step 3.2: Type-Safe Artists API (6h)
+- [ ] GET/POST/PUT/DELETE /api/artists with Prisma + Joi validation
+  - **TEST**: Type inference, Prisma relations, validation schemas, pagination
 
-### Step 3.3: Releases API (6h)
-- [ ] GET/POST/PUT /api/releases, filtering, artist relations  
-  - **TEST**: Filter combinations, invalid filters, relationships
+### Step 3.3: Type-Safe Releases API (6h)
+- [ ] GET/POST/PUT /api/releases with artist relations + streaming links validation
+  - **TEST**: JSON field validation, foreign key constraints, type safety
 
 ### Step 3.4: News API (4h)
 - [ ] GET/POST /api/news, pagination, sorting, slugs
@@ -107,21 +107,21 @@
 
 ## Phase 4: Frontend Components (Days 9-12)
 
-### Step 4.1: Layout Components (6h)
-- [ ] Header, Footer, Layout, responsive navigation
-  - **TEST**: Rendering, responsive behavior, navigation links
+### Step 4.1: Layout Components with State Management (6h)
+- [ ] Header, Footer, Layout with Zustand app store integration
+  - **TEST**: Theme switching, responsive behavior, navigation state
 
-### Step 4.2: Artist Components (8h)
-- [ ] ArtistCard, ArtistGrid, ArtistProfile, FeaturedArtists
-  - **TEST**: Props, loading states, error states, empty data
+### Step 4.2: Artist Components with TanStack Query (8h)
+- [ ] ArtistCard, ArtistGrid, ArtistProfile with type-safe API hooks
+  - **TEST**: Loading states, error boundaries, cache invalidation, optimistic updates
 
-### Step 4.3: Release Components (8h)
-- [ ] ReleaseCard, ReleasesGrid, MusicPlayer, StreamingLinks
-  - **TEST**: Audio loading, play/pause, error handling
+### Step 4.3: Enhanced Music Components (8h)
+- [ ] MusicPlayer (Howler.js), ReleaseCard, Zustand music player store
+  - **TEST**: Audio controls, playlist management, progress tracking, error handling
 
-### Step 4.4: Form Components (6h)
-- [ ] ContactForm, NewsletterSignup, validation, loading/success states
-  - **TEST**: Validation, submission, error messages, accessibility
+### Step 4.4: Form Components with Validation (6h)
+- [ ] ContactForm, NewsletterSignup with client-side validation matching API
+  - **TEST**: Form validation, submission states, error handling, accessibility
 
 ### Step 4.5: News Components (4h)
 - [ ] NewsCard, NewsGrid, NewsArticle
@@ -133,17 +133,17 @@
 
 ## Phase 5: Page Integration (Days 13-15)
 
-### Step 5.1: Homepage (8h)
-- [ ] Hero section, latest releases, featured artists, newsletter signup
-  - **TEST**: Data loading, error states, responsive layout, skeletons
+### Step 5.1: Homepage with Enhanced Features (8h)
+- [ ] Hero, latest releases, featured artists with TanStack Query + Zustand
+  - **TEST**: Data prefetching, cache management, skeleton loading, music player integration
 
-### Step 5.2: Artist Pages (8h)
-- [ ] Roster page, individual pages, search/filter, discography
-  - **TEST**: Routing, data fetching, 404 handling, dynamic content
+### Step 5.2: Artist Pages with Advanced State (8h)
+- [ ] Roster, individual pages, search/filter with app store + music integration
+  - **TEST**: Route state management, optimistic navigation, music player continuity
 
-### Step 5.3: Catalog & News (8h)
-- [ ] Catalog page, filters, news listing, article pages
-  - **TEST**: Filtering, sorting, pagination, search
+### Step 5.3: Catalog & News with Full Integration (8h)
+- [ ] Catalog filters, news listing with comprehensive state management
+  - **TEST**: Filter state persistence, search integration, background music playback
 
 ### Step 5.4: Static Pages (4h)
 - [ ] About, Contact, 404, loading pages
@@ -155,17 +155,17 @@
 
 ## Phase 6: Full-Stack Integration (Days 16-17)
 
-### Step 6.1: API Integration (6h)
-- [ ] Frontend-backend connection, error handling, loading states, caching
-  - **TEST**: Network errors, slow responses, data consistency, caching
+### Step 6.1: Full-Stack Type Safety Integration (6h)
+- [ ] End-to-end type safety, TanStack Query + Prisma, error boundaries
+  - **TEST**: Type inference validation, runtime type safety, cache synchronization
 
-### Step 6.2: User Flows (8h)
-- [ ] Homepage→discovery, artist→streaming, news reading, contact submission
-  - **TEST**: Complete journeys, cross-page consistency
+### Step 6.2: Enhanced User Flows (8h)
+- [ ] Music discovery journeys with persistent player, optimistic updates
+  - **TEST**: Cross-page state persistence, music continuity, search integration
 
-### Step 6.3: Performance (4h)
-- [ ] Image lazy loading, bundle optimization, API caching, monitoring
-  - **TEST**: Load times, lazy loading, API response times
+### Step 6.3: Performance with State Management (4h)
+- [ ] Bundle optimization, store persistence, audio streaming optimization
+  - **TEST**: Store hydration, audio memory management, concurrent playback
 
 **Phase 6 Success**: End-to-end flows, <2s load time, error handling, caching
 
@@ -195,27 +195,31 @@
 
 ## Detailed Testing Requirements by Phase
 
-### Phase 1-2: Foundation Testing
-- **Unit Tests**: Database operations, utility functions
-- **Integration Tests**: Database connection, migration system
+### Phase 1-2: Enhanced Foundation Testing
+- **Unit Tests**: Prisma operations, type validation, utility functions
+- **Integration Tests**: Database connections, Prisma Client, migration system
+- **Type Safety Tests**: Prisma schema validation, TypeScript compilation
 - **Coverage Target**: 90%+
 
-### Phase 3: API Testing  
-- **Unit Tests**: Route handlers, middleware, validation
-- **Integration Tests**: API + Database interactions
-- **Security Tests**: SQL injection, XSS prevention
+### Phase 3: API Testing with Type Safety
+- **Unit Tests**: Route handlers, Prisma queries, Joi validation schemas
+- **Integration Tests**: API + Prisma + validation layer interactions
+- **Security Tests**: SQL injection prevention, JSON field validation
+- **Type Tests**: End-to-end type inference validation
 - **Coverage Target**: 90%+
 
-### Phase 4: Component Testing
-- **Unit Tests**: Individual components, hooks
-- **Integration Tests**: Component interactions
-- **Accessibility Tests**: Screen reader, keyboard navigation
+### Phase 4: Component Testing with State Management
+- **Unit Tests**: Components, Zustand stores, TanStack Query hooks
+- **Integration Tests**: Component + store interactions, music player workflows
+- **Audio Tests**: Howler.js integration, playlist management
+- **Accessibility Tests**: Screen reader, keyboard navigation, music controls
 - **Coverage Target**: 90%+
 
-### Phase 5-6: Full-Stack Testing
-- **Integration Tests**: Frontend + Backend + Database
-- **E2E Tests**: Complete user workflows
-- **Performance Tests**: Load testing, bundle analysis
+### Phase 5-6: Full-Stack Integration Testing
+- **Integration Tests**: Frontend + Backend + Database + State Management
+- **E2E Tests**: Complete user workflows with music playback
+- **Performance Tests**: Store persistence, audio streaming, bundle analysis
+- **Type Safety Tests**: Runtime type validation across full stack
 - **Coverage Target**: 90%+ overall
 
 ### Phase 7: Production Testing
@@ -229,10 +233,11 @@
 ## Risk Mitigation Strategies
 
 ### Technical Risks
-- **Database Performance**: Implement proper indexing and query optimization
-- **API Rate Limiting**: Protect against abuse and DoS attacks
-- **Frontend Bundle Size**: Code splitting and lazy loading
-- **Music Streaming Integration**: Fallback options for unavailable content
+- **Prisma Performance**: Optimize query relations, implement connection pooling
+- **State Management Complexity**: Zustand store design, TanStack Query cache management
+- **Audio Streaming Memory**: Howler.js memory leaks, concurrent playback limits
+- **Type Safety Runtime**: Prisma schema drift, API contract validation
+- **Bundle Size**: Howler.js + TanStack Query + Zustand size optimization
 
 ### Timeline Risks
 - **Scope Creep**: Strict adherence to defined requirements

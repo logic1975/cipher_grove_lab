@@ -21,11 +21,12 @@
        └─────────────────┘
 ```
 
-## Frontend Testing (React + TypeScript)
+## Frontend Testing (React + TypeScript + Enhanced Stack)
 
-### Unit Testing - Vitest + React Testing Library  
-**Coverage Target**: 90%+ for components and utilities
+### Unit Testing - Vitest + React Testing Library + TanStack Query + Zustand
+**Coverage Target**: 90%+ for components, utilities, stores, and hooks
 **Why Vitest**: Faster than Jest, better Vite integration, modern tooling
+**New Focus**: State management testing, API caching validation, audio player testing
 
 #### Component Testing
 ```javascript
@@ -40,12 +41,77 @@ describe('ArtistCard', () => {
 });
 ```
 
-#### Hook Testing  
+#### TanStack Query Testing
 ```javascript
-// useArtists.test.ts - Key patterns
+// useArtists.test.ts - Enhanced patterns
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderHook, waitFor } from '@testing-library/react';
+
 describe('useArtists', () => {
-  it('fetches successfully', async () => {/* mock fetch, verify data */});
-  it('handles errors', async () => {/* mock error, verify error state */});
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } }
+  });
+  
+  it('fetches successfully with caching', async () => {
+    const wrapper = ({ children }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
+    
+    const { result } = renderHook(() => useArtists(), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toMatchObject({ success: true });
+  });
+  
+  it('handles network errors', async () => {
+    // Mock network failure, verify error state and retry logic
+  });
+});
+```
+
+#### Zustand Store Testing
+```javascript
+// musicPlayerStore.test.ts
+import { renderHook, act } from '@testing-library/react';
+import { useMusicPlayerStore } from '../stores/musicPlayerStore';
+
+describe('Music Player Store', () => {
+  beforeEach(() => {
+    useMusicPlayerStore.setState({ isPlaying: false, currentTrack: null });
+  });
+
+  it('plays and pauses tracks', () => {
+    const { result } = renderHook(() => useMusicPlayerStore());
+    
+    act(() => {
+      result.current.play({ id: 1, title: 'Test Track', url: 'test.mp3' });
+    });
+    
+    expect(result.current.isPlaying).toBe(true);
+    expect(result.current.currentTrack?.title).toBe('Test Track');
+  });
+});
+```
+
+#### Howler.js Audio Testing
+```javascript
+// MusicPlayer.test.tsx
+import { vi } from 'vitest';
+
+// Mock Howler
+vi.mock('howler', () => ({
+  Howl: vi.fn().mockImplementation(() => ({
+    play: vi.fn(),
+    pause: vi.fn(),
+    stop: vi.fn(),
+    on: vi.fn()
+  }))
+}));
+
+describe('MusicPlayer Component', () => {
+  it('initializes audio player correctly', () => {
+    render(<MusicPlayer track={{ url: 'test.mp3', title: 'Test' }} />);
+    // Test audio controls, progress, error handling
+  });
 });
 ```
 
@@ -89,11 +155,12 @@ describe('Artist Page Integration', () => {
 });
 ```
 
-## Backend Testing (Node.js + Express)
+## Backend Testing (Node.js + Express + Prisma)
 
-### Unit Testing - Jest + Supertest
-**Coverage Target**: 95%+ for business logic and API routes  
+### Unit Testing - Jest + Supertest + Prisma Test Database
+**Coverage Target**: 95%+ for business logic, API routes, and database operations
 **Why Jest**: Mature, excellent Node.js support, comprehensive mocking
+**Enhanced Focus**: Prisma query testing, type safety validation, database transactions
 
 #### API Route Testing
 ```javascript
@@ -105,16 +172,92 @@ describe('GET /api/artists', () => {
 });
 ```
 
-#### Database Layer Testing
+#### Prisma Database Layer Testing
 ```javascript
-// artistService.test.js - Key patterns
-describe('ArtistService', () => {
-  beforeEach(async () => { await db.migrate.latest(); await db.seed.run(); });
-  afterEach(async () => { await db.migrate.rollback(); });
-  
-  it('creates artist', async () => {/* valid data, expect created artist */});
-  it('prevents duplicates', async () => {/* duplicate name, expect error */});
-  it('validates URLs', async () => {/* invalid URL, expect validation error */});
+// artistService.test.js - Enhanced patterns
+import { PrismaClient } from '@prisma/client';
+import { mockDeep, mockReset, DeepMockProxy } from 'jest-mock-extended';
+
+const prisma = mockDeep<PrismaClient>();
+
+describe('ArtistService with Prisma', () => {
+  beforeEach(() => {
+    mockReset(prisma);
+  });
+
+  it('creates artist with type safety', async () => {
+    const artistData = {
+      name: 'Test Artist',
+      bio: 'Test bio',
+      socialLinks: { instagram: 'https://instagram.com/test' },
+      isFeatured: false
+    };
+
+    prisma.artist.create.mockResolvedValue({
+      id: 1,
+      ...artistData,
+      imageUrl: null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    const result = await createArtist(artistData);
+    expect(result).toMatchObject(artistData);
+    expect(prisma.artist.create).toHaveBeenCalledWith({
+      data: artistData
+    });
+  });
+
+  it('handles Prisma unique constraint errors', async () => {
+    prisma.artist.create.mockRejectedValue({
+      code: 'P2002',
+      meta: { target: ['name'] }
+    });
+
+    await expect(createArtist({ name: 'Duplicate' }))
+      .rejects.toThrow('Artist name already exists');
+  });
+
+  it('validates JSON fields', async () => {
+    const invalidData = {
+      name: 'Test',
+      socialLinks: { instagram: 'invalid-url' }
+    };
+
+    // Test Joi validation before Prisma call
+    await expect(createArtist(invalidData))
+      .rejects.toThrow('Invalid social media URL');
+  });
+});
+```
+
+#### Type Safety Testing
+```javascript
+// typeValidation.test.ts
+import { Artist, Release } from '@prisma/client';
+
+describe('Prisma Type Validation', () => {
+  it('enforces Artist type structure', () => {
+    const artist: Artist = {
+      id: 1,
+      name: 'Test',
+      bio: null,
+      imageUrl: null,
+      socialLinks: {},
+      isFeatured: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    // TypeScript compilation validates this structure
+    expect(artist.name).toBe('Test');
+  });
+
+  it('validates Release relationships', () => {
+    const releaseWithArtist: Release & { artist: Artist } = {
+      // Full type checking for relations
+    };
+  });
 });
 ```
 

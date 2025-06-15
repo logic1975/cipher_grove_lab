@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Artist {
+  id           Int       @id @default(autoincrement())
+  name         String    @unique @db.VarChar(255)
+  bio          String?   @db.Text
+  imageUrl     String?   @map("image_url") @db.VarChar(500)
+  socialLinks  Json      @default("{}") @map("social_links") @db.JsonB
+  isFeatured   Boolean   @default(false) @map("is_featured")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relationships
+  releases Release[]
+
+  @@index([name])
+  @@index([isFeatured], map: "idx_artists_featured")
+  @@index([createdAt(sort: Desc)], map: "idx_artists_created_at")
+  @@map("artists")
+}
+
+model Release {
+  id             Int      @id @default(autoincrement())
+  artistId       Int      @map("artist_id")
+  title          String   @db.VarChar(255)
+  type           ReleaseType
+  releaseDate    DateTime @map("release_date") @db.Date
+  coverArtUrl    String?  @map("cover_art_url") @db.VarChar(500)
+  streamingLinks Json     @default("{}") @map("streaming_links") @db.JsonB
+  description    String?  @db.Text
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relationships
+  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@index([artistId], map: "idx_releases_artist_id")
+  @@index([releaseDate(sort: Desc)], map: "idx_releases_release_date")
+  @@index([type], map: "idx_releases_type")
+  @@index([createdAt(sort: Desc)], map: "idx_releases_created_at")
+  @@map("releases")
+}
+
+model News {
+  id          Int       @id @default(autoincrement())
+  title       String    @db.VarChar(255)
+  content     String    @db.Text
+  author      String    @default("Music Label") @db.VarChar(100)
+  slug        String?   @unique @db.VarChar(255)
+  publishedAt DateTime? @map("published_at") @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([publishedAt(sort: Desc)], map: "idx_news_published_at")
+  @@index([slug], map: "idx_news_slug")
+  @@index([createdAt(sort: Desc)], map: "idx_news_created_at")
+  @@map("news")
+}
+
+// Enums
+enum ReleaseType {
+  album
+  single
+  ep
+
+  @@map("release_type")
+}

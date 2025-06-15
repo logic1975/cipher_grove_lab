@@ -17,15 +17,23 @@
 
 ## 🛠️ Project-Specific Tech Decisions
 
+### Enhanced Technology Stack
+- **Frontend State**: Zustand (lightweight, TypeScript-first) + TanStack Query (API caching)
+- **Backend ORM**: Prisma (type-safe database layer with migrations)
+- **Audio Handling**: Howler.js for enhanced music player functionality
+- **Type Safety**: End-to-end TypeScript with Prisma-generated types
+
 ### Testing Strategy (Deviates from ~/CLAUDE.md defaults)
 - **Frontend**: Vitest + React Testing Library (faster than Jest with Vite)
-- **Backend**: Jest + Supertest (mature Node.js testing)
-- **Rationale**: Optimized for each environment rather than consistency
+- **Backend**: Jest + Supertest + Prisma test database
+- **Integration**: TanStack Query + Zustand testing patterns
+- **Rationale**: Optimized for each environment with enhanced type safety
 
 ### Music Industry Integrations
-- **Streaming APIs**: Spotify, Apple Music, YouTube Music embed support
+- **Streaming APIs**: Spotify Web API (preview URLs), Apple Music, YouTube Music
 - **Social Platforms**: Instagram, Twitter, Facebook, TikTok integration
-- **Music Previews**: Simple audio player with streaming platform links
+- **Audio Engine**: Howler.js player with waveforms, cross-browser compatibility
+- **Music Previews**: Advanced audio controls with background playback
 
 ### Design System (Dark Mode Focus)
 - **Theme**: Dark mode with vibrant orange accent (#ff6b35)

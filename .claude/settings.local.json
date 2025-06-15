@@ -6,7 +6,13 @@
       "Bash(mkdir:*)",
       "Bash(npm init:*)",
       "Bash(npm run build:*)",
-      "Bash(npm run test:*)"
+      "Bash(npm run test:*)",
+      "Bash(npm test:*)",
+      "Bash(NODE_ENV=development npx ts-node prisma/seed.ts)",
+      "Bash(docker exec:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

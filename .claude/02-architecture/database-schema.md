@@ -10,10 +10,12 @@
 │ name            │   └│ artist_id (FK)  │    │ title           │
 │ bio             │    │ title           │    │ content         │
 │ image_url       │    │ type            │    │ author          │
-│ social_links    │    │ release_date    │    │ published_at    │
-│ is_featured     │    │ cover_art_url   │    │ created_at      │
-│ created_at      │    │ streaming_links │    │ updated_at      │
-│ updated_at      │    │ created_at      │    └─────────────────┘
+│ image_alt       │    │ release_date    │    │ published_at    │
+│ image_sizes     │    │ cover_art_url   │    │ created_at      │
+│ social_links    │    │ cover_art_alt   │    │ updated_at      │
+│ is_featured     │    │ cover_art_sizes │    └─────────────────┘
+│ created_at      │    │ streaming_links │
+│ updated_at      │    │ created_at      │
 └─────────────────┘    │ updated_at      │
                        └─────────────────┘
 ```
@@ -26,8 +28,14 @@ CREATE TABLE artists (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
     bio TEXT,
-    image_url VARCHAR(500),
-    social_links JSONB DEFAULT '{}',
+    
+    -- Enhanced image fields for local storage (Coolify/Docker deployment)
+    image_url VARCHAR(500),              -- Main image URL: /uploads/artists/{id}_profile.webp
+    image_alt VARCHAR(255),              -- Accessibility alt text
+    image_sizes JSONB DEFAULT '{}',      -- {"thumbnail": "path", "profile": "path", "featured": "path"}
+    
+    -- Enhanced social platforms (all optional for indie label flexibility)
+    social_links JSONB DEFAULT '{}',     -- {spotify, appleMusic, youtube, instagram, facebook, bandcamp, soundcloud, tiktok}
     is_featured BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -47,8 +55,14 @@ CREATE TABLE releases (
     title VARCHAR(255) NOT NULL,
     type VARCHAR(50) NOT NULL CHECK (type IN ('album', 'single', 'ep')),
     release_date DATE NOT NULL,
-    cover_art_url VARCHAR(500),
-    streaming_links JSONB DEFAULT '{}',
+    
+    -- Enhanced cover art fields for local storage (1:1 square format)
+    cover_art_url VARCHAR(500),         -- Main cover URL: /uploads/releases/{id}_medium.webp
+    cover_art_alt VARCHAR(255),         -- Accessibility alt text
+    cover_art_sizes JSONB DEFAULT '{}', -- {"small": "300x300", "medium": "600x600", "large": "1200x1200"}
+    
+    -- Enhanced streaming platforms (matches social_links structure)
+    streaming_links JSONB DEFAULT '{}', -- {spotify, appleMusic, youtube, bandcamp, soundcloud}
     description TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -82,25 +96,46 @@ CREATE INDEX idx_news_created_at ON news(created_at DESC);
 
 ## JSON Field Structures
 
-### Artists.social_links
+### Artists.social_links (8 platforms, all optional)
 ```json
 {
-  "instagram": "https://instagram.com/artist",
-  "twitter": "https://twitter.com/artist",
-  "facebook": "https://facebook.com/artist",
-  "youtube": "https://youtube.com/artist",
-  "website": "https://artist-website.com"
+  "spotify": "https://open.spotify.com/artist/artist_id",
+  "appleMusic": "https://music.apple.com/artist/artist_id",
+  "youtube": "https://youtube.com/@artistname",
+  "instagram": "https://instagram.com/artistname",
+  "facebook": "https://facebook.com/artistname",
+  "bandcamp": "https://artistname.bandcamp.com",
+  "soundcloud": "https://soundcloud.com/artistname", 
+  "tiktok": "https://tiktok.com/@artistname"
 }
 ```
 
-### Releases.streaming_links
+### Artists.image_sizes (local storage paths)
 ```json
 {
-  "spotify": "https://open.spotify.com/album/...",
-  "apple_music": "https://music.apple.com/album/...",
-  "youtube_music": "https://music.youtube.com/playlist/...",
-  "bandcamp": "https://artist.bandcamp.com/album/...",
-  "soundcloud": "https://soundcloud.com/artist/sets/..."
+  "thumbnail": "/uploads/artists/1_thumbnail.webp",  // 400x400
+  "profile": "/uploads/artists/1_profile.webp",      // 800x800
+  "featured": "/uploads/artists/1_featured.webp"     // 1200x1200
+}
+```
+
+### Releases.streaming_links (5 platforms, all optional)
+```json
+{
+  "spotify": "https://open.spotify.com/album/album_id",
+  "appleMusic": "https://music.apple.com/album/album_id",
+  "youtube": "https://youtube.com/playlist?list=playlist_id",
+  "bandcamp": "https://artistname.bandcamp.com/album/album_name",
+  "soundcloud": "https://soundcloud.com/artistname/sets/album_name"
+}
+```
+
+### Releases.cover_art_sizes (local storage paths)
+```json
+{
+  "small": "/uploads/releases/1_small.webp",    // 300x300
+  "medium": "/uploads/releases/1_medium.webp",  // 600x600
+  "large": "/uploads/releases/1_large.webp"     // 1200x1200
 }
 ```
 
@@ -109,8 +144,10 @@ CREATE INDEX idx_news_created_at ON news(created_at DESC);
 ### Artists
 - `name`: Required, 1-255 characters, unique
 - `bio`: Optional, max 5000 characters
-- `image_url`: Optional, valid URL format
-- `social_links`: Valid JSON object with URL validation
+- `image_url`: Optional, local path format `/uploads/artists/{id}_profile.webp`
+- `image_alt`: Optional, accessibility description, max 255 characters
+- `image_sizes`: JSON object with thumbnail/profile/featured paths
+- `social_links`: JSON object, all platforms optional (spotify, appleMusic, youtube, instagram, facebook, bandcamp, soundcloud, tiktok)
 - `is_featured`: Boolean, max 6 featured artists at once
 
 ### Releases
@@ -118,7 +155,10 @@ CREATE INDEX idx_news_created_at ON news(created_at DESC);
 - `type`: Required, must be 'album', 'single', or 'ep'
 - `release_date`: Required, cannot be more than 100 years in past/future
 - `artist_id`: Required, must reference existing artist
-- `streaming_links`: Valid JSON object with URL validation
+- `cover_art_url`: Optional, local path format `/uploads/releases/{id}_medium.webp`
+- `cover_art_alt`: Optional, accessibility description, max 255 characters  
+- `cover_art_sizes`: JSON object with small/medium/large paths (1:1 square format)
+- `streaming_links`: JSON object, all platforms optional (spotify, appleMusic, youtube, bandcamp, soundcloud)
 
 ### News
 - `title`: Required, 1-255 characters
@@ -178,32 +218,50 @@ CREATE INDEX idx_news_created_at ON news(created_at DESC);
 
 ## Development Data
 
-### Sample Artists
+### Sample Artists (with enhanced image and social structure)
 ```json
 [
   {
     "name": "The Midnight Echo",
-    "bio": "Alternative rock band from Portland",
-    "is_featured": true,
+    "bio": "Alternative rock band from Portland known for their ethereal soundscapes",
+    "image_url": "/uploads/artists/1_profile.webp",
+    "image_alt": "The Midnight Echo band performing on stage with atmospheric lighting",
+    "image_sizes": {
+      "thumbnail": "/uploads/artists/1_thumbnail.webp",
+      "profile": "/uploads/artists/1_profile.webp", 
+      "featured": "/uploads/artists/1_featured.webp"
+    },
     "social_links": {
+      "spotify": "https://open.spotify.com/artist/midnightecho",
       "instagram": "https://instagram.com/midnightecho",
-      "spotify": "https://open.spotify.com/artist/..."
-    }
+      "youtube": "https://youtube.com/@midnightecho",
+      "bandcamp": "https://midnightecho.bandcamp.com"
+    },
+    "is_featured": true
   }
 ]
 ```
 
-### Sample Releases
+### Sample Releases (with enhanced cover art and streaming)
 ```json
 [
   {
     "title": "Neon Dreams",
     "type": "album",
     "release_date": "2024-03-15",
+    "cover_art_url": "/uploads/releases/1_medium.webp",
+    "cover_art_alt": "Neon Dreams album cover featuring abstract neon cityscapes",
+    "cover_art_sizes": {
+      "small": "/uploads/releases/1_small.webp",
+      "medium": "/uploads/releases/1_medium.webp",
+      "large": "/uploads/releases/1_large.webp"
+    },
     "streaming_links": {
-      "spotify": "https://open.spotify.com/album/...",
-      "apple_music": "https://music.apple.com/album/..."
-    }
+      "spotify": "https://open.spotify.com/album/neondreams123",
+      "appleMusic": "https://music.apple.com/album/neondreams123",
+      "bandcamp": "https://midnightecho.bandcamp.com/album/neon-dreams"
+    },
+    "description": "A journey through midnight cityscapes and electric emotions"
   }
 ]
 ```

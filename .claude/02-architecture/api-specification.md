@@ -46,16 +46,19 @@ interface PaginatedResponse<T> {
 ## Type Definitions
 
 ```typescript
-// Prisma-generated types
+// Enhanced Prisma-generated types with image and platform support
 interface Artist {
   id: number;
   name: string;
   bio: string | null;
   imageUrl: string | null;
-  socialLinks: Record<string, string>; // JSON object
+  imageAlt: string | null;
+  imageSizes: ImageSizes; // JSON object with thumbnail, profile, featured
+  socialLinks: SocialPlatformLinks; // JSON object with 8 platform support
   isFeatured: boolean;
   createdAt: Date;
   updatedAt: Date;
+  releases?: Release[]; // Include relation when needed
 }
 
 interface Release {
@@ -65,7 +68,9 @@ interface Release {
   type: 'album' | 'single' | 'ep';
   releaseDate: Date;
   coverArtUrl: string | null;
-  streamingLinks: Record<string, string>; // JSON object
+  coverArtAlt: string | null;
+  coverArtSizes: ImageSizes; // JSON object with small, medium, large
+  streamingLinks: StreamingPlatformLinks; // JSON object with 5 platform support
   description: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -81,6 +86,35 @@ interface News {
   publishedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
+}
+
+// Supporting types for enhanced image and platform support
+interface ImageSizes {
+  thumbnail?: string;
+  small?: string;
+  medium?: string;
+  large?: string;
+  profile?: string;
+  featured?: string;
+}
+
+interface SocialPlatformLinks {
+  instagram?: string;
+  twitter?: string;
+  facebook?: string;
+  youtube?: string;
+  tiktok?: string;
+  spotify?: string;
+  bandcamp?: string;
+  soundcloud?: string;
+}
+
+interface StreamingPlatformLinks {
+  spotify?: string;
+  appleMusic?: string;
+  youtube?: string;
+  bandcamp?: string;
+  soundcloud?: string;
 }
 ```
 
@@ -98,7 +132,14 @@ interface News {
 
 ### POST /api/artists
 **Status**: Future feature (Phase 2+)  
-**Body**: Joi validation with Prisma types
+**Body**: Joi validation with Prisma types + image upload
+
+### POST /api/artists/:id/image
+**Authentication**: Required (admin only)  
+**Content-Type**: `multipart/form-data`  
+**Body**: `image` file field (JPEG, PNG, WebP, max 5MB)  
+**Processing**: Auto-generates thumbnail/profile/featured sizes  
+**Response**: `ApiResponse<{ imageSizes: Record<string, string> }>`
 
 ## Releases Endpoints
 
@@ -114,6 +155,13 @@ interface News {
 ### GET /api/artists/:id/releases  
 **Query**: Same as `/api/releases` except `artist_id`  
 **Response**: `PaginatedResponse<Release>`
+
+### POST /api/releases/:id/cover-art
+**Authentication**: Required (admin only)  
+**Content-Type**: `multipart/form-data`  
+**Body**: `coverArt` file field (JPEG, PNG, WebP, max 5MB)  
+**Processing**: Auto-generates small/medium/large sizes (1:1 square format)  
+**Response**: `ApiResponse<{ coverArtSizes: Record<string, string> }>`
 
 ## News Endpoints
 
@@ -147,10 +195,24 @@ interface News {
 **Response**: Success message  
 **Errors**: 400 invalid/duplicate email, 429 rate limit
 
+## File Management Endpoints
+
+### GET /uploads/artists/:filename
+**Static Files**: Artist images served by Express.js  
+**Path**: `/uploads/artists/{id}_{size}.webp`  
+**Sizes**: thumbnail (400x400), profile (800x800), featured (1200x1200)  
+**Headers**: Cache-Control, Content-Type
+
+### GET /uploads/releases/:filename  
+**Static Files**: Release cover art served by Express.js  
+**Path**: `/uploads/releases/{id}_{size}.webp`  
+**Sizes**: small (300x300), medium (600x600), large (1200x1200)  
+**Headers**: Cache-Control, Content-Type
+
 ## Health Check Endpoints
 
 ### GET /api/health
-**Response**: `{status: "healthy", timestamp, version, uptime, database: "connected"}`
+**Response**: `{status: "healthy", timestamp, version, uptime, database: "connected", storage: "accessible"}`
 
 ## Error Codes & Rate Limiting
 
@@ -190,11 +252,30 @@ const artist = await prisma.artist.findUnique({
   include: { releases: true }
 }); // TypeScript knows exact return type
 
-// Joi validation with Prisma types
+// Enhanced Joi validation with image and social platform validation
 const createArtistSchema = Joi.object<Partial<Artist>>({
   name: Joi.string().min(1).max(255).required(),
   bio: Joi.string().max(5000),
-  socialLinks: Joi.object().pattern(Joi.string(), Joi.string().uri())
+  imageAlt: Joi.string().max(255),
+  socialLinks: Joi.object({
+    spotify: Joi.string().uri(),
+    appleMusic: Joi.string().uri(),
+    youtube: Joi.string().uri(),
+    instagram: Joi.string().uri(),
+    facebook: Joi.string().uri(),
+    bandcamp: Joi.string().uri(),
+    soundcloud: Joi.string().uri(),
+    tiktok: Joi.string().uri()
+  }).unknown(false)
+});
+
+// File upload with multer + sharp processing
+const uploadArtistImage = multer({
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    cb(null, allowedTypes.includes(file.mimetype));
+  },
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB
 });
 ```
 

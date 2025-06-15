@@ -161,6 +161,37 @@ describe('Artist Page Integration', () => {
 **Coverage Target**: 95%+ for business logic, API routes, and database operations
 **Why Jest**: Mature, excellent Node.js support, comprehensive mocking
 **Enhanced Focus**: Prisma query testing, type safety validation, database transactions
+**Database Setup**: Docker PostgreSQL with isolated test database
+
+#### Docker Database Testing Setup
+```javascript
+// jest.config.js - Test environment with Docker database
+module.exports = {
+  testEnvironment: 'node',
+  setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
+  globalSetup: '<rootDir>/src/test/globalSetup.ts',
+  globalTeardown: '<rootDir>/src/test/globalTeardown.ts',
+};
+
+// globalSetup.ts - Start test database
+import { execSync } from 'child_process';
+
+export default async () => {
+  // Ensure Docker database is running
+  execSync('npm run db:start', { stdio: 'inherit' });
+  
+  // Run migrations on test database
+  process.env.DATABASE_URL = process.env.DATABASE_URL_TEST;
+  execSync('npx prisma migrate deploy', { stdio: 'inherit' });
+};
+
+// Test database isolation
+import { cleanupTestDatabase } from '../config/database';
+
+beforeEach(async () => {
+  await cleanupTestDatabase(); // Clear test data between tests
+});
+```
 
 #### API Route Testing
 ```javascript

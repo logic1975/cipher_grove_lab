@@ -19,25 +19,31 @@ Me asking Claude things like:
 
 ## Tech Stack (aka "Things I'm Learning to Love")
 
-- **Frontend**: React + TypeScript (because apparently TypeScript prevents me from breaking things)
-- **Backend**: Node.js + Express (the server that serves... servers?)
-- **Database**: PostgreSQL (it stores data and doesn't judge my queries)
-- **Testing**: Jest + Vitest (because Claude insists good code needs tests)
+- **Frontend**: React + TypeScript + Vite (because apparently TypeScript prevents me from breaking things)
+- **Backend**: Node.js + Express + Prisma ORM (the server that serves... servers?)
+- **Database**: PostgreSQL + Docker (it stores data in containers and doesn't judge my queries)
+- **Testing**: Jest + Vitest + Supertest (because Claude insists good code needs tests)
 - **Styling**: Tailwind CSS (utility classes that make me feel like a CSS wizard)
+- **Dev Environment**: Docker containers (because apparently everything lives in boxes now)
 
 ## Features (Planned vs. Reality)
 
 ### ✅ What's Working
 - [x] Project setup that doesn't immediately explode
-- [x] Tests that actually pass (Claude's doing, not mine)
+- [x] Tests that actually pass (53 tests and counting!)
+- [x] Docker PostgreSQL database with real data
+- [x] Enhanced database schema with artist/release info
+- [x] Prisma ORM for type-safe database operations
+- [x] Sample artists, releases, and news seeded
 - [x] Documentation that makes sense to future-me
 - [x] Git commits that aren't just "fix stuff"
 
-### 🚧 What's Coming
+### 🚧 What's Coming Next
+- [ ] File upload system for artist photos
+- [ ] REST API endpoints for data access
 - [ ] Artist profiles that look professional
 - [ ] Music player that plays music (revolutionary concept)
 - [ ] Contact forms that don't just vanish into the void
-- [ ] Mobile-friendly design (because phones exist)
 
 ### 🌈 What I Dream About
 - [ ] Spotify integration that actually works
@@ -69,15 +75,20 @@ git clone https://github.com/logic1975/cipher_grove_lab.git
 # Enter the musical coding zone
 cd cipher_grove_lab
 
-# Install frontend dependencies (and pray)
-cd frontend
-npm install
+# Start the database (Docker magic)
+cd backend
+npm run db:start
 
-# Install backend dependencies (double pray)
-cd ../backend
+# Install backend dependencies and setup database
+npm install
+npm run setup
+
+# Install frontend dependencies (and pray)
+cd ../frontend
 npm install
 
 # Run tests to make sure nothing's broken
+cd ../backend
 npm test
 
 # Start the development servers and watch the magic happen
@@ -90,7 +101,11 @@ npm run dev
 cipher_grove_lab/
 ├── frontend/          # The pretty stuff users see
 ├── backend/           # The smart stuff that makes it work
+│   ├── prisma/        # Database schema and migrations
+│   └── src/           # Server code and configs
+├── database/          # Docker database initialization
 ├── .claude/           # Documentation (lots of it)
+├── docker-compose.yml # Database container setup
 ├── CLAUDE.md          # My project bible
 └── README.md          # You are here! 👋
 ```

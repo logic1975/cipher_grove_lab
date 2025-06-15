@@ -17,7 +17,13 @@ model Artist {
   id           Int       @id @default(autoincrement())
   name         String    @unique @db.VarChar(255)
   bio          String?   @db.Text
+  
+  // Enhanced image fields for local storage
   imageUrl     String?   @map("image_url") @db.VarChar(500)
+  imageAlt     String?   @map("image_alt") @db.VarChar(255)
+  imageSizes   Json      @default("{}") @map("image_sizes") @db.JsonB
+  
+  // Enhanced social platforms (all optional)
   socialLinks  Json      @default("{}") @map("social_links") @db.JsonB
   isFeatured   Boolean   @default(false) @map("is_featured")
   createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
@@ -38,7 +44,13 @@ model Release {
   title          String   @db.VarChar(255)
   type           ReleaseType
   releaseDate    DateTime @map("release_date") @db.Date
+  
+  // Enhanced cover art fields for local storage
   coverArtUrl    String?  @map("cover_art_url") @db.VarChar(500)
+  coverArtAlt    String?  @map("cover_art_alt") @db.VarChar(255)
+  coverArtSizes  Json     @default("{}") @map("cover_art_sizes") @db.JsonB
+  
+  // Enhanced streaming platforms (all optional)
   streamingLinks Json     @default("{}") @map("streaming_links") @db.JsonB
   description    String?  @db.Text
   createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)

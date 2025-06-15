@@ -3,19 +3,26 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log('🌱 Seeding database...')
+  console.log('🌱 Seeding database with enhanced data...')
 
-  // Create sample artists
+  // Create sample artists with enhanced image and social platform support
   const artists = await Promise.all([
     prisma.artist.create({
       data: {
         name: 'The Midnight Echo',
         bio: 'Alternative rock band from Portland known for their ethereal soundscapes and powerful live performances.',
-        imageUrl: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400',
+        imageUrl: '/uploads/artists/1_profile.webp',
+        imageAlt: 'The Midnight Echo band performing on stage with atmospheric lighting',
+        imageSizes: {
+          thumbnail: '/uploads/artists/1_thumbnail.webp',
+          profile: '/uploads/artists/1_profile.webp',
+          featured: '/uploads/artists/1_featured.webp'
+        },
         socialLinks: {
-          instagram: 'https://instagram.com/midnightecho',
           spotify: 'https://open.spotify.com/artist/midnightecho',
-          twitter: 'https://twitter.com/midnightecho'
+          instagram: 'https://instagram.com/midnightecho',
+          youtube: 'https://youtube.com/@midnightecho',
+          bandcamp: 'https://midnightecho.bandcamp.com'
         },
         isFeatured: true
       }
@@ -24,11 +31,18 @@ async function main() {
       data: {
         name: 'Luna Ray',
         bio: 'Electronic dream-pop artist creating atmospheric music that blends vintage synthesizers with modern production.',
-        imageUrl: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=400',
+        imageUrl: '/uploads/artists/2_profile.webp',
+        imageAlt: 'Luna Ray in a ethereal studio setup with vintage synthesizers',
+        imageSizes: {
+          thumbnail: '/uploads/artists/2_thumbnail.webp',
+          profile: '/uploads/artists/2_profile.webp',
+          featured: '/uploads/artists/2_featured.webp'
+        },
         socialLinks: {
-          instagram: 'https://instagram.com/lunaray',
           spotify: 'https://open.spotify.com/artist/lunaray',
-          website: 'https://lunaray.music'
+          instagram: 'https://instagram.com/lunaray',
+          soundcloud: 'https://soundcloud.com/lunaray',
+          tiktok: 'https://tiktok.com/@lunaray'
         },
         isFeatured: true
       }
@@ -37,11 +51,19 @@ async function main() {
       data: {
         name: 'Crimson Valley',
         bio: 'Indie folk duo combining rich harmonies with storytelling that captures the essence of small-town America.',
-        imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400',
+        imageUrl: '/uploads/artists/3_profile.webp',
+        imageAlt: 'Crimson Valley duo performing acoustic set in rustic setting',
+        imageSizes: {
+          thumbnail: '/uploads/artists/3_thumbnail.webp',
+          profile: '/uploads/artists/3_profile.webp',
+          featured: '/uploads/artists/3_featured.webp'
+        },
         socialLinks: {
-          instagram: 'https://instagram.com/crimsonvalley',
           spotify: 'https://open.spotify.com/artist/crimsonvalley',
-          youtube: 'https://youtube.com/@crimsonvalley'
+          instagram: 'https://instagram.com/crimsonvalley',
+          youtube: 'https://youtube.com/@crimsonvalley',
+          facebook: 'https://facebook.com/crimsonvalley',
+          bandcamp: 'https://crimsonvalley.bandcamp.com'
         },
         isFeatured: false
       }
@@ -50,7 +72,7 @@ async function main() {
 
   console.log(`✅ Created ${artists.length} artists`)
 
-  // Create sample releases
+  // Create sample releases with enhanced cover art and streaming platform support
   const releases = await Promise.all([
     prisma.release.create({
       data: {
@@ -58,11 +80,18 @@ async function main() {
         title: 'Neon Dreams',
         type: 'album',
         releaseDate: new Date('2024-03-15'),
-        coverArtUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500',
+        coverArtUrl: '/uploads/releases/1_medium.webp',
+        coverArtAlt: 'Neon Dreams album cover featuring abstract neon cityscapes',
+        coverArtSizes: {
+          small: '/uploads/releases/1_small.webp',
+          medium: '/uploads/releases/1_medium.webp',
+          large: '/uploads/releases/1_large.webp'
+        },
         streamingLinks: {
-          spotify: 'https://open.spotify.com/album/neondreams',
-          appleMusic: 'https://music.apple.com/album/neondreams',
-          youtubeMusic: 'https://music.youtube.com/playlist/neondreams'
+          spotify: 'https://open.spotify.com/album/neondreams123',
+          appleMusic: 'https://music.apple.com/album/neondreams123',
+          youtube: 'https://music.youtube.com/playlist?list=neondreams',
+          bandcamp: 'https://midnightecho.bandcamp.com/album/neon-dreams'
         },
         description: 'A journey through midnight cityscapes and electric emotions.'
       }
@@ -73,10 +102,17 @@ async function main() {
         title: 'Electric Pulse',
         type: 'single',
         releaseDate: new Date('2024-01-20'),
-        coverArtUrl: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500',
+        coverArtUrl: '/uploads/releases/2_medium.webp',
+        coverArtAlt: 'Electric Pulse single cover with lightning and neon elements',
+        coverArtSizes: {
+          small: '/uploads/releases/2_small.webp',
+          medium: '/uploads/releases/2_medium.webp',
+          large: '/uploads/releases/2_large.webp'
+        },
         streamingLinks: {
-          spotify: 'https://open.spotify.com/track/electricpulse',
-          appleMusic: 'https://music.apple.com/song/electricpulse'
+          spotify: 'https://open.spotify.com/track/electricpulse456',
+          appleMusic: 'https://music.apple.com/song/electricpulse456',
+          soundcloud: 'https://soundcloud.com/midnightecho/electric-pulse'
         },
         description: 'The lead single that started it all.'
       }
@@ -87,10 +123,17 @@ async function main() {
         title: 'Cosmic Waves',
         type: 'ep',
         releaseDate: new Date('2024-02-10'),
-        coverArtUrl: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=500',
+        coverArtUrl: '/uploads/releases/3_medium.webp',
+        coverArtAlt: 'Cosmic Waves EP cover with nebula and space imagery',
+        coverArtSizes: {
+          small: '/uploads/releases/3_small.webp',
+          medium: '/uploads/releases/3_medium.webp',
+          large: '/uploads/releases/3_large.webp'
+        },
         streamingLinks: {
-          spotify: 'https://open.spotify.com/album/cosmicwaves',
-          bandcamp: 'https://lunaray.bandcamp.com/album/cosmic-waves'
+          spotify: 'https://open.spotify.com/album/cosmicwaves789',
+          bandcamp: 'https://lunaray.bandcamp.com/album/cosmic-waves',
+          soundcloud: 'https://soundcloud.com/lunaray/sets/cosmic-waves'
         },
         description: 'Five tracks exploring the vastness of space and emotion.'
       }
@@ -101,10 +144,17 @@ async function main() {
         title: 'Hometown Stories',
         type: 'album',
         releaseDate: new Date('2023-11-05'),
-        coverArtUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500',
+        coverArtUrl: '/uploads/releases/4_medium.webp',
+        coverArtAlt: 'Hometown Stories album cover featuring rustic countryside imagery',
+        coverArtSizes: {
+          small: '/uploads/releases/4_small.webp',
+          medium: '/uploads/releases/4_medium.webp',
+          large: '/uploads/releases/4_large.webp'
+        },
         streamingLinks: {
-          spotify: 'https://open.spotify.com/album/hometownstories',
-          appleMusic: 'https://music.apple.com/album/hometownstories'
+          spotify: 'https://open.spotify.com/album/hometownstories101',
+          appleMusic: 'https://music.apple.com/album/hometownstories101',
+          bandcamp: 'https://crimsonvalley.bandcamp.com/album/hometown-stories'
         },
         description: 'Tales from the heartland, told through folk melodies.'
       }

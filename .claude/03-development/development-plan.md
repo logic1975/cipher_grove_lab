@@ -8,10 +8,11 @@
 **Every [ ] substep MUST be tested before proceeding to next substep.**
 
 ### Process:
-1. Complete substep implementation
-2. Write comprehensive tests 
+1. Write comprehensive tests first (TDD approach)
+2. Implement minimum code to make tests pass
 3. Verify 90%+ coverage + all tests pass
-4. Mark [x] and proceed
+4. Refactor if needed
+5. Mark [x] and proceed
 
 **Example**: ❌ Check boxes without testing | ✅ Test each substep completely before marking [x]
 
@@ -197,13 +198,13 @@
 ### Phase 1-2: Foundation Testing
 - **Unit Tests**: Database operations, utility functions
 - **Integration Tests**: Database connection, migration system
-- **Coverage Target**: 95%+
+- **Coverage Target**: 90%+
 
 ### Phase 3: API Testing  
 - **Unit Tests**: Route handlers, middleware, validation
 - **Integration Tests**: API + Database interactions
 - **Security Tests**: SQL injection, XSS prevention
-- **Coverage Target**: 95%+
+- **Coverage Target**: 90%+
 
 ### Phase 4: Component Testing
 - **Unit Tests**: Individual components, hooks
@@ -278,4 +279,4 @@
 - [ ] SEO: Meta tags and structured data implemented
 
 ## 🚨 ABSOLUTE RULE REMINDER
-**NEVER mark a substep as [x] complete unless ALL its "MUST TEST" requirements have been implemented, tested, and verified to work correctly. This is non-negotiable for maintaining code quality and project success.**
+**NEVER mark a substep as [x] complete unless ALL its "TEST" requirements have been implemented, tested, and verified to work correctly. This is non-negotiable for maintaining code quality and project success.**

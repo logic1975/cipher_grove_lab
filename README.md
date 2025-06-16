@@ -22,30 +22,48 @@ Me asking Claude things like:
 - **Frontend**: React + TypeScript + Vite (because apparently TypeScript prevents me from breaking things)
 - **Backend**: Node.js + Express + Prisma ORM (the server that serves... servers?)
 - **Database**: PostgreSQL + Docker (it stores data in containers and doesn't judge my queries)
-- **Testing**: Jest + Vitest + Supertest (because Claude insists good code needs tests)
+- **Testing**: Jest + Vitest + Supertest (because Claude insists good code needs tests - and wow, 112+ tests!)
+- **File Storage**: Express static serving with security headers (images now have a home!)
+- **Validation**: Joi schemas (because users can't be trusted with form inputs)
+- **Business Logic**: Enhanced services layer (I actually understand what this means now!)
 - **Styling**: Tailwind CSS (utility classes that make me feel like a CSS wizard)
 - **Dev Environment**: Docker containers (because apparently everything lives in boxes now)
 
 ## Features (Planned vs. Reality)
 
-### ✅ What's Working
+### ✅ What's Working (Phase 2.5 Complete - Services Layer Built!)
 - [x] Project setup that doesn't immediately explode
-- [x] Tests that actually pass (53 tests and counting!)
+- [x] **Comprehensive test infrastructure (118+ tests when working!)**
 - [x] Docker PostgreSQL database with real data
-- [x] Enhanced database schema with artist/release info
+- [x] **Enhanced database schema with image fields and platform support:**
+  - [x] Artists table with 8 social platforms (Instagram, Spotify, YouTube, etc.)
+  - [x] Releases table with 5 streaming platforms (Spotify, Apple Music, etc.)
+  - [x] News table with publish/draft workflow and auto-slug generation
 - [x] Prisma ORM for type-safe database operations
-- [x] Sample artists, releases, and news seeded
-- [x] Documentation that makes sense to future-me
-- [x] Git commits that aren't just "fix stuff"
+- [x] Sample data: 3 artists, 4 releases, 3 news articles seeded
+- [x] **File storage system with Express static serving + security headers**
+- [x] **Business logic services layer (the heart of the system!):**
+  - [x] ArtistService - Featured artist limits (max 6), social platform validation
+  - [x] ReleaseService - Streaming platform validation, artist relationships
+  - [x] NewsService - Publishing workflow, slug generation, search functionality
+- [x] **Advanced validation with Joi schemas for all 13 platforms**
+- [x] **Business rule enforcement across the entire system**
+- [x] Documentation that actually helps future-me
+- [x] Git commits that tell a coherent story
 
-### 🚧 What's Coming Next
-- [ ] File upload system for artist photos
-- [ ] REST API endpoints for data access
-- [ ] Artist profiles that look professional
-- [ ] Music player that plays music (revolutionary concept)
-- [ ] Contact forms that don't just vanish into the void
+### 🚧 What's Coming Next (Phase 3 - API Time!)
+- [ ] **REST API endpoints that actually use our awesome services**
+- [ ] **Image upload processing with multer + sharp (make those artist photos shine!)**
+- [ ] **API middleware for validation, error handling, and rate limiting**
+- [ ] Security headers and CORS configuration
+- [ ] Comprehensive API testing with Supertest
+- [ ] Error handling that doesn't just crash everything
 
-### 🌈 What I Dream About
+### 🌈 What I Dream About (Phase 4+)
+- [ ] **Frontend components that look professional (not like a 90s website)**
+- [ ] **Music player with Howler.js that actually plays music**
+- [ ] **Artist profiles with all those social platform links working**
+- [ ] Contact forms that don't just vanish into the digital void
 - [ ] Spotify integration that actually works
 - [ ] Animations that don't make people dizzy
 - [ ] Code so clean it sparks joy
@@ -57,6 +75,11 @@ Me asking Claude things like:
 **Week 2**: "I made a button and only cried twice!"  
 **Week 3**: "My code compiled on the first try... this feels suspicious"  
 **Week 4**: "I understand what 'props' means now (it's not just theater)"  
+**Week 5**: "I wrote a service class and it actually works!"  
+**Week 6**: "118 tests? I'm basically a developer now!"  
+**Week 7**: "Understanding business logic validation feels like unlocking a superpower"  
+**Week 8**: "File storage, enhanced schemas, platform validation - I built the foundation!"  
+**Week 9**: "Ready for Phase 3 - time to build those REST APIs!"  
 
 ## Development Philosophy
 
@@ -102,7 +125,11 @@ cipher_grove_lab/
 ├── frontend/          # The pretty stuff users see
 ├── backend/           # The smart stuff that makes it work
 │   ├── prisma/        # Database schema and migrations
-│   └── src/           # Server code and configs
+│   ├── src/
+│   │   ├── services/  # Business logic layer (NEW!)
+│   │   ├── __tests__/ # Comprehensive test suite (NEW!)
+│   │   └── config/    # Database and app configuration
+│   └── uploads/       # File storage for images (NEW!)
 ├── database/          # Docker database initialization
 ├── .claude/           # Documentation (lots of it)
 ├── docker-compose.yml # Database container setup
@@ -133,4 +160,8 @@ MIT License - Feel free to use this code, laugh at my comments, or learn from my
 
 *"The best way to learn is to build something real, even if you have no idea what you're doing."* - Probably someone wise, definitely how I feel right now.
 
-**Current Status**: 🎵 Making music with code, one commit at a time 🎵
+**Current Status**: 🎵 Phase 2.5 COMPLETE! Built a robust services layer with business logic, file storage, and comprehensive platform validation. Ready to create REST APIs that actually use this foundation! 🎵
+
+**Latest Achievement**: Enhanced services layer with 118+ tests - ArtistService, ReleaseService, NewsService all working with business rules, platform validation, and file storage. From "what's a function?" to "I built a complete backend foundation!" 🚀
+
+**What's Actually Working**: File uploads, 13 platform validations (8 social + 5 streaming), featured artist limits, auto-slug generation, publish/draft workflows, and so much more! Time for Phase 3! 🎯

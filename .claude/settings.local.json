@@ -12,7 +12,10 @@
       "Bash(docker exec:*)",
       "Bash(find:*)",
       "Bash(ls:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }

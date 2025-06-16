@@ -93,3 +93,9 @@ pids
 *.temp
 temp/
 !temp/
+
+# Uploads - ignore actual files but keep directory structure
+backend/uploads/*
+!backend/uploads/.gitkeep
+!backend/uploads/artists/.gitkeep
+!backend/uploads/releases/.gitkeep

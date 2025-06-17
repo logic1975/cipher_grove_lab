@@ -160,6 +160,14 @@ Homepage (featured artists + latest releases)
 - **Business Rules**: @.claude/06-domain/business-rules.md (music industry rules)
 - **Technical Requirements**: @.claude/01-project/requirements.md
 
+### Complete Documentation Reference
+- **System Overview**: @.claude/02-architecture/system-overview.md (tech stack & architecture)
+- **Test Helpers**: @.claude/03-development/test-helpers.md (practical testing patterns)  
+- **Coding Standards**: @.claude/03-development/coding-standards.md (development best practices)
+- **Workflow Guidelines**: @.claude/03-development/workflow.md (development process)
+- **Project Overview**: @.claude/01-project/overview.md (business goals & scope)
+- **Documentation Index**: @.claude/README.md (navigation guide)
+
 ## 🎵 Music Industry Business Rules
 
 ### Content Management

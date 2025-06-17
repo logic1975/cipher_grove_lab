@@ -1,7 +1,7 @@
 # Context Prime
 > Follow the instructions to understand the context of the cipher_grove_lab music label website project.
 
-## Run the following command
+## Run the following command to get the file structure of the project
 
  eza . --tree --git-ignore --level=2
 

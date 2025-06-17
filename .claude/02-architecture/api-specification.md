@@ -220,7 +220,7 @@ interface StreamingPlatformLinks {
 
 ## Implementation Status (June 17, 2025)
 
-### ✅ COMPLETED: Enhanced Services Layer + Test Infrastructure
+### ✅ COMPLETED: Phase 3.1 - Full REST API Implementation (258 tests passing)
 ```typescript
 // ArtistService - 25 comprehensive tests
 class ArtistService {
@@ -291,22 +291,41 @@ streamingLinks: {
 - Publish/draft workflow
 ```
 
-### 🎯 READY FOR IMPLEMENTATION: REST API Layer (Phase 3.1)
-**Foundation Status**: All 165 tests passing ✅ - Services layer complete and tested
+### ✅ COMPLETED: REST API Endpoints (Phase 3.1) - All 258 tests passing
 
-```typescript
-// Ready to implement - API endpoints using tested services
-GET    /api/artists              # ArtistService.getArtists() (25 tests ✅)
-POST   /api/artists              # ArtistService.createArtist() (business rules tested ✅)
-POST   /api/artists/:id/image    # ArtistService.updateArtistImage() (validation tested ✅)
+#### Artists API (22 tests ✅)
+- `GET /api/artists` - Paginated list with filtering and search
+- `GET /api/artists/featured` - Featured artists only (max 6)
+- `GET /api/artists/:id` - Single artist with optional releases
+- `POST /api/artists` - Create with validation and business rules
+- `PUT /api/artists/:id` - Update with duplicate name prevention
+- `DELETE /api/artists/:id` - Delete with relationship handling
 
-GET    /api/releases             # ReleaseService.getReleases() (37 tests ✅)
-POST   /api/releases             # ReleaseService.createRelease() (platform validation tested ✅)
-POST   /api/releases/:id/cover-art # ReleaseService.updateReleaseCoverArt() (tested ✅)
+#### Releases API (25 tests ✅)
+- `GET /api/releases` - Paginated list with artist relations
+- `GET /api/releases/latest` - Latest releases with custom limits
+- `GET /api/releases/stats` - Statistics by type and totals
+- `GET /api/releases/type/:type` - Filter by album/single/ep
+- `GET /api/releases/:id` - Single release with artist data
+- `POST /api/releases` - Create with artist validation
+- `PUT /api/releases/:id` - Update with type validation
+- `DELETE /api/releases/:id` - Delete with verification
 
-GET    /api/news                 # NewsService.getNews() (40 tests ✅)
-POST   /api/news                 # NewsService.createNews() (workflow tested ✅)
-PUT    /api/news/:id/publish     # NewsService.publishNews() (tested ✅)
-```
+#### News API (44 tests ✅)
+- `GET /api/news` - Paginated with published/draft filtering
+- `GET /api/news/published` - Published articles only
+- `GET /api/news/drafts` - Draft articles only
+- `GET /api/news/latest` - Latest published with limits
+- `GET /api/news/stats` - Statistics with monthly data
+- `GET /api/news/search` - Search with published filter
+- `GET /api/news/slug/:slug` - Get by URL slug
+- `GET /api/news/:id` - Get by ID
+- `POST /api/news` - Create with auto-slug generation
+- `PUT /api/news/:id` - Update with slug handling
+- `PUT /api/news/:id/publish` - Publish workflow
+- `PUT /api/news/:id/unpublish` - Unpublish workflow
+- `DELETE /api/news/:id` - Delete with verification
 
-**Next Steps**: Implement Express routes that delegate to the tested service layer
+### 🔄 NEXT: Phase 3.2 - Image Upload Endpoints
+- `POST /api/artists/:id/image` - Artist image upload with Sharp processing
+- `POST /api/releases/:id/cover-art` - Release cover art upload with Sharp processing

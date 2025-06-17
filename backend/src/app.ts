@@ -2,6 +2,11 @@ import express from 'express'
 import dotenv from 'dotenv'
 import path from 'path'
 
+// Import API routes
+import artistRoutes from './routes/artists'
+import releaseRoutes from './routes/releases'
+import newsRoutes from './routes/news'
+
 // Load environment variables
 dotenv.config()
 
@@ -50,5 +55,10 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString()
   })
 })
+
+// API routes
+app.use('/api/artists', artistRoutes)
+app.use('/api/releases', releaseRoutes)
+app.use('/api/news', newsRoutes)
 
 export default app

@@ -15,7 +15,9 @@
       "Bash(git add:*)",
       "Bash(git push:*)",
       "WebFetch(domain:docs.anthropic.com)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(mv:*)",
+      "Bash(npx ts-node:*)"
     ],
     "deny": []
   }

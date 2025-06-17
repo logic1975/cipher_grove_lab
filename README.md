@@ -22,7 +22,7 @@ Me asking Claude things like:
 - **Frontend**: React + TypeScript + Vite (because apparently TypeScript prevents me from breaking things)
 - **Backend**: Node.js + Express + Prisma ORM (the server that serves... servers?)
 - **Database**: PostgreSQL + Docker (it stores data in containers and doesn't judge my queries)
-- **Testing**: Jest + Vitest + Supertest (because Claude insists good code needs tests - and wow, 112+ tests!)
+- **Testing**: Jest + Vitest + Supertest (because Claude insists good code needs tests - and wow, 165 tests!)
 - **File Storage**: Express static serving with security headers (images now have a home!)
 - **Validation**: Joi schemas (because users can't be trusted with form inputs)
 - **Business Logic**: Enhanced services layer (I actually understand what this means now!)
@@ -33,7 +33,7 @@ Me asking Claude things like:
 
 ### ✅ What's Working (Phase 2.5 Complete - Services Layer Built!)
 - [x] Project setup that doesn't immediately explode
-- [x] **Comprehensive test infrastructure (118+ tests when working!)**
+- [x] **Comprehensive test infrastructure (165 tests - 129 passing, 36 need fixes)**
 - [x] Docker PostgreSQL database with real data
 - [x] **Enhanced database schema with image fields and platform support:**
   - [x] Artists table with 8 social platforms (Instagram, Spotify, YouTube, etc.)
@@ -51,8 +51,9 @@ Me asking Claude things like:
 - [x] Documentation that actually helps future-me
 - [x] Git commits that tell a coherent story
 
-### 🚧 What's Coming Next (Phase 3 - API Time!)
-- [ ] **REST API endpoints that actually use our awesome services**
+### ⚠️ Current Priority (Fix & Build Phase 3)
+- [ ] **Fix 36 failing foundation tests to restore TDD compliance**
+- [ ] **REST API endpoints that actually use our awesome services** 
 - [ ] **Image upload processing with multer + sharp (make those artist photos shine!)**
 - [ ] **API middleware for validation, error handling, and rate limiting**
 - [ ] Security headers and CORS configuration
@@ -76,10 +77,11 @@ Me asking Claude things like:
 **Week 3**: "My code compiled on the first try... this feels suspicious"  
 **Week 4**: "I understand what 'props' means now (it's not just theater)"  
 **Week 5**: "I wrote a service class and it actually works!"  
-**Week 6**: "118 tests? I'm basically a developer now!"  
+**Week 6**: "165 tests? I'm basically a developer now!"  
 **Week 7**: "Understanding business logic validation feels like unlocking a superpower"  
 **Week 8**: "File storage, enhanced schemas, platform validation - I built the foundation!"  
-**Week 9**: "Ready for Phase 3 - time to build those REST APIs!"  
+**Week 9**: "Honest assessment: 36 tests failing, but the services layer is solid!"  
+**Week 10**: "Documentation accuracy matters - fixed all the progress tracking!"  
 
 ## Development Philosophy
 
@@ -88,6 +90,29 @@ Me asking Claude things like:
 3. **Small Steps**: Better to make tiny progress than giant mistakes
 4. **Ask Questions**: Claude never judges my "why doesn't this work?" questions
 5. **Celebrate Small Wins**: Successfully installing packages deserves a happy dance
+
+## 📚 Learning Resources (NEW!)
+
+This project now includes comprehensive documentation for different learning levels:
+
+### **For Beginners** 
+- **README.md** (this file): Friendly project overview with honest progress tracking
+- **CLAUDE.md**: Project-specific development standards and achievement tracking
+
+### **For Developers**
+- **`.claude/README.md`**: Enterprise documentation navigation index
+- **`.claude/03-development/`**: Professional development processes, testing strategies, troubleshooting
+
+### **For Computer Science Students**
+- **`explain_the_codebase.md`**: 3-level learning guide (849 lines!)
+  - **Level 1**: The Big Picture (beginner-friendly)  
+  - **Level 2**: Advanced Architecture (professional patterns)
+  - **Level 3**: Computer Science Deep Dive (theoretical foundations)
+
+### **For Enterprise Learning**
+- **`.claude/02-architecture/`**: Database schema, API specs, security models
+- **`.claude/06-domain/`**: Business rules and domain-driven design
+- Complete enterprise-grade project documentation
 
 ## Getting Started (For Fellow Beginners)
 
@@ -131,9 +156,14 @@ cipher_grove_lab/
 │   │   └── config/    # Database and app configuration
 │   └── uploads/       # File storage for images (NEW!)
 ├── database/          # Docker database initialization
-├── .claude/           # Documentation (lots of it)
+├── .claude/           # Enterprise-grade documentation
+│   ├── README.md      # Documentation navigation index  
+│   ├── 02-architecture/ # Target specs (database, API, security)
+│   ├── 03-development/  # Process, testing, troubleshooting
+│   └── ...            # Business rules, design system
 ├── docker-compose.yml # Database container setup
-├── CLAUDE.md          # My project bible
+├── CLAUDE.md          # My project bible and progress tracker
+├── explain_the_codebase.md # 3-level learning guide (beginner → advanced)
 └── README.md          # You are here! 👋
 ```
 
@@ -160,8 +190,8 @@ MIT License - Feel free to use this code, laugh at my comments, or learn from my
 
 *"The best way to learn is to build something real, even if you have no idea what you're doing."* - Probably someone wise, definitely how I feel right now.
 
-**Current Status**: 🎵 Phase 2.5 COMPLETE! Built a robust services layer with business logic, file storage, and comprehensive platform validation. Ready to create REST APIs that actually use this foundation! 🎵
+**Current Status**: 🎵 Phase 2.5 COMPLETE! Built a robust services layer with business logic, file storage, and comprehensive platform validation. Need to fix failing tests, then ready for REST APIs! 🎵
 
-**Latest Achievement**: Enhanced services layer with 118+ tests - ArtistService, ReleaseService, NewsService all working with business rules, platform validation, and file storage. From "what's a function?" to "I built a complete backend foundation!" 🚀
+**Latest Achievement**: Honest documentation! Fixed test counts (165 tests, 36 failing), corrected progress tracking, and eliminated redundancy across enterprise-grade documentation. Plus added comprehensive codebase explanation guide! 📚
 
-**What's Actually Working**: File uploads, 13 platform validations (8 social + 5 streaming), featured artist limits, auto-slug generation, publish/draft workflows, and so much more! Time for Phase 3! 🎯
+**What's Actually Working**: File uploads, 13 platform validations (8 social + 5 streaming), featured artist limits, auto-slug generation, publish/draft workflows, enterprise documentation, and complete learning resources! Time to fix those tests and build Phase 3! 🎯

@@ -3,18 +3,20 @@
 **Total Duration**: 20 days (optimized due to early foundation completion)  
 **Approach**: Test-Driven Development with 90%+ coverage  
 **Methodology**: Small incremental steps with comprehensive testing after each step  
-**Current Status**: ✅ **Phase 1 COMPLETE** (Foundation + Enhanced Database Schema)
-**Next Session**: Phase 2.4 - File Storage Setup + CRUD Operations
+**Current Status**: ✅ **Phase 2.5 COMPLETE** (Services Layer), ⚠️ **36 tests failing** - need fixes before Phase 3.1  
+**Current Priority**: Fix failing foundation tests, then begin Phase 3.1 API implementation
 
 ## 🔒 CRITICAL RULE: NO STEP PROCEEDS WITHOUT TESTS
 **Every [ ] substep MUST be tested before proceeding to next substep.**
 
-### Process:
-1. Write comprehensive tests first (TDD approach)
-2. Implement minimum code to make tests pass
-3. Verify 90%+ coverage + all tests pass
-4. Refactor if needed
-5. Mark [x] and proceed
+### Standard Quality Gates (Apply to All Substeps):
+1. **TDD Process**: Write tests first → Implement minimum code → Verify coverage
+2. **Coverage Requirement**: 90%+ line coverage for all new code
+3. **Test Validation**: All existing and new tests must pass
+4. **Type Safety**: Zero TypeScript compilation errors
+5. **Code Quality**: ESLint/Prettier compliance
+
+**Note**: All "TEST:" descriptions below reference these standard quality gates
 
 **Example**: ❌ Check boxes without testing | ✅ Test each substep completely before marking [x]
 
@@ -59,11 +61,11 @@
 - Enhanced Schema: Image fields, social platforms (8), streaming links (5), all migrated and seeded
 - Full TypeScript compilation and environment isolation working
 
-## 🎯 Current Progress Summary (as of June 16, 2025)
+## 🎯 Current Progress Summary (as of June 17, 2025)
 
-### ✅ COMPLETED (Phase 1 + Enhanced Schema + Services)
+### ✅ COMPLETED (Phase 2.5 - Services Layer)
 - **Foundation**: React+Vite+Express+PostgreSQL+Prisma setup complete
-- **Testing Infrastructure**: 112+ passing tests with comprehensive TDD approach
+- **Testing Infrastructure**: 165 tests (129 passing ✅, 36 failing ⚠️)
 - **Enhanced Database**: Image fields, social platforms, streaming links implemented
 - **Docker Environment**: PostgreSQL containerized with automatic setup scripts
 - **Sample Data**: 3 artists, 4 releases, 3 news articles seeded
@@ -71,13 +73,18 @@
 - **Services Layer**: ArtistService (25 tests), ReleaseService (37 tests), NewsService (40 tests)
 - **Business Logic**: Featured artist limits, platform validation, slug generation, publish/draft workflow
 
-### 🔄 NEXT SESSION PRIORITIES
-1. **REST API Development** (Phase 3.1): Create API routes using enhanced services
-2. **Image Upload Endpoints** (Phase 3.2): Multer + Sharp processing for artists/releases
-3. **API Middleware** (Phase 3.3): Validation, error handling, rate limiting
+### ⚠️ CURRENT SESSION PRIORITIES (Before Phase 3.1)
+1. **Fix Failing Tests**: Resolve 36 failing foundation tests to restore TDD compliance
+2. **Begin Phase 3.1**: Create REST API endpoints using the completed services layer  
+3. **API Foundation**: Implement basic CRUD endpoints for artists, releases, news
 
-### 📈 SIGNIFICANTLY AHEAD OF SCHEDULE
-Original plan: 22 days → Now targeting 18 days due to efficient implementation
+### 🔄 NEXT SESSION PRIORITIES (After Test Fixes)
+1. **Complete Phase 3.1**: Finish API endpoint implementation
+2. **Phase 3.2**: Image upload endpoints with multer + sharp processing
+3. **Phase 3.3**: API validation and error handling middleware
+
+### 📊 REALISTIC TIMELINE
+Services layer complete, but need to fix test issues before claiming full TDD success
 
 ---
 
@@ -233,40 +240,22 @@ Original plan: 22 days → Now targeting 18 days due to efficient implementation
 
 ---
 
-## Detailed Testing Requirements by Phase
+## Testing Requirements by Phase
 
-### Phase 1-2: Enhanced Foundation Testing
-- **Unit Tests**: Prisma operations, type validation, utility functions
-- **Integration Tests**: Database connections, Prisma Client, migration system
-- **Type Safety Tests**: Prisma schema validation, TypeScript compilation
-- **Coverage Target**: 90%+
+**See comprehensive testing strategy**: @.claude/03-development/testing-strategy.md
 
-### Phase 3: API Testing with Type Safety
-- **Unit Tests**: Route handlers, Prisma queries, Joi validation schemas
-- **Integration Tests**: API + Prisma + validation layer interactions
-- **Security Tests**: SQL injection prevention, JSON field validation
-- **Type Tests**: End-to-end type inference validation
-- **Coverage Target**: 90%+
+### Testing Standards for All Phases
+- **TDD Approach**: Write tests first, implement minimum code, verify coverage
+- **Coverage Target**: 90%+ for all phases (enforced via Jest/Vitest configs)
+- **Quality Gates**: Tests must pass before marking any substep complete
+- **Testing Tools**: Vitest (frontend), Jest+Supertest (backend), Playwright (E2E)
 
-### Phase 4: Component Testing with State Management
-- **Unit Tests**: Components, Zustand stores, TanStack Query hooks
-- **Integration Tests**: Component + store interactions, music player workflows
-- **Audio Tests**: Howler.js integration, playlist management
-- **Accessibility Tests**: Screen reader, keyboard navigation, music controls
-- **Coverage Target**: 90%+
-
-### Phase 5-6: Full-Stack Integration Testing
-- **Integration Tests**: Frontend + Backend + Database + State Management
-- **E2E Tests**: Complete user workflows with music playback
-- **Performance Tests**: Store persistence, audio streaming, bundle analysis
-- **Type Safety Tests**: Runtime type validation across full stack
-- **Coverage Target**: 90%+ overall
-
-### Phase 7: Production Testing
-- **Security Tests**: OWASP scanning, penetration testing
-- **Performance Tests**: Real-world load simulation
-- **Accessibility Tests**: Comprehensive WCAG audit
-- **Cross-browser Tests**: All supported browsers
+### Phase-Specific Focus Areas
+- **Phase 1-2**: Foundation testing (Prisma, database, type safety)
+- **Phase 3**: API testing with comprehensive validation
+- **Phase 4**: Component + state management testing  
+- **Phase 5-6**: Full-stack integration and E2E workflows
+- **Phase 7**: Security, accessibility, and production readiness
 
 ---
 

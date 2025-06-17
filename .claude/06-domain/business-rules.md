@@ -3,7 +3,7 @@
 ## Artist Management Rules
 
 ### Artist Eligibility
-- Artists must be signed to the label
+- Artists must be signed to the Music Label
 - Active contracts required for featured status
 - Minimum bio length: 50 characters
 - Professional photos required for listing

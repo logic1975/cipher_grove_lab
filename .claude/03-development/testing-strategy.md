@@ -158,7 +158,7 @@ describe('Artist Page Integration', () => {
 ## Backend Testing (Node.js + Express + Prisma)
 
 ### Unit Testing - Jest + Supertest + Prisma Test Database
-**Coverage Target**: 95%+ for business logic, API routes, and database operations ✅ ACHIEVED
+**Coverage Target**: 95%+ for business logic, API endpoints, and database operations ✅ ACHIEVED
 **Why Jest**: Mature, excellent Node.js support, comprehensive mocking
 **Enhanced Focus**: Prisma query testing, type safety validation, database transactions
 **Database Setup**: Docker PostgreSQL with isolated test database
@@ -400,14 +400,41 @@ describe('Bundle Size', () => {
 
 ## Test Data Management
 
-### Test Database Setup
-```sql
--- Sample test data: artists + releases for testing
+### Comprehensive Test Helpers
+**See detailed documentation**: `.claude/03-development/test-helpers.md`
+
+### Mock Data Factories (Working Implementation)
+```typescript
+// Simple, reusable patterns for test data creation
+const createMockArtist = (overrides = {}) => ({
+  name: 'Test Artist',
+  bio: 'A great artist from the underground scene',
+  socialLinks: { spotify: 'https://open.spotify.com/artist/test' },
+  isFeatured: false,
+  ...overrides
+})
+
+// Usage: Easy customization for different test scenarios
+const featuredArtist = createMockArtist({ isFeatured: true })
+const artistWithoutSocial = createMockArtist({ socialLinks: {} })
 ```
 
-### Mock Data Factories  
-```javascript
-// testUtils/factories.js - createMockArtist() with faker.js
+### Test Database Utilities (Working Implementation)
+```typescript
+// Database isolation pattern (from working tests)
+beforeEach(async () => {
+  await cleanupTestDatabase() // Fresh state for each test
+})
+
+// Relationship testing helpers
+const setupArtistWithReleases = async () => {
+  const artist = await ArtistService.createArtist(createMockArtist())
+  const releases = await Promise.all([
+    ReleaseService.createRelease({ artistId: artist.id, title: 'Album 1' }),
+    ReleaseService.createRelease({ artistId: artist.id, title: 'Album 2' })
+  ])
+  return { artist, releases }
+}
 ```
 
 ## Test Execution Strategy

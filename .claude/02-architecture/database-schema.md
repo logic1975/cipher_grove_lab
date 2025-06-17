@@ -34,7 +34,7 @@ CREATE TABLE artists (
     image_alt VARCHAR(255),              -- Accessibility alt text
     image_sizes JSONB DEFAULT '{}',      -- {"thumbnail": "path", "profile": "path", "featured": "path"}
     
-    -- Enhanced social platforms (all optional for indie label flexibility)
+    -- Enhanced social platforms (all optional for indie Music Label flexibility)
     social_links JSONB DEFAULT '{}',     -- {spotify, appleMusic, youtube, instagram, facebook, bandcamp, soundcloud, tiktok}
     is_featured BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -171,7 +171,7 @@ CREATE INDEX idx_news_created_at ON news(created_at DESC);
 
 ### Initial Migration (001_create_tables.sql)
 ```sql
--- Create artists table
+-- Create Artists table
 -- Create releases table with foreign key
 -- Create news table
 -- Add indexes

@@ -89,32 +89,20 @@ interface News {
 }
 
 // Supporting types for enhanced image and platform support
+// See complete JSON field structures: @database-schema.md#json-field-structures
 interface ImageSizes {
-  thumbnail?: string;
-  small?: string;
-  medium?: string;
-  large?: string;
-  profile?: string;
-  featured?: string;
+  // Artist: thumbnail, profile, featured paths
+  // Release: small, medium, large paths (1:1 square format)
 }
 
 interface SocialPlatformLinks {
-  instagram?: string;
-  twitter?: string;
-  facebook?: string;
-  youtube?: string;
-  tiktok?: string;
-  spotify?: string;
-  bandcamp?: string;
-  soundcloud?: string;
+  // 8 platforms: spotify, appleMusic, youtube, instagram, facebook, bandcamp, soundcloud, tiktok
+  // See database-schema.md for URL format examples
 }
 
 interface StreamingPlatformLinks {
-  spotify?: string;
-  appleMusic?: string;
-  youtube?: string;
-  bandcamp?: string;
-  soundcloud?: string;
+  // 5 platforms: spotify, appleMusic, youtube, bandcamp, soundcloud  
+  // See database-schema.md for URL format examples
 }
 ```
 
@@ -230,7 +218,7 @@ interface StreamingPlatformLinks {
 - **Methods**: GET, POST, PUT, DELETE, OPTIONS
 - **Headers**: Content-Type, Authorization, X-Requested-With
 
-## Implementation Status (June 16, 2025)
+## Implementation Status (June 17, 2025)
 
 ### ✅ COMPLETED: Enhanced Services Layer
 ```typescript
@@ -305,7 +293,7 @@ streamingLinks: {
 
 ### 🔄 NEXT: REST API Implementation (Phase 3)
 ```typescript
-// Planned API routes using enhanced services
+// Planned API endpoints using enhanced services
 GET    /api/artists              # ArtistService.getArtists()
 POST   /api/artists              # ArtistService.createArtist()
 POST   /api/artists/:id/image    # ArtistService.updateArtistImage()

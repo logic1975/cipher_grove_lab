@@ -1,12 +1,11 @@
-import { PrismaClient, Release, ReleaseType, Prisma, Artist } from '@prisma/client'
+import { Release, ReleaseType, Prisma, Artist } from '@prisma/client'
+import { prisma } from '../config/database'
+import Joi from 'joi'
 
 // Type for Release with Artist included
 type ReleaseWithArtist = Release & {
   artist: Artist
 }
-import Joi from 'joi'
-
-const prisma = new PrismaClient()
 
 // Enhanced validation schemas for Releases
 const streamingPlatformSchema = Joi.object({

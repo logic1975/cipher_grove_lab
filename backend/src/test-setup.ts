@@ -1,4 +1,5 @@
 // Test environment setup and configuration
+import { cleanupTestDatabase, disconnectDatabase } from './config/database'
 
 // Set test environment variables
 process.env.NODE_ENV = 'test'
@@ -9,10 +10,14 @@ process.env.DB_NAME = 'cipher_grove_lab_test'
 process.env.DB_USER = 'test_user'
 process.env.DB_PASSWORD = 'test_password'
 
-// Database connection mock (to be updated when we add database)
-export const mockDatabase = {
-  connect: jest.fn().mockResolvedValue(true),
-  disconnect: jest.fn().mockResolvedValue(true),
-  query: jest.fn(),
-  transaction: jest.fn(),
-}
+// Global setup for all tests
+beforeAll(async () => {
+  // Initial cleanup to ensure clean state
+  await cleanupTestDatabase()
+})
+
+// Cleanup after all tests
+afterAll(async () => {
+  await cleanupTestDatabase()
+  await disconnectDatabase()
+})

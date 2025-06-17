@@ -1,7 +1,6 @@
-import { PrismaClient, Artist, Prisma } from '@prisma/client'
+import { Artist, Prisma } from '@prisma/client'
 import Joi from 'joi'
-
-const prisma = new PrismaClient()
+import { prisma } from '../config/database'
 
 // Enhanced validation schemas for Artists
 const socialPlatformSchema = Joi.object({

@@ -21,9 +21,11 @@ module.exports = {
       statements: 95,
     },
   },
-  // setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'], // Will enable later when needed
+  setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   testTimeout: 10000,
   clearMocks: true,
   resetMocks: true,
   restoreMocks: true,
+  // Run tests serially to avoid database conflicts
+  maxWorkers: 1,
 }

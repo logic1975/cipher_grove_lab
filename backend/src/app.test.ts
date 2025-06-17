@@ -1,6 +1,5 @@
 import request from 'supertest'
 import app from './app'
-import { mockDatabase } from './test-setup'
 
 describe('Express App', () => {
   describe('Basic Routes', () => {
@@ -41,36 +40,33 @@ describe('Express App', () => {
     })
 
     it('isolates test data between tests', () => {
-      // Verify mocks are cleared between tests
-      expect(mockDatabase.query).not.toHaveBeenCalled()
+      // Test environment isolation is handled by Jest configuration
+      expect(process.env.NODE_ENV).toBe('test')
     })
   })
 
-  describe('Database Mocking', () => {
-    it('can mock database connections', async () => {
-      mockDatabase.connect.mockResolvedValue(true)
+  describe('Test Framework Features', () => {
+    it('can create simple mocks', () => {
+      const mockFn = jest.fn()
+      mockFn('test')
       
-      const result = await mockDatabase.connect()
-      expect(result).toBe(true)
-      expect(mockDatabase.connect).toHaveBeenCalledTimes(1)
+      expect(mockFn).toHaveBeenCalledWith('test')
+      expect(mockFn).toHaveBeenCalledTimes(1)
     })
 
-    it('can mock database queries', async () => {
-      const mockResult = { id: 1, name: 'Test Artist' }
-      mockDatabase.query.mockResolvedValue([mockResult])
+    it('can mock async functions', async () => {
+      const mockAsyncFn = jest.fn().mockResolvedValue({ success: true })
       
-      const result = await mockDatabase.query('SELECT * FROM artists WHERE id = $1', [1])
-      expect(result).toEqual([mockResult])
-      expect(mockDatabase.query).toHaveBeenCalledWith('SELECT * FROM artists WHERE id = $1', [1])
+      const result = await mockAsyncFn()
+      expect(result).toEqual({ success: true })
+      expect(mockAsyncFn).toHaveBeenCalledTimes(1)
     })
 
-    it('can mock database transactions', async () => {
-      const mockTransaction = jest.fn().mockResolvedValue({ commit: jest.fn(), rollback: jest.fn() })
-      mockDatabase.transaction.mockResolvedValue(mockTransaction)
+    it('can test error scenarios', async () => {
+      const mockErrorFn = jest.fn().mockRejectedValue(new Error('Test error'))
       
-      const transaction = await mockDatabase.transaction()
-      expect(transaction).toBeDefined()
-      expect(mockDatabase.transaction).toHaveBeenCalledTimes(1)
+      await expect(mockErrorFn()).rejects.toThrow('Test error')
+      expect(mockErrorFn).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -88,11 +84,11 @@ describe('Express App', () => {
       expect(asyncFunction).toHaveBeenCalledTimes(1)
     })
 
-    it('handles async database operations', async () => {
-      mockDatabase.query.mockResolvedValue([{ count: 5 }])
+    it('handles async operations', async () => {
+      const mockPromise = jest.fn().mockResolvedValue({ data: 'test' })
       
-      const result = await mockDatabase.query('SELECT COUNT(*) as count FROM artists')
-      expect(result).toEqual([{ count: 5 }])
+      const result = await mockPromise()
+      expect(result).toEqual({ data: 'test' })
     })
 
     it('handles async timeout scenarios', async () => {

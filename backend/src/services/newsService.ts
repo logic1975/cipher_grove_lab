@@ -1,7 +1,6 @@
-import { PrismaClient, News, Prisma } from '@prisma/client'
+import { News, Prisma } from '@prisma/client'
 import Joi from 'joi'
-
-const prisma = new PrismaClient()
+import { prisma } from '../config/database'
 
 // Enhanced validation schemas for News
 const createNewsSchema = Joi.object({

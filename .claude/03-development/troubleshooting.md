@@ -26,6 +26,14 @@
 **Problem**: Development requests being rate limited
 **Solution**: Disable rate limiting in development environment
 
+### ts-jest isolatedModules Deprecation Warning
+**Problem**: `ts-jest[config] (WARN) The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0`
+**Root Cause**: Express.js v5 type conflicts prevent moving isolatedModules to tsconfig.json
+**Impact**: ⚠️ WARNING ONLY - No functional impact, all tests pass
+**Timeline**: Non-urgent until ts-jest v30.0.0 release (estimated 6-12 months)
+**Current Status**: DEFERRED - Documented as technical debt
+**Solution**: Address during Express.js type upgrade or ts-jest v30.0.0 preparation
+
 ## Quick Fixes
 
 ### Port Conflicts

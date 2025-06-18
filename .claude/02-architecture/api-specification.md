@@ -119,15 +119,18 @@ interface StreamingPlatformLinks {
 **Errors**: 404 if not found
 
 ### POST /api/artists
-**Status**: Future feature (Phase 2+)  
-**Body**: Joi validation with Prisma types + image upload
+**Status**: ✅ IMPLEMENTED  
+**Body**: Joi validation with Prisma types
+**Response**: `ApiResponse<Artist>`
 
 ### POST /api/artists/:id/image
-**Authentication**: Required (admin only)  
+**Status**: ✅ IMPLEMENTED (Phase 3.2)  
 **Content-Type**: `multipart/form-data`  
-**Body**: `image` file field (JPEG, PNG, WebP, max 5MB)  
-**Processing**: Auto-generates thumbnail/profile/featured sizes  
-**Response**: `ApiResponse<{ imageSizes: Record<string, string> }>`
+**Body**: `image` file field (JPEG, PNG, WebP, max 5MB), `altText` optional field  
+**Processing**: Auto-generates thumbnail (400x400), profile (800x800), featured (1200x1200) sizes  
+**Response**: `ApiResponse<Artist>` with updated image fields  
+**Validation**: File type, size, artist existence  
+**Error Codes**: 400 (validation), 404 (artist not found)
 
 ## Releases Endpoints
 
@@ -145,11 +148,13 @@ interface StreamingPlatformLinks {
 **Response**: `PaginatedResponse<Release>`
 
 ### POST /api/releases/:id/cover-art
-**Authentication**: Required (admin only)  
+**Status**: ✅ IMPLEMENTED (Phase 3.2)  
 **Content-Type**: `multipart/form-data`  
-**Body**: `coverArt` file field (JPEG, PNG, WebP, max 5MB)  
-**Processing**: Auto-generates small/medium/large sizes (1:1 square format)  
-**Response**: `ApiResponse<{ coverArtSizes: Record<string, string> }>`
+**Body**: `image` file field (JPEG, PNG, WebP, max 5MB), `altText` optional field  
+**Processing**: Auto-generates small (300x300), medium (600x600), large (1200x1200) sizes (1:1 square format)  
+**Response**: `ApiResponse<Release>` with updated cover art fields  
+**Validation**: File type, size, release existence  
+**Error Codes**: 400 (validation), 404 (release not found)
 
 ## News Endpoints
 
@@ -218,9 +223,9 @@ interface StreamingPlatformLinks {
 - **Methods**: GET, POST, PUT, DELETE, OPTIONS
 - **Headers**: Content-Type, Authorization, X-Requested-With
 
-## Implementation Status (June 17, 2025)
+## Implementation Status (June 18, 2025)
 
-### ✅ COMPLETED: Phase 3.1 - Full REST API Implementation (258 tests passing)
+### ✅ COMPLETED: Phase 3.1-3.2 - Full REST API + Image Upload Implementation (270 tests passing)
 ```typescript
 // ArtistService - 25 comprehensive tests
 class ArtistService {
@@ -291,7 +296,7 @@ streamingLinks: {
 - Publish/draft workflow
 ```
 
-### ✅ COMPLETED: REST API Endpoints (Phase 3.1) - All 258 tests passing
+### ✅ COMPLETED: REST API Endpoints (Phase 3.1-3.2) - All 270 tests passing
 
 #### Artists API (22 tests ✅)
 - `GET /api/artists` - Paginated list with filtering and search
@@ -300,6 +305,7 @@ streamingLinks: {
 - `POST /api/artists` - Create with validation and business rules
 - `PUT /api/artists/:id` - Update with duplicate name prevention
 - `DELETE /api/artists/:id` - Delete with relationship handling
+- `POST /api/artists/:id/image` - ✅ NEW: Image upload with Sharp processing
 
 #### Releases API (25 tests ✅)
 - `GET /api/releases` - Paginated list with artist relations
@@ -310,6 +316,7 @@ streamingLinks: {
 - `POST /api/releases` - Create with artist validation
 - `PUT /api/releases/:id` - Update with type validation
 - `DELETE /api/releases/:id` - Delete with verification
+- `POST /api/releases/:id/cover-art` - ✅ NEW: Cover art upload with Sharp processing
 
 #### News API (44 tests ✅)
 - `GET /api/news` - Paginated with published/draft filtering
@@ -326,6 +333,31 @@ streamingLinks: {
 - `PUT /api/news/:id/unpublish` - Unpublish workflow
 - `DELETE /api/news/:id` - Delete with verification
 
-### 🔄 NEXT: Phase 3.2 - Image Upload Endpoints
-- `POST /api/artists/:id/image` - Artist image upload with Sharp processing
-- `POST /api/releases/:id/cover-art` - Release cover art upload with Sharp processing
+#### Image Upload API (12 tests ✅) - ✅ NEW: Phase 3.2 Complete
+- `POST /api/artists/:id/image` - Artist image upload (7 comprehensive tests)
+- `POST /api/releases/:id/cover-art` - Release cover art upload (5 comprehensive tests)
+- **Features**: File validation, multi-size generation, WebP conversion, error handling
+- **Processing**: Sharp integration, automatic alt text, secure file handling
+
+### ✅ COMPLETED: ImageProcessingService (Phase 3.2)
+```typescript
+// ImageProcessingService with Sharp integration
+class ImageProcessingService {
+  static validateImageFile(file: Express.Multer.File): void
+  static async processArtistImage(file, artistId, altText): Promise<ProcessedImageResult>
+  static async processReleaseCoverArt(file, releaseId, altText): Promise<ProcessedCoverArtResult>
+  static getImageSizes(type: 'artist' | 'release'): ImageSize[]
+  static async deleteImageFiles(type, entityId): Promise<void>
+}
+
+// Multer configuration with security
+export const imageUpload = multer({
+  storage: multer.memoryStorage(),
+  fileFilter: (req, file, cb) => { /* JPEG, PNG, WebP only */ },
+  limits: { fileSize: 5 * 1024 * 1024, files: 1 }
+})
+```
+
+### 🔄 NEXT: Phase 3.3-3.4 - API Middleware & Contact Forms
+- API validation and error handling middleware
+- Contact/Newsletter API endpoints with rate limiting

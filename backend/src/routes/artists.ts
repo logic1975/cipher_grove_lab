@@ -1,5 +1,7 @@
 import { Router } from 'express'
 import { ArtistService } from '../services/artistService'
+import { ImageProcessingService } from '../services/imageProcessingService'
+import { singleImageUpload, handleMulterError } from '../middleware/multerConfig'
 
 const router = Router()
 
@@ -271,6 +273,93 @@ router.delete('/:id', async (req, res) => {
         },
         timestamp: new Date().toISOString()
       })
+    }
+
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      },
+      timestamp: new Date().toISOString()
+    })
+  }
+})
+
+// POST /api/artists/:id/image - Upload artist image
+router.post('/:id/image', singleImageUpload, handleMulterError, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id)
+
+    if (isNaN(id)) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'INVALID_ID',
+          message: 'Artist ID must be a valid number'
+        },
+        timestamp: new Date().toISOString()
+      })
+    }
+
+    // Check if artist exists
+    const existingArtist = await ArtistService.getArtistById(id)
+    if (!existingArtist) {
+      return res.status(404).json({
+        success: false,
+        error: {
+          code: 'ARTIST_NOT_FOUND',
+          message: 'Artist not found'
+        },
+        timestamp: new Date().toISOString()
+      })
+    }
+
+    // Check if file was uploaded
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'NO_FILE_UPLOADED',
+          message: 'No image file was uploaded'
+        },
+        timestamp: new Date().toISOString()
+      })
+    }
+
+    // Get alt text from request body or generate default
+    const altText = req.body.altText || `${existingArtist.name} profile photo`
+
+    // Process the image
+    const imageData = await ImageProcessingService.processArtistImage(
+      req.file,
+      id,
+      altText
+    )
+
+    // Update artist with new image data
+    const updatedArtist = await ArtistService.updateArtist(id, imageData)
+
+    res.json({
+      success: true,
+      data: updatedArtist,
+      message: 'Artist image uploaded successfully',
+      timestamp: new Date().toISOString()
+    })
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message.includes('Image processing failed') || 
+          error.message.includes('Invalid file type') ||
+          error.message.includes('File size exceeds')) {
+        return res.status(400).json({
+          success: false,
+          error: {
+            code: 'IMAGE_PROCESSING_ERROR',
+            message: error.message
+          },
+          timestamp: new Date().toISOString()
+        })
+      }
     }
 
     res.status(500).json({

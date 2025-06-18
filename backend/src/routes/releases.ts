@@ -1,5 +1,7 @@
 import express, { Request, Response } from 'express'
 import { ReleaseService } from '../services/releaseService'
+import { ImageProcessingService } from '../services/imageProcessingService'
+import { singleImageUpload, handleMulterError } from '../middleware/multerConfig'
 
 const router = express.Router()
 
@@ -326,6 +328,93 @@ router.delete('/:id', async (req, res) => {
         },
         timestamp: new Date().toISOString()
       })
+    }
+
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      },
+      timestamp: new Date().toISOString()
+    })
+  }
+})
+
+// POST /api/releases/:id/cover-art - Upload release cover art
+router.post('/:id/cover-art', singleImageUpload, handleMulterError, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id)
+
+    if (isNaN(id)) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'INVALID_ID',
+          message: 'Release ID must be a valid number'
+        },
+        timestamp: new Date().toISOString()
+      })
+    }
+
+    // Check if release exists
+    const existingRelease = await ReleaseService.getReleaseById(id, true)
+    if (!existingRelease) {
+      return res.status(404).json({
+        success: false,
+        error: {
+          code: 'RELEASE_NOT_FOUND',
+          message: 'Release not found'
+        },
+        timestamp: new Date().toISOString()
+      })
+    }
+
+    // Check if file was uploaded
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'NO_FILE_UPLOADED',
+          message: 'No cover art file was uploaded'
+        },
+        timestamp: new Date().toISOString()
+      })
+    }
+
+    // Get alt text from request body or generate default
+    const altText = req.body.altText || `${existingRelease.title} album cover`
+
+    // Process the cover art
+    const coverArtData = await ImageProcessingService.processReleaseCoverArt(
+      req.file,
+      id,
+      altText
+    )
+
+    // Update release with new cover art data
+    const updatedRelease = await ReleaseService.updateRelease(id, coverArtData)
+
+    res.json({
+      success: true,
+      data: updatedRelease,
+      message: 'Release cover art uploaded successfully',
+      timestamp: new Date().toISOString()
+    })
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message.includes('Cover art processing failed') || 
+          error.message.includes('Invalid file type') ||
+          error.message.includes('File size exceeds')) {
+        return res.status(400).json({
+          success: false,
+          error: {
+            code: 'IMAGE_PROCESSING_ERROR',
+            message: error.message
+          },
+          timestamp: new Date().toISOString()
+        })
+      }
     }
 
     res.status(500).json({

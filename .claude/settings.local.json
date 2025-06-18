@@ -17,7 +17,9 @@
       "WebFetch(domain:docs.anthropic.com)",
       "Bash(grep:*)",
       "Bash(mv:*)",
-      "Bash(npx ts-node:*)"
+      "Bash(npx ts-node:*)",
+      "Bash(node:*)",
+      "Bash(eza:*)"
     ],
     "deny": []
   }

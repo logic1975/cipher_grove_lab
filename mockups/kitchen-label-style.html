@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cipher Grove Lab - Kitchen Label Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            line-height: 1.4;
+        }
+
+        /* Header - Minimalist with centered logo */
+        header {
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 1px solid #222;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+        }
+
+        /* Navigation - Horizontal, spaced out */
+        nav {
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        nav a {
+            color: #999;
+            text-decoration: none;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0 25px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover, nav a.active {
+            color: #fff;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Artists Grid - Kitchen Label style */
+        .artists-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 60px 40px;
+            margin-top: 40px;
+        }
+
+        .artist-card {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .artist-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .artist-image {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #111;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .artist-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s;
+        }
+
+        .artist-card:hover .artist-image img {
+            transform: scale(1.05);
+        }
+
+        .artist-name {
+            font-size: 16px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .artist-genre {
+            font-size: 13px;
+            color: #666;
+            letter-spacing: 0.5px;
+        }
+
+        /* Latest Releases Section */
+        .section-title {
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            color: #999;
+        }
+
+        .releases-row {
+            display: flex;
+            gap: 40px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+            margin-top: 60px;
+        }
+
+        .release-card {
+            flex: 0 0 200px;
+            text-align: center;
+        }
+
+        .release-cover {
+            width: 200px;
+            height: 200px;
+            background: #111;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .release-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .release-card:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .play-button {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+        }
+
+        .play-button::after {
+            content: '▶';
+            color: #fff;
+            font-size: 20px;
+            margin-left: 5px;
+        }
+
+        .release-title {
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .release-artist {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid #222;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        .footer-links {
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: #666;
+            text-decoration: none;
+            font-size: 12px;
+            margin: 0 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+        }
+
+        .copyright {
+            font-size: 11px;
+            color: #444;
+            letter-spacing: 0.5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav a {
+                display: block;
+                margin: 10px 0;
+            }
+
+            .artists-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 30px 20px;
+            }
+
+            .releases-row {
+                gap: 20px;
+            }
+
+            .release-card {
+                flex: 0 0 150px;
+            }
+
+            .release-cover {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">CIPHER GROVE LAB</div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="active">Artists</a>
+        <a href="#">Releases</a>
+        <a href="#">News</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Artists Section -->
+        <div class="section-title">Artists</div>
+        
+        <div class="artists-grid">
+            <div class="artist-card">
+                <div class="artist-image">
+                    <img src="https://via.placeholder.com/400x400/1a1a1a/666?text=The+Midnight+Echo" alt="The Midnight Echo">
+                </div>
+                <div class="artist-name">The Midnight Echo</div>
+                <div class="artist-genre">Alternative Rock</div>
+            </div>
+
+            <div class="artist-card">
+                <div class="artist-image">
+                    <img src="https://via.placeholder.com/400x400/1a1a1a/666?text=Velvet+Shadows" alt="Velvet Shadows">
+                </div>
+                <div class="artist-name">Velvet Shadows</div>
+                <div class="artist-genre">Electronic</div>
+            </div>
+
+            <div class="artist-card">
+                <div class="artist-image">
+                    <img src="https://via.placeholder.com/400x400/1a1a1a/666?text=Neon+Pulse" alt="Neon Pulse">
+                </div>
+                <div class="artist-name">Neon Pulse</div>
+                <div class="artist-genre">Synthwave</div>
+            </div>
+
+            <div class="artist-card">
+                <div class="artist-image">
+                    <img src="https://via.placeholder.com/400x400/1a1a1a/666?text=Echo+Chamber" alt="Echo Chamber">
+                </div>
+                <div class="artist-name">Echo Chamber</div>
+                <div class="artist-genre">Ambient</div>
+            </div>
+
+            <div class="artist-card">
+                <div class="artist-image">
+                    <img src="https://via.placeholder.com/400x400/1a1a1a/666?text=Crystal+Void" alt="Crystal Void">
+                </div>
+                <div class="artist-name">Crystal Void</div>
+                <div class="artist-genre">Post-Rock</div>
+            </div>
+
+            <div class="artist-card">
+                <div class="artist-image">
+                    <img src="https://via.placeholder.com/400x400/1a1a1a/666?text=Digital+Phantoms" alt="Digital Phantoms">
+                </div>
+                <div class="artist-name">Digital Phantoms</div>
+                <div class="artist-genre">Techno</div>
+            </div>
+        </div>
+
+        <!-- Latest Releases -->
+        <div class="section-title" style="margin-top: 100px;">Latest Releases</div>
+        
+        <div class="releases-row">
+            <div class="release-card">
+                <div class="release-cover">
+                    <img src="https://via.placeholder.com/400x400/2a2a2a/ff6b35?text=Neon+Dreams" alt="Neon Dreams">
+                    <div class="play-overlay">
+                        <div class="play-button"></div>
+                    </div>
+                </div>
+                <div class="release-title">Neon Dreams</div>
+                <div class="release-artist">The Midnight Echo</div>
+            </div>
+
+            <div class="release-card">
+                <div class="release-cover">
+                    <img src="https://via.placeholder.com/400x400/2a2a2a/ff6b35?text=Shadow+Play" alt="Shadow Play">
+                    <div class="play-overlay">
+                        <div class="play-button"></div>
+                    </div>
+                </div>
+                <div class="release-title">Shadow Play</div>
+                <div class="release-artist">Velvet Shadows</div>
+            </div>
+
+            <div class="release-card">
+                <div class="release-cover">
+                    <img src="https://via.placeholder.com/400x400/2a2a2a/ff6b35?text=Pulse+Wave" alt="Pulse Wave">
+                    <div class="play-overlay">
+                        <div class="play-button"></div>
+                    </div>
+                </div>
+                <div class="release-title">Pulse Wave</div>
+                <div class="release-artist">Neon Pulse</div>
+            </div>
+
+            <div class="release-card">
+                <div class="release-cover">
+                    <img src="https://via.placeholder.com/400x400/2a2a2a/ff6b35?text=Void+Space" alt="Void Space">
+                    <div class="play-overlay">
+                        <div class="play-button"></div>
+                    </div>
+                </div>
+                <div class="release-title">Void Space</div>
+                <div class="release-artist">Crystal Void</div>
+            </div>
+
+            <div class="release-card">
+                <div class="release-cover">
+                    <img src="https://via.placeholder.com/400x400/2a2a2a/ff6b35?text=Digital+Dreams" alt="Digital Dreams">
+                    <div class="play-overlay">
+                        <div class="play-button"></div>
+                    </div>
+                </div>
+                <div class="release-title">Digital Dreams</div>
+                <div class="release-artist">Digital Phantoms</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="#">Newsletter</a>
+            <a href="#">Instagram</a>
+            <a href="#">Spotify</a>
+        </div>
+        <div class="copyright">© 2024 Cipher Grove Lab. All rights reserved.</div>
+    </footer>
+</body>
+</html>

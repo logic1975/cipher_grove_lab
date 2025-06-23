@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cipher Grove Lab - Modern Gallery ECM Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #000;
+            --secondary: #fff;
+            --accent: #ff6b35;
+            --gray-light: #f8f8f8;
+            --gray-medium: #e0e0e0;
+            --gray-dark: #666;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: var(--secondary);
+            color: var(--primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            transition: all 0.1s ease;
+            z-index: 9999;
+            mix-blend-mode: difference;
+        }
+
+        .cursor.hover {
+            transform: scale(2);
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        /* Header - Minimal and floating */
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding: 30px 50px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.9), transparent);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        header.scrolled {
+            background: rgba(255,255,255,0.98);
+            padding: 20px 50px;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            font-family: 'Arial', sans-serif;
+        }
+
+        nav {
+            display: flex;
+            gap: 50px;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+            font-family: 'Arial', sans-serif;
+            letter-spacing: 1px;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero - Full screen gallery */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gray-light);
+            overflow: hidden;
+        }
+
+        .hero-gallery {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 2px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .gallery-item:nth-child(1) {
+            grid-column: span 2;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover img {
+            filter: grayscale(0%);
+            transform: scale(1.05);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 40px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        .gallery-overlay h3 {
+            color: var(--secondary);
+            font-size: 28px;
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+
+        .gallery-overlay p {
+            color: var(--gray-medium);
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            background: rgba(255,255,255,0.95);
+            padding: 60px 80px;
+            max-width: 800px;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--gray-medium);
+        }
+
+        .hero-content h1 {
+            font-size: 48px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .hero-content p {
+            font-size: 20px;
+            color: var(--gray-dark);
+            margin-bottom: 40px;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .hero-cta {
+            display: inline-block;
+            padding: 15px 50px;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            text-decoration: none;
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: var(--transition);
+        }
+
+        .hero-cta:hover {
+            background: var(--primary);
+            color: var(--secondary);
+        }
+
+        /* Content Sections */
+        .section {
+            padding: 120px 50px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            margin-bottom: 80px;
+        }
+
+        .section-header h2 {
+            font-size: 42px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: var(--gray-dark);
+            max-width: 600px;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Artists - Asymmetric grid */
+        .artists-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 40px;
+            margin-bottom: 120px;
+        }
+
+        .artist-feature {
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .artist-feature:nth-child(1) {
+            grid-column: span 7;
+        }
+
+        .artist-feature:nth-child(2) {
+            grid-column: span 5;
+        }
+
+        .artist-feature:nth-child(3) {
+            grid-column: span 4;
+        }
+
+        .artist-feature:nth-child(4) {
+            grid-column: span 4;
+        }
+
+        .artist-feature:nth-child(5) {
+            grid-column: span 4;
+        }
+
+        .artist-image {
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .artist-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.2);
+            transition: var(--transition);
+        }
+
+        .artist-feature:hover .artist-image img {
+            filter: grayscale(0%) contrast(1);
+            transform: scale(1.02);
+        }
+
+        .artist-number {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            font-size: 60px;
+            font-weight: 300;
+            color: var(--secondary);
+            font-family: 'Arial', sans-serif;
+            opacity: 0.9;
+        }
+
+        .artist-info h3 {
+            font-size: 28px;
+            font-weight: 400;
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+
+        .artist-feature:hover .artist-info h3 {
+            color: var(--accent);
+        }
+
+        .artist-info p {
+            color: var(--gray-dark);
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .artist-link {
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .artist-link:hover {
+            gap: 15px;
+            color: var(--accent);
+        }
+
+        /* Releases - Horizontal scroll */
+        .releases-container {
+            position: relative;
+            margin: 0 -50px;
+            padding: 0 50px;
+            overflow: hidden;
+        }
+
+        .releases-scroll {
+            display: flex;
+            gap: 40px;
+            padding-bottom: 40px;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--gray-dark) var(--gray-light);
+        }
+
+        .releases-scroll::-webkit-scrollbar {
+            height: 1px;
+        }
+
+        .releases-scroll::-webkit-scrollbar-track {
+            background: var(--gray-light);
+        }
+
+        .releases-scroll::-webkit-scrollbar-thumb {
+            background: var(--gray-dark);
+        }
+
+        .release-item {
+            flex: 0 0 400px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .release-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .release-cover {
+            position: relative;
+            aspect-ratio: 1;
+            overflow: hidden;
+            margin-bottom: 25px;
+            background: var(--gray-light);
+        }
+
+        .release-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .release-item:hover .release-cover img {
+            transform: scale(1.05);
+        }
+
+        .release-date {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--secondary);
+            padding: 10px 20px;
+            font-family: 'Arial', sans-serif;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .release-info h3 {
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 8px;
+        }
+
+        .release-info p {
+            color: var(--gray-dark);
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .release-format {
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* News - Editorial style */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 80px;
+        }
+
+        .news-article {
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .news-image {
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .news-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(50%);
+            transition: var(--transition);
+        }
+
+        .news-article:hover .news-image img {
+            filter: grayscale(0%);
+            transform: scale(1.02);
+        }
+
+        .news-category {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            background: var(--primary);
+            color: var(--secondary);
+            padding: 10px 20px;
+            font-family: 'Arial', sans-serif;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .news-content h3 {
+            font-size: 32px;
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+
+        .news-article:hover .news-content h3 {
+            color: var(--accent);
+        }
+
+        .news-excerpt {
+            font-size: 18px;
+            color: var(--gray-dark);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .news-meta {
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+            color: var(--gray-dark);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: var(--secondary);
+            padding: 80px 50px 40px;
+        }
+
+        .footer-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 80px;
+            margin-bottom: 60px;
+        }
+
+        .footer-brand h3 {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 6px;
+            margin-bottom: 30px;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .footer-brand p {
+            line-height: 1.8;
+            color: var(--gray-medium);
+            margin-bottom: 30px;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 0;
+            margin-bottom: 30px;
+        }
+
+        .newsletter-input {
+            flex: 1;
+            padding: 15px 20px;
+            background: transparent;
+            border: 1px solid var(--gray-dark);
+            border-right: none;
+            color: var(--secondary);
+            font-family: 'Georgia', serif;
+            font-size: 16px;
+        }
+
+        .newsletter-input::placeholder {
+            color: var(--gray-dark);
+        }
+
+        .newsletter-submit {
+            padding: 15px 30px;
+            background: var(--accent);
+            border: none;
+            color: var(--primary);
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .newsletter-submit:hover {
+            background: var(--secondary);
+        }
+
+        .footer-column h4 {
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .footer-links a {
+            color: var(--gray-medium);
+            text-decoration: none;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary);
+        }
+
+        .footer-bottom {
+            padding-top: 40px;
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+            color: var(--gray-dark);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .social-links a {
+            color: var(--gray-medium);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            color: var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .artists-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+
+            .artist-feature:nth-child(1),
+            .artist-feature:nth-child(2) {
+                grid-column: span 6;
+            }
+
+            .artist-feature:nth-child(3),
+            .artist-feature:nth-child(4),
+            .artist-feature:nth-child(5) {
+                grid-column: span 2;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+                gap: 60px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-gallery {
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(4, 200px);
+            }
+
+            .gallery-item:nth-child(1) {
+                grid-column: span 1;
+            }
+
+            .hero-content {
+                padding: 40px;
+            }
+
+            .hero-content h1 {
+                font-size: 32px;
+            }
+
+            .section {
+                padding: 80px 30px;
+            }
+
+            .artists-grid {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">CIPHER GROVE LAB</div>
+            <nav>
+                <a href="#">Artists</a>
+                <a href="#">Releases</a>
+                <a href="#">News</a>
+                <a href="#">About</a>
+                <a href="#">Store</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-gallery">
+            <div class="gallery-item">
+                <img src="https://via.placeholder.com/800x600/f0f0f0/666?text=Studio+Sessions" alt="Studio Sessions">
+                <div class="gallery-overlay">
+                    <h3>Behind the Music</h3>
+                    <p>Exclusive studio sessions and creative process</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://via.placeholder.com/400x300/f0f0f0/666?text=Live+Performance" alt="Live Performance">
+                <div class="gallery-overlay">
+                    <h3>Live Experiences</h3>
+                    <p>Intimate performances</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://via.placeholder.com/400x300/f0f0f0/666?text=Artist+Portrait" alt="Artist Portrait">
+                <div class="gallery-overlay">
+                    <h3>Artist Stories</h3>
+                    <p>Personal journeys</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://via.placeholder.com/400x300/f0f0f0/666?text=Album+Art" alt="Album Art">
+                <div class="gallery-overlay">
+                    <h3>Visual Art</h3>
+                    <p>Album artwork gallery</p>
+                </div>
+            </div>
+        </div>
+        <div class="hero-content">
+            <h1>Where Sound Meets Vision</h1>
+            <p>Curating exceptional music that transcends boundaries and challenges conventions</p>
+            <a href="#" class="hero-cta">Explore Our World</a>
+        </div>
+    </section>
+
+    <!-- Artists Section -->
+    <section class="section">
+        <div class="section-header">
+            <h2>Featured Artists</h2>
+            <p>Visionary musicians crafting the soundtrack of tomorrow</p>
+        </div>
+        <div class="artists-grid">
+            <div class="artist-feature">
+                <div class="artist-image">
+                    <img src="https://via.placeholder.com/700x900/e5e5e5/666?text=The+Midnight+Echo" alt="The Midnight Echo">
+                    <div class="artist-number">01</div>
+                </div>
+                <div class="artist-info">
+                    <h3>The Midnight Echo</h3>
+                    <p>Blending atmospheric rock with electronic textures, The Midnight Echo creates immersive soundscapes that explore the boundaries between dreams and reality.</p>
+                    <a href="#" class="artist-link">Discover More →</a>
+                </div>
+            </div>
+
+            <div class="artist-feature">
+                <div class="artist-image">
+                    <img src="https://via.placeholder.com/500x700/e5e5e5/666?text=Velvet+Shadows" alt="Velvet Shadows">
+                    <div class="artist-number">02</div>
+                </div>
+                <div class="artist-info">
+                    <h3>Velvet Shadows</h3>
+                    <p>Electronic soul duo crafting intimate narratives through synthesized warmth and organic vocals.</p>
+                    <a href="#" class="artist-link">Explore →</a>
+                </div>
+            </div>
+
+            <div class="artist-feature">
+                <div class="artist-image">
+                    <img src="https://via.placeholder.com/400x500/e5e5e5/666?text=Neon+Pulse" alt="Neon Pulse">
+                    <div class="artist-number">03</div>
+                </div>
+                <div class="artist-info">
+                    <h3>Neon Pulse</h3>
+                    <p>Retro-futuristic synthwave architect.</p>
+                    <a href="#" class="artist-link">Listen →</a>
+                </div>
+            </div>
+
+            <div class="artist-feature">
+                <div class="artist-image">
+                    <img src="https://via.placeholder.com/400x500/e5e5e5/666?text=Echo+Chamber" alt="Echo Chamber">
+                    <div class="artist-number">04</div>
+                </div>
+                <div class="artist-info">
+                    <h3>Echo Chamber</h3>
+                    <p>Ambient minimalism meets classical composition.</p>
+                    <a href="#" class="artist-link">Experience →</a>
+                </div>
+            </div>
+
+            <div class="artist-feature">
+                <div class="artist-image">
+                    <img src="https://via.placeholder.com/400x500/e5e5e5/666?text=Crystal+Void" alt="Crystal Void">
+                    <div class="artist-number">05</div>
+                </div>
+                <div class="artist-info">
+                    <h3>Crystal Void</h3>
+                    <p>Post-rock experimentalists pushing sonic boundaries.</p>
+                    <a href="#" class="artist-link">Discover →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Releases Section -->
+    <section class="section" style="background: #fafafa;">
+        <div class="section-header">
+            <h2>Recent Releases</h2>
+            <p>New music from our roster of innovative artists</p>
+        </div>
+        <div class="releases-container">
+            <div class="releases-scroll">
+                <div class="release-item">
+                    <div class="release-cover">
+                        <img src="https://via.placeholder.com/400x400/f0f0f0/333?text=Neon+Dreams" alt="Neon Dreams">
+                        <div class="release-date">MAR 2024</div>
+                    </div>
+                    <div class="release-info">
+                        <h3>Neon Dreams</h3>
+                        <p>The Midnight Echo</p>
+                        <div class="release-format">LP / DIGITAL</div>
+                    </div>
+                </div>
+
+                <div class="release-item">
+                    <div class="release-cover">
+                        <img src="https://via.placeholder.com/400x400/f0f0f0/333?text=Shadow+Play" alt="Shadow Play">
+                        <div class="release-date">FEB 2024</div>
+                    </div>
+                    <div class="release-info">
+                        <h3>Shadow Play</h3>
+                        <p>Velvet Shadows</p>
+                        <div class="release-format">EP / DIGITAL</div>
+                    </div>
+                </div>
+
+                <div class="release-item">
+                    <div class="release-cover">
+                        <img src="https://via.placeholder.com/400x400/f0f0f0/333?text=Pulse+Wave" alt="Pulse Wave">
+                        <div class="release-date">JAN 2024</div>
+                    </div>
+                    <div class="release-info">
+                        <h3>Pulse Wave</h3>
+                        <p>Neon Pulse</p>
+                        <div class="release-format">LP / CASSETTE</div>
+                    </div>
+                </div>
+
+                <div class="release-item">
+                    <div class="release-cover">
+                        <img src="https://via.placeholder.com/400x400/f0f0f0/333?text=Resonance" alt="Resonance">
+                        <div class="release-date">DEC 2023</div>
+                    </div>
+                    <div class="release-info">
+                        <h3>Resonance</h3>
+                        <p>Echo Chamber</p>
+                        <div class="release-format">2LP / DIGITAL</div>
+                    </div>
+                </div>
+
+                <div class="release-item">
+                    <div class="release-cover">
+                        <img src="https://via.placeholder.com/400x400/f0f0f0/333?text=Void+Spaces" alt="Void Spaces">
+                        <div class="release-date">NOV 2023</div>
+                    </div>
+                    <div class="release-info">
+                        <h3>Void Spaces</h3>
+                        <p>Crystal Void</p>
+                        <div class="release-format">LP / DIGITAL</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- News Section -->
+    <section class="section">
+        <div class="section-header">
+            <h2>Latest News</h2>
+            <p>Stories and updates from the Cipher Grove Lab universe</p>
+        </div>
+        <div class="news-grid">
+            <article class="news-article">
+                <div class="news-image">
+                    <img src="https://via.placeholder.com/800x450/f0f0f0/333?text=Studio+Feature" alt="Studio Feature">
+                    <div class="news-category">Studio</div>
+                </div>
+                <div class="news-content">
+                    <h3>Inside the Creative Process: The Midnight Echo's New Album</h3>
+                    <p class="news-excerpt">An intimate look at the year-long journey behind "Neon Dreams," exploring the innovative recording techniques and philosophical themes that shaped this groundbreaking work.</p>
+                    <div class="news-meta">March 15, 2024 — 8 min read</div>
+                </div>
+            </article>
+
+            <article class="news-article">
+                <div class="news-image">
+                    <img src="https://via.placeholder.com/800x450/f0f0f0/333?text=Artist+Interview" alt="Artist Interview">
+                    <div class="news-category">Interview</div>
+                </div>
+                <div class="news-content">
+                    <h3>Velvet Shadows on Electronic Soul and Human Connection</h3>
+                    <p class="news-excerpt">The duo discusses their evolution from underground producers to label artists, and how they maintain authenticity in an increasingly digital world.</p>
+                    <div class="news-meta">March 10, 2024 — 6 min read</div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>CIPHER GROVE LAB</h3>
+                <p>An independent music label dedicated to artistic excellence and sonic innovation. We believe in music that challenges, inspires, and transcends conventional boundaries.</p>
+                <form class="newsletter-form">
+                    <input type="email" class="newsletter-input" placeholder="Enter your email">
+                    <button type="submit" class="newsletter-submit">Subscribe</button>
+                </form>
+            </div>
+            <div class="footer-column">
+                <h4>Explore</h4>
+                <div class="footer-links">
+                    <a href="#">Artists</a>
+                    <a href="#">Releases</a>
+                    <a href="#">News</a>
+                    <a href="#">Events</a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>Connect</h4>
+                <div class="footer-links">
+                    <a href="#">Contact</a>
+                    <a href="#">Demos</a>
+                    <a href="#">Press</a>
+                    <a href="#">Partners</a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>Shop</h4>
+                <div class="footer-links">
+                    <a href="#">Vinyl</a>
+                    <a href="#">Digital</a>
+                    <a href="#">Merchandise</a>
+                    <a href="#">Limited Editions</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>© 2024 Cipher Grove Lab. All rights reserved.</div>
+            <div class="social-links">
+                <a href="#">Instagram</a>
+                <a href="#">Spotify</a>
+                <a href="#">Bandcamp</a>
+                <a href="#">YouTube</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Custom cursor
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Add hover class to cursor
+        const hoverElements = document.querySelectorAll('a, button, .artist-feature, .release-item, .news-article');
+        hoverElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // Header scroll effect
+        const header = document.querySelector('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cipher Grove Lab - ECM Records Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            background: #fff;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Header - ECM minimalist style */
+        header {
+            background: #000;
+            color: #fff;
+            padding: 20px 40px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 300;
+            letter-spacing: 4px;
+        }
+
+        /* Navigation - Clean horizontal */
+        nav {
+            display: flex;
+            gap: 40px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.7;
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 80px;
+            padding: 40px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* News Layout - ECM style */
+        .news-header {
+            margin-bottom: 60px;
+        }
+
+        .news-header h1 {
+            font-size: 36px;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .news-filter {
+            display: flex;
+            gap: 30px;
+            margin-top: 30px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 15px;
+        }
+
+        .news-filter button {
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            color: #666;
+            cursor: pointer;
+            padding: 5px 0;
+            transition: color 0.3s;
+        }
+
+        .news-filter button.active,
+        .news-filter button:hover {
+            color: #000;
+        }
+
+        /* News Articles */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 60px 40px;
+        }
+
+        .news-article {
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .news-article:hover {
+            transform: translateY(-2px);
+        }
+
+        .article-image {
+            width: 100%;
+            height: 250px;
+            background: #f5f5f5;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .article-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .news-article:hover .article-image img {
+            transform: scale(1.03);
+        }
+
+        .article-category {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+            font-family: Arial, sans-serif;
+            margin-bottom: 10px;
+        }
+
+        .article-title {
+            font-size: 22px;
+            font-weight: 400;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .article-excerpt {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .article-meta {
+            font-size: 14px;
+            color: #999;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Featured Article - Large */
+        .featured-article {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+            padding-bottom: 60px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .featured-article .article-image {
+            height: 400px;
+        }
+
+        .featured-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .featured-content .article-title {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .featured-content .article-excerpt {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        /* Artist Spotlight Section */
+        .artist-spotlight {
+            margin-top: 80px;
+            padding: 60px 0;
+            background: #f9f9f9;
+        }
+
+        .spotlight-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .spotlight-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .spotlight-header h2 {
+            font-size: 32px;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .artists-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 40px;
+        }
+
+        .artist-feature {
+            text-align: center;
+        }
+
+        .artist-photo {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #e5e5e5;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .artist-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.3s;
+        }
+
+        .artist-feature:hover .artist-photo img {
+            filter: grayscale(0%);
+        }
+
+        .artist-name {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .artist-instrument {
+            font-size: 14px;
+            color: #666;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Footer */
+        footer {
+            background: #000;
+            color: #fff;
+            padding: 60px 40px 40px;
+            margin-top: 100px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-section h3 {
+            font-size: 16px;
+            font-weight: 400;
+            margin-bottom: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .footer-section a {
+            display: block;
+            color: #999;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #fff;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid #333;
+            font-size: 13px;
+            color: #666;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+
+            .featured-article {
+                grid-template-columns: 1fr;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .artists-row {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">CIPHER GROVE LAB</div>
+        <nav>
+            <a href="#">Artists</a>
+            <a href="#">Releases</a>
+            <a href="#">News</a>
+            <a href="#">About</a>
+            <a href="#">Store</a>
+            <a href="#">Contact</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="news-header">
+            <h1>News</h1>
+            <div class="news-filter">
+                <button class="active">All</button>
+                <button>Releases</button>
+                <button>Tours</button>
+                <button>Features</button>
+                <button>Awards</button>
+            </div>
+        </div>
+
+        <div class="news-grid">
+            <!-- Featured Article -->
+            <article class="featured-article">
+                <div class="article-image">
+                    <img src="https://via.placeholder.com/800x400/f0f0f0/333?text=The+Midnight+Echo+Live" alt="The Midnight Echo Live">
+                </div>
+                <div class="featured-content">
+                    <div class="article-category">Featured</div>
+                    <h2 class="article-title">The Midnight Echo Announces European Tour Following Acclaimed New Album</h2>
+                    <p class="article-excerpt">Following the release of their critically acclaimed album "Neon Dreams," The Midnight Echo will embark on a comprehensive European tour spanning 15 cities. The tour will showcase their evolving sound that bridges alternative rock with electronic elements.</p>
+                    <div class="article-meta">March 15, 2024</div>
+                </div>
+            </article>
+
+            <!-- Regular Articles -->
+            <article class="news-article">
+                <div class="article-image">
+                    <img src="https://via.placeholder.com/400x250/f0f0f0/333?text=Velvet+Shadows+Studio" alt="Velvet Shadows Studio">
+                </div>
+                <div class="article-category">Recording</div>
+                <h2 class="article-title">Velvet Shadows Completes Recording Sessions for Upcoming EP</h2>
+                <p class="article-excerpt">The electronic duo spent three months in our Berlin studio crafting their most ambitious work to date.</p>
+                <div class="article-meta">March 10, 2024</div>
+            </article>
+
+            <article class="news-article">
+                <div class="article-image">
+                    <img src="https://via.placeholder.com/400x250/f0f0f0/333?text=Awards+Night" alt="Awards Night">
+                </div>
+                <div class="article-category">Awards</div>
+                <h2 class="article-title">Cipher Grove Lab Artists Nominated for Multiple Industry Awards</h2>
+                <p class="article-excerpt">Three of our artists receive recognition at this year's Independent Music Awards ceremony.</p>
+                <div class="article-meta">March 8, 2024</div>
+            </article>
+
+            <article class="news-article">
+                <div class="article-image">
+                    <img src="https://via.placeholder.com/400x250/f0f0f0/333?text=New+Signing" alt="New Signing">
+                </div>
+                <div class="article-category">Announcement</div>
+                <h2 class="article-title">Cipher Grove Lab Welcomes Crystal Void to the Roster</h2>
+                <p class="article-excerpt">The post-rock quartet joins our growing family of innovative artists pushing musical boundaries.</p>
+                <div class="article-meta">March 5, 2024</div>
+            </article>
+
+            <article class="news-article">
+                <div class="article-image">
+                    <img src="https://via.placeholder.com/400x250/f0f0f0/333?text=Documentary" alt="Documentary">
+                </div>
+                <div class="article-category">Feature</div>
+                <h2 class="article-title">Behind the Scenes: The Making of "Digital Dreams"</h2>
+                <p class="article-excerpt">An intimate look at Digital Phantoms' creative process during their latest album recording.</p>
+                <div class="article-meta">March 1, 2024</div>
+            </article>
+
+            <article class="news-article">
+                <div class="article-image">
+                    <img src="https://via.placeholder.com/400x250/f0f0f0/333?text=Live+Session" alt="Live Session">
+                </div>
+                <div class="article-category">Video</div>
+                <h2 class="article-title">Watch: Echo Chamber's Stunning Live Session</h2>
+                <p class="article-excerpt">The ambient masters perform an exclusive set in our acoustically treated studio space.</p>
+                <div class="article-meta">February 28, 2024</div>
+            </article>
+        </div>
+    </main>
+
+    <!-- Artist Spotlight Section -->
+    <section class="artist-spotlight">
+        <div class="spotlight-content">
+            <div class="spotlight-header">
+                <h2>Featured Artists</h2>
+            </div>
+            <div class="artists-row">
+                <div class="artist-feature">
+                    <div class="artist-photo">
+                        <img src="https://via.placeholder.com/300x300/e5e5e5/666?text=The+Midnight+Echo" alt="The Midnight Echo">
+                    </div>
+                    <h3 class="artist-name">The Midnight Echo</h3>
+                    <p class="artist-instrument">Alternative Rock</p>
+                </div>
+                <div class="artist-feature">
+                    <div class="artist-photo">
+                        <img src="https://via.placeholder.com/300x300/e5e5e5/666?text=Velvet+Shadows" alt="Velvet Shadows">
+                    </div>
+                    <h3 class="artist-name">Velvet Shadows</h3>
+                    <p class="artist-instrument">Electronic</p>
+                </div>
+                <div class="artist-feature">
+                    <div class="artist-photo">
+                        <img src="https://via.placeholder.com/300x300/e5e5e5/666?text=Neon+Pulse" alt="Neon Pulse">
+                    </div>
+                    <h3 class="artist-name">Neon Pulse</h3>
+                    <p class="artist-instrument">Synthwave</p>
+                </div>
+                <div class="artist-feature">
+                    <div class="artist-photo">
+                        <img src="https://via.placeholder.com/300x300/e5e5e5/666?text=Echo+Chamber" alt="Echo Chamber">
+                    </div>
+                    <h3 class="artist-name">Echo Chamber</h3>
+                    <p class="artist-instrument">Ambient</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About</h3>
+                <a href="#">Our Story</a>
+                <a href="#">Mission</a>
+                <a href="#">Team</a>
+                <a href="#">Press</a>
+            </div>
+            <div class="footer-section">
+                <h3>Artists</h3>
+                <a href="#">Roster</a>
+                <a href="#">Releases</a>
+                <a href="#">Tours</a>
+                <a href="#">News</a>
+            </div>
+            <div class="footer-section">
+                <h3>Connect</h3>
+                <a href="#">Newsletter</a>
+                <a href="#">Instagram</a>
+                <a href="#">Twitter</a>
+                <a href="#">YouTube</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <a href="#">General Inquiries</a>
+                <a href="#">Demo Submissions</a>
+                <a href="#">Press Inquiries</a>
+                <a href="#">Booking</a>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2024 Cipher Grove Lab. All rights reserved. Privacy Policy | Terms of Use
+        </div>
+    </footer>
+</body>
+</html>

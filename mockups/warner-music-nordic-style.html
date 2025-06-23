@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cipher Grove Lab - Warner Music Nordic Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #fff;
+            color: #000;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header - Clean and functional */
+        header {
+            background: #fff;
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #e0e0e0;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #000;
+        }
+
+        .logo .accent {
+            color: #ff6b35;
+        }
+
+        /* Navigation */
+        .main-nav {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .main-nav a {
+            color: #000;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .main-nav a:hover {
+            color: #ff6b35;
+        }
+
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .search-icon:hover {
+            opacity: 1;
+        }
+
+        /* Hero Section - Full width with overlay text */
+        .hero {
+            margin-top: 70px;
+            height: 80vh;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .hero-slider {
+            display: flex;
+            height: 100%;
+            transition: transform 0.6s ease;
+        }
+
+        .hero-slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .hero-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+        }
+
+        .hero-content {
+            position: absolute;
+            bottom: 80px;
+            left: 0;
+            right: 0;
+            color: #fff;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .hero-label {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            color: #ff6b35;
+            font-weight: 600;
+        }
+
+        .hero-title {
+            font-size: 64px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            max-width: 800px;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            font-weight: 400;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            max-width: 600px;
+        }
+
+        .hero-cta {
+            display: inline-block;
+            padding: 15px 40px;
+            background: #ff6b35;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 30px;
+            transition: all 0.3s;
+        }
+
+        .hero-cta:hover {
+            background: #e55a30;
+            transform: translateY(-2px);
+        }
+
+        /* Section Container */
+        .section {
+            padding: 80px 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .section-link {
+            color: #ff6b35;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: gap 0.3s;
+        }
+
+        .section-link:hover {
+            gap: 12px;
+        }
+
+        /* Artist Grid - Clean cards */
+        .artist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .artist-card {
+            background: #f8f8f8;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .artist-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .artist-image {
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+        }
+
+        .artist-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s;
+        }
+
+        .artist-card:hover .artist-image img {
+            transform: scale(1.05);
+        }
+
+        .artist-info {
+            padding: 25px;
+        }
+
+        .artist-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .artist-genre {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .artist-latest {
+            font-size: 14px;
+            color: #ff6b35;
+            font-weight: 600;
+        }
+
+        /* News Section - Editorial style */
+        .news-section {
+            background: #f5f5f5;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+
+        .featured-news {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .featured-news-image {
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .featured-news-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .featured-news-content {
+            padding: 40px;
+        }
+
+        .news-category {
+            color: #ff6b35;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .news-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .news-excerpt {
+            color: #666;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .news-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .news-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .sidebar-news {
+            background: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sidebar-news:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .sidebar-news-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .sidebar-news-date {
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* Releases Carousel */
+        .releases-carousel {
+            position: relative;
+            overflow: hidden;
+            margin: 0 -40px;
+            padding: 0 40px;
+        }
+
+        .releases-track {
+            display: flex;
+            gap: 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .release-card {
+            flex: 0 0 280px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .release-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .release-cover {
+            width: 100%;
+            aspect-ratio: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .release-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .play-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .release-card:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .play-button {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+        }
+
+        .play-button::after {
+            content: '▶';
+            color: #000;
+            font-size: 24px;
+            margin-left: 5px;
+        }
+
+        .release-info {
+            padding: 25px;
+        }
+
+        .release-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .release-artist {
+            color: #ff6b35;
+            font-size: 16px;
+        }
+
+        /* Footer - Comprehensive */
+        footer {
+            background: #000;
+            color: #fff;
+            padding: 80px 0 40px;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .footer-brand {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .footer-brand .accent {
+            color: #ff6b35;
+        }
+
+        .footer-description {
+            color: #999;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            width: 44px;
+            height: 44px;
+            background: #222;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .social-link:hover {
+            background: #ff6b35;
+            transform: translateY(-3px);
+        }
+
+        .footer-column h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .footer-links a {
+            color: #999;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #ff6b35;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #333;
+            padding-top: 30px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 40px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .artist-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">CIPHER<span class="accent">GROVE</span>LAB</div>
+            <nav class="main-nav">
+                <a href="#">Artists</a>
+                <a href="#">Releases</a>
+                <a href="#">News</a>
+                <a href="#">About</a>
+                <a href="#">Contact</a>
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-slider">
+            <div class="hero-slide">
+                <img src="https://via.placeholder.com/1920x1080/1a1a1a/666?text=The+Midnight+Echo+Tour" alt="The Midnight Echo">
+                <div class="hero-content">
+                    <div class="hero-label">Featured Artist</div>
+                    <h1 class="hero-title">The Midnight Echo World Tour 2024</h1>
+                    <p class="hero-subtitle">Experience their groundbreaking new album "Neon Dreams" live across 30 cities</p>
+                    <a href="#" class="hero-cta">Get Tickets</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Artists Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Artists</h2>
+                <a href="#" class="section-link">View All Artists →</a>
+            </div>
+            <div class="artist-grid">
+                <div class="artist-card">
+                    <div class="artist-image">
+                        <img src="https://via.placeholder.com/400x400/f8f8f8/333?text=The+Midnight+Echo" alt="The Midnight Echo">
+                    </div>
+                    <div class="artist-info">
+                        <h3 class="artist-name">The Midnight Echo</h3>
+                        <p class="artist-genre">Alternative Rock</p>
+                        <p class="artist-latest">New Album: Neon Dreams</p>
+                    </div>
+                </div>
+
+                <div class="artist-card">
+                    <div class="artist-image">
+                        <img src="https://via.placeholder.com/400x400/f8f8f8/333?text=Velvet+Shadows" alt="Velvet Shadows">
+                    </div>
+                    <div class="artist-info">
+                        <h3 class="artist-name">Velvet Shadows</h3>
+                        <p class="artist-genre">Electronic Soul</p>
+                        <p class="artist-latest">New Single: Shadow Play</p>
+                    </div>
+                </div>
+
+                <div class="artist-card">
+                    <div class="artist-image">
+                        <img src="https://via.placeholder.com/400x400/f8f8f8/333?text=Neon+Pulse" alt="Neon Pulse">
+                    </div>
+                    <div class="artist-info">
+                        <h3 class="artist-name">Neon Pulse</h3>
+                        <p class="artist-genre">Synthwave</p>
+                        <p class="artist-latest">New EP: Pulse Wave</p>
+                    </div>
+                </div>
+
+                <div class="artist-card">
+                    <div class="artist-image">
+                        <img src="https://via.placeholder.com/400x400/f8f8f8/333?text=Echo+Chamber" alt="Echo Chamber">
+                    </div>
+                    <div class="artist-info">
+                        <h3 class="artist-name">Echo Chamber</h3>
+                        <p class="artist-genre">Ambient Electronic</p>
+                        <p class="artist-latest">New Album: Resonance</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- News Section -->
+    <section class="section news-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Latest News</h2>
+                <a href="#" class="section-link">All News →</a>
+            </div>
+            <div class="news-grid">
+                <div class="featured-news">
+                    <div class="featured-news-image">
+                        <img src="https://via.placeholder.com/800x400/fff/333?text=Studio+Session" alt="Studio Session">
+                    </div>
+                    <div class="featured-news-content">
+                        <div class="news-category">Studio Update</div>
+                        <h3 class="news-title">Velvet Shadows Returns to the Studio for Third Album</h3>
+                        <p class="news-excerpt">The electronic duo has begun recording sessions for their highly anticipated third album, working with Grammy-winning producer Alex Chen at our state-of-the-art Berlin facility.</p>
+                        <div class="news-meta">
+                            <span>March 15, 2024</span>
+                            <span>•</span>
+                            <span>3 min read</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="news-sidebar">
+                    <div class="sidebar-news">
+                        <div class="news-category">Tour</div>
+                        <h4 class="sidebar-news-title">Neon Pulse Announces Summer Festival Circuit</h4>
+                        <p class="sidebar-news-date">March 12, 2024</p>
+                    </div>
+                    <div class="sidebar-news">
+                        <div class="news-category">Award</div>
+                        <h4 class="sidebar-news-title">The Midnight Echo Wins Best Alternative Album</h4>
+                        <p class="sidebar-news-date">March 10, 2024</p>
+                    </div>
+                    <div class="sidebar-news">
+                        <div class="news-category">Release</div>
+                        <h4 class="sidebar-news-title">Crystal Void Drops Surprise Single "Shattered Light"</h4>
+                        <p class="sidebar-news-date">March 8, 2024</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Releases Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">New Releases</h2>
+                <a href="#" class="section-link">All Releases →</a>
+            </div>
+            <div class="releases-carousel">
+                <div class="releases-track">
+                    <div class="release-card">
+                        <div class="release-cover">
+                            <img src="https://via.placeholder.com/300x300/000/ff6b35?text=Neon+Dreams" alt="Neon Dreams">
+                            <div class="play-overlay">
+                                <div class="play-button"></div>
+                            </div>
+                        </div>
+                        <div class="release-info">
+                            <h3 class="release-title">Neon Dreams</h3>
+                            <p class="release-artist">The Midnight Echo</p>
+                        </div>
+                    </div>
+
+                    <div class="release-card">
+                        <div class="release-cover">
+                            <img src="https://via.placeholder.com/300x300/000/ff6b35?text=Shadow+Play" alt="Shadow Play">
+                            <div class="play-overlay">
+                                <div class="play-button"></div>
+                            </div>
+                        </div>
+                        <div class="release-info">
+                            <h3 class="release-title">Shadow Play</h3>
+                            <p class="release-artist">Velvet Shadows</p>
+                        </div>
+                    </div>
+
+                    <div class="release-card">
+                        <div class="release-cover">
+                            <img src="https://via.placeholder.com/300x300/000/ff6b35?text=Pulse+Wave" alt="Pulse Wave">
+                            <div class="play-overlay">
+                                <div class="play-button"></div>
+                            </div>
+                        </div>
+                        <div class="release-info">
+                            <h3 class="release-title">Pulse Wave</h3>
+                            <p class="release-artist">Neon Pulse</p>
+                        </div>
+                    </div>
+
+                    <div class="release-card">
+                        <div class="release-cover">
+                            <img src="https://via.placeholder.com/300x300/000/ff6b35?text=Resonance" alt="Resonance">
+                            <div class="play-overlay">
+                                <div class="play-button"></div>
+                            </div>
+                        </div>
+                        <div class="release-info">
+                            <h3 class="release-title">Resonance</h3>
+                            <p class="release-artist">Echo Chamber</p>
+                        </div>
+                    </div>
+
+                    <div class="release-card">
+                        <div class="release-cover">
+                            <img src="https://via.placeholder.com/300x300/000/ff6b35?text=Digital+Dreams" alt="Digital Dreams">
+                            <div class="play-overlay">
+                                <div class="play-button"></div>
+                            </div>
+                        </div>
+                        <div class="release-info">
+                            <h3 class="release-title">Digital Dreams</h3>
+                            <p class="release-artist">Digital Phantoms</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div>
+                <div class="footer-brand">CIPHER<span class="accent">GROVE</span>LAB</div>
+                <p class="footer-description">
+                    An independent music label dedicated to discovering and nurturing innovative artists who push the boundaries of contemporary music.
+                </p>
+                <div class="social-links">
+                    <a href="#" class="social-link">f</a>
+                    <a href="#" class="social-link">t</a>
+                    <a href="#" class="social-link">i</a>
+                    <a href="#" class="social-link">s</a>
+                    <a href="#" class="social-link">y</a>
+                </div>
+            </div>
+            <div>
+                <h4>Artists</h4>
+                <div class="footer-links">
+                    <a href="#">All Artists</a>
+                    <a href="#">New Signings</a>
+                    <a href="#">Artist Resources</a>
+                    <a href="#">Submit Demo</a>
+                </div>
+            </div>
+            <div>
+                <h4>Music</h4>
+                <div class="footer-links">
+                    <a href="#">New Releases</a>
+                    <a href="#">Catalog</a>
+                    <a href="#">Playlists</a>
+                    <a href="#">Videos</a>
+                </div>
+            </div>
+            <div>
+                <h4>Company</h4>
+                <div class="footer-links">
+                    <a href="#">About Us</a>
+                    <a href="#">News</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Contact</a>
+                </div>
+            </div>
+            <div>
+                <h4>Connect</h4>
+                <div class="footer-links">
+                    <a href="#">Newsletter</a>
+                    <a href="#">Press Kit</a>
+                    <a href="#">Partners</a>
+                    <a href="#">Support</a>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="footer-bottom">
+                © 2024 Cipher Grove Lab. All rights reserved. | Privacy Policy | Terms of Service | Cookie Settings
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cipher Grove Lab - Artists (Super Subtle Animation with Real Images)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #fff;
+            color: #000;
+            line-height: 1.4;
+            font-size: 14px;
+            overflow-x: hidden;
+        }
+
+        /* Subtle background grain animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            z-index: -1;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(0,0,0,.01) 35px, rgba(0,0,0,.01) 70px);
+            animation: grain 8s steps(10) infinite;
+        }
+
+        @keyframes grain {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-1%, -1%); }
+            20% { transform: translate(1%, 1%); }
+            30% { transform: translate(-1%, 1%); }
+            40% { transform: translate(1%, -1%); }
+            50% { transform: translate(-1%, 0); }
+            60% { transform: translate(1%, 0); }
+            70% { transform: translate(0, -1%); }
+            80% { transform: translate(0, 1%); }
+            90% { transform: translate(-1%, -1%); }
+        }
+
+        /* Header */
+        header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #000;
+            position: relative;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            padding: 15px 30px;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.05);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 100%;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+            transition: letter-spacing 0.3s ease;
+        }
+
+        .logo:hover {
+            letter-spacing: 1px;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .header-nav a {
+            color: #000;
+            text-decoration: none;
+            font-size: 14px;
+            position: relative;
+            transition: opacity 0.3s ease;
+        }
+
+        .header-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #000;
+            transition: width 0.3s ease;
+        }
+
+        .header-nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Main Navigation Bar */
+        .main-nav {
+            padding: 15px 30px;
+            border-bottom: 1px solid #000;
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .main-nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        .main-nav a {
+            color: #000;
+            text-decoration: none;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .main-nav a::before {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 1px;
+            background: #000;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .main-nav a:hover::before,
+        .main-nav a.active::before {
+            width: 100%;
+        }
+
+        /* Page Title with subtle parallax */
+        .page-header {
+            padding: 40px 30px 30px;
+            border-bottom: 1px solid #000;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+            transform: translateY(0);
+            transition: transform 0.6s ease;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            padding: 20px 30px;
+            border-bottom: 1px solid #000;
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filter-options button {
+            background: none;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 2px 0;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .filter-options button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #000;
+            transition: width 0.3s ease;
+        }
+
+        .filter-options button:hover::after,
+        .filter-options button.active::after {
+            width: 100%;
+        }
+
+        /* Artists Grid with stagger animation */
+        .artists-container {
+            padding: 30px;
+        }
+
+        .artists-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 40px 30px;
+        }
+
+        .artist-item {
+            cursor: pointer;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .artist-item:nth-child(1) { animation-delay: 0.05s; }
+        .artist-item:nth-child(2) { animation-delay: 0.1s; }
+        .artist-item:nth-child(3) { animation-delay: 0.15s; }
+        .artist-item:nth-child(4) { animation-delay: 0.2s; }
+        .artist-item:nth-child(5) { animation-delay: 0.25s; }
+        .artist-item:nth-child(6) { animation-delay: 0.3s; }
+        .artist-item:nth-child(7) { animation-delay: 0.35s; }
+        .artist-item:nth-child(8) { animation-delay: 0.4s; }
+        .artist-item:nth-child(9) { animation-delay: 0.45s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .artist-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .artist-image {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #f5f5f5;
+            overflow: hidden;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .artist-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.6s ease;
+        }
+
+        .artist-item:hover .artist-image img {
+            transform: scale(1.05);
+        }
+
+        /* Subtle overlay on hover */
+        .artist-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 1;
+        }
+
+        .artist-item:hover .artist-image::before {
+            opacity: 1;
+        }
+
+        .artist-name {
+            font-size: 13px;
+            line-height: 1.3;
+            margin-bottom: 3px;
+            transition: transform 0.3s ease;
+        }
+
+        .artist-item:hover .artist-name {
+            transform: translateX(2px);
+        }
+
+        .artist-name a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .artist-instrument {
+            font-size: 12px;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .artist-item:hover .artist-instrument {
+            color: #000;
+        }
+
+        /* Load More with subtle animation */
+        .load-more {
+            text-align: center;
+            padding: 40px 30px 60px;
+        }
+
+        .load-more button {
+            background: none;
+            border: 1px solid #000;
+            padding: 10px 30px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .load-more button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .load-more button:hover {
+            color: #fff;
+        }
+
+        .load-more button:hover::before {
+            left: 0;
+        }
+
+        /* Footer */
+        footer {
+            background: #fff;
+            color: #000;
+            padding: 60px 30px 40px;
+            margin-top: 80px;
+            border-top: 1px solid #000;
+            position: relative;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            font-size: 14px;
+            font-weight: normal;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+
+        .footer-links a {
+            color: #000;
+            text-decoration: none;
+            font-size: 13px;
+            position: relative;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #000;
+            transition: width 0.3s ease;
+        }
+
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+
+        .footer-bottom {
+            padding-top: 30px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .copyright {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Subtle scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: #000;
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-nav {
+                display: none;
+            }
+
+            .artists-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-indicator"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">CIPHER GROVE LAB</div>
+            <nav class="header-nav">
+                <a href="#">News</a>
+                <a href="#">Concerts</a>
+                <a href="#">Shop</a>
+                <a href="#">About</a>
+                <span class="search-toggle">Search</span>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Navigation -->
+    <nav class="main-nav">
+        <ul>
+            <li><a href="#" class="active">Artists</a></li>
+            <li><a href="#">Releases</a></li>
+            <li><a href="#">Series</a></li>
+            <li><a href="#">Stories</a></li>
+            <li><a href="#">Sounds</a></li>
+        </ul>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">Artists</h1>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="filter-group">
+            <span class="filter-label">Sort by:</span>
+            <div class="filter-options">
+                <button class="active">A-Z</button>
+                <button>Recent</button>
+                <button>Genre</button>
+            </div>
+        </div>
+        <div class="filter-group">
+            <span class="filter-label">Filter:</span>
+            <div class="filter-options">
+                <button class="active">All</button>
+                <button>Rock</button>
+                <button>Electronic</button>
+                <button>Ambient</button>
+                <button>Experimental</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Artists Grid -->
+    <div class="artists-container">
+        <div class="artists-grid">
+            <div class="artist-item">
+                <div class="artist-image">
+                    <img src="pics/Gemini_Generated_Image_2xugtx2xugtx2xug.png" alt="The Midnight Echo">
+                </div>
+                <div class="artist-name">
+                    <a href="#">The Midnight Echo</a>
+                </div>
+                <div class="artist-instrument">Alternative Rock</div>
+            </div>
+
+            <div class="artist-item">
+                <div class="artist-image">
+                    <img src="pics/Gemini_Generated_Image_5v82pt5v82pt5v82.png" alt="Velvet Shadows">
+                </div>
+                <div class="artist-name">
+                    <a href="#">Velvet Shadows</a>
+                </div>
+                <div class="artist-instrument">Electronic</div>
+            </div>
+
+            <div class="artist-item">
+                <div class="artist-image">
+                    <img src="pics/Gemini_Generated_Image_q1u0olq1u0olq1u0.png" alt="Neon Pulse">
+                </div>
+                <div class="artist-name">
+                    <a href="#">Neon Pulse</a>
+                </div>
+                <div class="artist-instrument">Synthwave</div>
+            </div>
+
+            <div class="artist-item">
+                <div class="artist-image">
+                    <img src="pics/Gemini_Generated_Image_q1u0omq1u0omq1u0.png" alt="Echo Chamber">
+                </div>
+                <div class="artist-name">
+                    <a href="#">Echo Chamber</a>
+                </div>
+                <div class="artist-instrument">Ambient</div>
+            </div>
+
+            <div class="artist-item">
+                <div class="artist-image">
+                    <img src="pics/Gemini_Generated_Image_q1u0ooq1u0ooq1u0.png" alt="Crystal Void">
+                </div>
+                <div class="artist-name">
+                    <a href="#">Crystal Void</a>
+                </div>
+                <div class="artist-instrument">Post-Rock</div>
+            </div>
+
+            <div class="artist-item">
+                <div class="artist-image">
+                    <img src="pics/Gemini_Generated_Image_q1u0opq1u0opq1u0.png" alt="Digital Phantoms">
+                </div>
+                <div class="artist-name">
+                    <a href="#">Digital Phantoms</a>
+                </div>
+                <div class="artist-instrument">Techno</div>
+            </div>
+
+            <div class="artist-item">
+                <div class="artist-image">
+                    <img src="pics/Gemini_Generated_Image_q1u0oqq1u0oqq1u0.png" alt="Lunar Drift">
+                </div>
+                <div class="artist-name">
+                    <a href="#">Lunar Drift</a>
+                </div>
+                <div class="artist-instrument">Experimental</div>
+            </div>
+
+            <div class="artist-item">
+                <div class="artist-image">
+                    <img src="pics/Gemini_Generated_Image_q1u0orq1u0orq1u0.png" alt="Solar Fields">
+                </div>
+                <div class="artist-name">
+                    <a href="#">Solar Fields</a>
+                </div>
+                <div class="artist-instrument">Ambient Electronic</div>
+            </div>
+
+            <div class="artist-item">
+                <div class="artist-image">
+                    <img src="pics/Gemini_Generated_Image_vqn086vqn086vqn0.png" alt="Aurora Waves">
+                </div>
+                <div class="artist-name">
+                    <a href="#">Aurora Waves</a>
+                </div>
+                <div class="artist-instrument">Dream Pop</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load More -->
+    <div class="load-more">
+        <button>Load More Artists</button>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Explore</h4>
+                <ul class="footer-links">
+                    <li><a href="#">New Releases</a></li>
+                    <li><a href="#">Coming Soon</a></li>
+                    <li><a href="#">Best Sellers</a></li>
+                    <li><a href="#">Complete Catalog</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>About</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Our Story</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul class="footer-links">
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Shipping</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">Terms</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Connect</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Newsletter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Spotify</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="copyright">
+                © 2024 Cipher Grove Lab. All rights reserved.
+            </div>
+            <div class="copyright">
+                Privacy Policy | Terms of Service
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Subtle scroll effects
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrolled / maxScroll) * 100;
+            
+            // Update scroll indicator
+            document.querySelector('.scroll-indicator').style.width = scrollPercent + '%';
+            
+            // Header shrink effect
+            const header = document.querySelector('header');
+            if (scrolled > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+            
+            // Subtle parallax on page title
+            const pageTitle = document.querySelector('.page-title');
+            if (pageTitle) {
+                pageTitle.style.transform = `translateY(${scrolled * 0.1}px)`;
+            }
+        });
+
+        // Filter functionality
+        document.querySelectorAll('.filter-options button').forEach(button => {
+            button.addEventListener('click', function() {
+                this.parentElement.querySelectorAll('button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

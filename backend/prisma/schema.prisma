@@ -82,6 +82,37 @@ model News {
   @@map("news")
 }
 
+model Contact {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(100)
+  email     String    @db.VarChar(255)
+  subject   String    @db.VarChar(200)
+  message   String    @db.Text
+  type      ContactType
+  processed Boolean   @default(false)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([email], map: "idx_contact_email")
+  @@index([type], map: "idx_contact_type")
+  @@index([processed], map: "idx_contact_processed")
+  @@index([createdAt(sort: Desc)], map: "idx_contact_created_at")
+  @@map("contacts")
+}
+
+model Newsletter {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique @db.VarChar(255)
+  isActive    Boolean  @default(true) @map("is_active")
+  subscribedAt DateTime @default(now()) @map("subscribed_at") @db.Timestamptz(6)
+  unsubscribedAt DateTime? @map("unsubscribed_at") @db.Timestamptz(6)
+
+  @@index([email], map: "idx_newsletter_email")
+  @@index([isActive], map: "idx_newsletter_active")
+  @@index([subscribedAt(sort: Desc)], map: "idx_newsletter_subscribed_at")
+  @@map("newsletter_subscribers")
+}
+
 // Enums
 enum ReleaseType {
   album
@@ -89,4 +120,13 @@ enum ReleaseType {
   ep
 
   @@map("release_type")
+}
+
+enum ContactType {
+  demo
+  business
+  general
+  press
+
+  @@map("contact_type")
 }

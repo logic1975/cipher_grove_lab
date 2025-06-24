@@ -1,51 +1,56 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import App from './App'
 
 describe('App Component', () => {
   it('renders without crashing', () => {
     render(<App />)
-    expect(screen.getByText('Vite + React')).toBeInTheDocument()
+    // Check for the site logo/title
+    expect(screen.getByText('CIPHER GROVE LAB')).toBeInTheDocument()
   })
 
-  it('displays initial counter value', () => {
+  it('renders header navigation', () => {
     render(<App />)
-    expect(screen.getByText('count is 0')).toBeInTheDocument()
+    // Check for header navigation links (both desktop and mobile versions exist)
+    const newsLinks = screen.getAllByRole('link', { name: 'News' })
+    const concertsLinks = screen.getAllByRole('link', { name: 'Concerts' })
+    const shopLinks = screen.getAllByRole('link', { name: 'Shop' })
+    const aboutLinks = screen.getAllByRole('link', { name: 'About' })
+    
+    // Should have 2 of each (desktop + mobile)
+    expect(newsLinks).toHaveLength(2)
+    expect(concertsLinks).toHaveLength(2)
+    expect(shopLinks).toHaveLength(2)
+    expect(aboutLinks).toHaveLength(2)
   })
 
-  it('increments counter when button is clicked', () => {
+  it('renders main navigation', () => {
     render(<App />)
-    const button = screen.getByRole('button', { name: /count is/i })
-    
-    fireEvent.click(button)
-    expect(screen.getByText('count is 1')).toBeInTheDocument()
-    
-    fireEvent.click(button)
-    expect(screen.getByText('count is 2')).toBeInTheDocument()
+    // Check for main navigation links
+    expect(screen.getByRole('link', { name: 'Artists' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Releases' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Series' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Stories' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Sounds' })).toBeInTheDocument()
   })
 
-  it('displays correct logos and links', () => {
+  it('renders layout structure', () => {
     render(<App />)
-    
-    const viteLogo = screen.getByAltText('Vite logo')
-    const reactLogo = screen.getByAltText('React logo')
-    
-    expect(viteLogo).toBeInTheDocument()
-    expect(reactLogo).toBeInTheDocument()
-    
-    expect(viteLogo.closest('a')).toHaveAttribute('href', 'https://vite.dev')
-    expect(reactLogo.closest('a')).toHaveAttribute('href', 'https://react.dev')
+    // Check for main layout elements
+    expect(screen.getByRole('banner')).toBeInTheDocument() // header
+    expect(screen.getByRole('main')).toBeInTheDocument() // main content
+    expect(screen.getByRole('contentinfo')).toBeInTheDocument() // footer
   })
 
-  it('displays HMR instruction text', () => {
+  it('renders footer content', () => {
     render(<App />)
-    expect(screen.getByText((content, element) => {
-      return element?.textContent === 'Edit src/App.tsx and save to test HMR'
-    })).toBeInTheDocument()
+    // Check for footer text
+    expect(screen.getByText(/© \d{4} Cipher Grove Lab/)).toBeInTheDocument()
   })
 
-  it('displays learn more instruction', () => {
+  it('default route shows artists page', () => {
     render(<App />)
-    expect(screen.getByText('Click on the Vite and React logos to learn more')).toBeInTheDocument()
+    // The default route should show the artists page header
+    expect(screen.getByRole('heading', { name: 'Artists', level: 1 })).toBeInTheDocument()
   })
 })

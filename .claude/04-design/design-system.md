@@ -23,10 +23,11 @@
 
 ## Spacing System
 
-### Scale (Tailwind)
+### Scale (Custom CSS)
 ```css
 /* 0, 4px, 8px, 12px, 16px, 20px, 24px, 32px, 40px, 48px, 64px, 80px, 96px */
 /* Layout: 1.5rem mobile padding, 3rem desktop, 4rem sections, 2rem components */
+/* Note: Tailwind CSS removed - using custom CSS implementation */
 ```
 
 ## Breakpoints & Components

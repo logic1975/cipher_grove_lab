@@ -21,14 +21,17 @@
 - **`02-architecture/system-overview.md`** - Technology stack, data flow, deployment architecture
 - **`02-architecture/database-schema.md`** - Complete schema with JSON field structures
 - **`02-architecture/api-specification.md`** - REST API contracts with TypeScript types
+- **`02-architecture/middleware-specification.md`** - Validation, error handling, rate limiting middleware
 - **`02-architecture/security-model.md`** - Enterprise security practices and implementation
 
 ## 🔧 Development Resources
 
 ### Process and Standards
 - **`03-development/development-plan.md`** - Phase-based roadmap with enterprise project management
+- **`03-development/workflow.md`** - Enhanced TDD workflow with documentation and regression requirements
 - **`03-development/testing-strategy.md`** - Comprehensive TDD approach with testing pyramid
 - **`03-development/test-helpers.md`** - Reusable test patterns and mock data utilities
+- **`03-development/coding-standards.md`** - Project-specific coding standards and patterns
 - **`03-development/troubleshooting.md`** - Common issues and solutions
 
 ## 🎯 Project Context

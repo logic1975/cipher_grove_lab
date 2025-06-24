@@ -23,24 +23,28 @@
 ### Frontend
 - **Framework**: React 18+ with TypeScript
 - **Build Tool**: Vite (fast development and optimized builds)
-- **Styling**: Tailwind CSS (utility-first, responsive design)
+- **Styling**: Custom CSS with ECM-inspired minimal design (Tailwind removed)
 - **Routing**: React Router v6 (client-side routing)
-- **State Management**: React Context + useReducer (simple state needs)
-- **HTTP Client**: Fetch API with custom hooks
+- **State Management**: Zustand (lightweight, TypeScript-first) + TanStack Query (API caching)
+- **HTTP Client**: TanStack Query with custom hooks
 - **Icons**: Lucide React (consistent, lightweight icons)
+- **Audio Handling**: Howler.js for enhanced music player functionality
+- **Testing**: Vitest + React Testing Library (65 tests passing)
 
 ### Backend
 - **Runtime**: Node.js (LTS version)
 - **Framework**: Express.js (minimal, flexible web framework)
 - **Language**: TypeScript (type safety and developer experience)
-- **Authentication**: JWT (if needed for admin features)
-- **Validation**: Joi or Zod (request validation)
-- **Logging**: Winston (structured logging)
+- **ORM**: Prisma (type-safe database layer with migrations)
+- **Validation**: Joi (request validation)
+- **Rate Limiting**: express-rate-limit v7 (multi-tier protection)
+- **File Processing**: Multer + Sharp (image upload and optimization)
 
 ### Database
 - **Primary Database**: PostgreSQL (ACID compliance, JSON support)
-- **Connection Pool**: node-postgres (pg) with connection pooling
-- **Migrations**: Custom migration system or Knex.js
+- **ORM**: Prisma with type-safe queries and migrations
+- **Connection Pool**: Prisma connection pooling
+- **Containerization**: Docker PostgreSQL with automatic setup
 - **Backup Strategy**: Automated daily backups
 
 ### Development & Testing

@@ -18,12 +18,36 @@
 
 ## API Response Format
 ```typescript
-// Consistent API response structure
+// Consistent API response structure (matches api-specification.md)
 interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: { code: string; message: string; };
-  pagination?: { page: number; limit: number; total: number; };
+  success: true;
+  data: T;
+  message?: string;
+  timestamp: string;
+}
+
+interface ApiErrorResponse {
+  success: false;
+  error: {
+    code: string;
+    message: string;
+    details?: any;
+  };
+  timestamp: string;
+}
+
+interface PaginatedResponse<T> {
+  success: true;
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+  timestamp: string;
 }
 ```
 

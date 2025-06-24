@@ -18,6 +18,20 @@
 │ updated_at      │    │ created_at      │
 └─────────────────┘    │ updated_at      │
                        └─────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐
+│     Contact     │    │   Newsletter    │
+├─────────────────┤    ├─────────────────┤
+│ id (PK)         │    │ id (PK)         │
+│ name            │    │ email           │
+│ email           │    │ is_active       │
+│ subject         │    │ subscribed_at   │
+│ message         │    │ unsubscribed_at │
+│ type            │    └─────────────────┘
+│ processed       │
+│ created_at      │
+│ updated_at      │
+└─────────────────┘
 ```
 
 ## Table Definitions
@@ -92,6 +106,43 @@ CREATE TABLE news (
 CREATE INDEX idx_news_published_at ON news(published_at DESC) WHERE published_at IS NOT NULL;
 CREATE INDEX idx_news_slug ON news(slug) WHERE slug IS NOT NULL;
 CREATE INDEX idx_news_created_at ON news(created_at DESC);
+```
+
+### Contact Table
+```sql
+CREATE TABLE contact (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    subject VARCHAR(200) NOT NULL,
+    message TEXT NOT NULL,
+    type VARCHAR(50) NOT NULL DEFAULT 'general' CHECK (type IN ('demo', 'business', 'general', 'press')),
+    processed BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes
+CREATE INDEX idx_contact_email ON contact(email);
+CREATE INDEX idx_contact_processed ON contact(processed);
+CREATE INDEX idx_contact_type ON contact(type);
+CREATE INDEX idx_contact_created_at ON contact(created_at DESC);
+```
+
+### Newsletter Table
+```sql
+CREATE TABLE newsletter (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    is_active BOOLEAN DEFAULT TRUE,
+    subscribed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    unsubscribed_at TIMESTAMP WITH TIME ZONE
+);
+
+-- Indexes
+CREATE INDEX idx_newsletter_email ON newsletter(email);
+CREATE INDEX idx_newsletter_is_active ON newsletter(is_active);
+CREATE INDEX idx_newsletter_subscribed_at ON newsletter(subscribed_at DESC);
 ```
 
 ## JSON Field Structures

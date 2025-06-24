@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug Layout</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #fff;
+      color: #000;
+      line-height: 1.4;
+      font-size: 14px;
+    }
+    
+    .debug-header {
+      padding: 20px 30px;
+      border-bottom: 1px solid #000;
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .debug-logo {
+      font-size: 24px;
+      letter-spacing: 0.5px;
+    }
+    
+    .debug-nav {
+      display: flex;
+      gap: 30px;
+    }
+    
+    .debug-main-nav {
+      padding: 15px 30px;
+      border-bottom: 1px solid #000;
+      background: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .debug-main-nav ul {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+    }
+    
+    .debug-content {
+      padding: 40px 30px;
+      min-height: 150vh; /* Make it scrollable */
+    }
+    
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      margin-top: 20px;
+    }
+    
+    .debug-item {
+      aspect-ratio: 1;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="debug-header">
+    <div class="debug-logo">CIPHER GROVE LAB</div>
+    <nav class="debug-nav">
+      <a href="#">News</a>
+      <a href="#">Concerts</a>
+      <a href="#">Shop</a>
+      <a href="#">About</a>
+      <span>Search</span>
+    </nav>
+  </header>
+  
+  <!-- Main Navigation (Sticky) -->
+  <nav class="debug-main-nav">
+    <ul>
+      <li><a href="#">Artists</a></li>
+      <li><a href="#">Releases</a></li>
+      <li><a href="#">Series</a></li>
+      <li><a href="#">Stories</a></li>
+      <li><a href="#">Sounds</a></li>
+    </ul>
+  </nav>
+  
+  <!-- Content -->
+  <div class="debug-content">
+    <h1>Artists</h1>
+    <p>Scroll down to test sticky navigation...</p>
+    
+    <div class="debug-grid">
+      <div class="debug-item">Artist 1</div>
+      <div class="debug-item">Artist 2</div>
+      <div class="debug-item">Artist 3</div>
+      <div class="debug-item">Artist 4</div>
+      <div class="debug-item">Artist 5</div>
+      <div class="debug-item">Artist 6</div>
+    </div>
+  </div>
+</body>
+</html>

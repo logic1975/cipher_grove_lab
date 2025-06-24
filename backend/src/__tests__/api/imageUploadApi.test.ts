@@ -124,8 +124,8 @@ describe('Image Upload API Endpoints', () => {
       expect(response.body).toMatchObject({
         success: false,
         error: {
-          code: 'INVALID_ID',
-          message: 'Artist ID must be a valid number'
+          code: 'VALIDATION_ERROR',
+          message: '"id" must be a number'
         }
       })
     })

@@ -2,6 +2,18 @@
 
 ## Critical Issues Specific to This Stack
 
+### Vite Dev Server IPv6/IPv4 Issues
+**Problem**: Server binds to IPv6 only, causing connection issues
+**Solution**: Configure vite.config.ts with proper server settings:
+```typescript
+server: {
+  host: 'localhost',
+  port: 5173,
+  strictPort: true,
+  open: true
+}
+```
+
 ### Vitest vs Jest Confusion
 **Problem**: Wrong test runner being used
 **Solution**: Frontend uses Vitest, Backend uses Jest - ensure correct config files
@@ -14,9 +26,9 @@
 **Problem**: Spotify/Apple Music embed issues
 **Solution**: Verify CORS settings allow streaming domains in CSP
 
-### Dark Mode Color Variables
-**Problem**: CSS variables not loading correctly
-**Solution**: Check Tailwind config and CSS variable definitions in design system
+### CSS Conflicts with Tailwind
+**Problem**: Tailwind CSS conflicting with custom ECM styles
+**Solution**: Removed Tailwind completely, using custom CSS in styles.css
 
 ### PostgreSQL Connection in Tests
 **Problem**: Test database conflicts

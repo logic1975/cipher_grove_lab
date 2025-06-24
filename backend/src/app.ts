@@ -6,6 +6,8 @@ import path from 'path'
 import artistRoutes from './routes/artists'
 import releaseRoutes from './routes/releases'
 import newsRoutes from './routes/news'
+import contactRoutes from './routes/contact'
+import newsletterRoutes from './routes/newsletter'
 
 // Load environment variables
 dotenv.config()
@@ -60,5 +62,7 @@ app.get('/health', (req, res) => {
 app.use('/api/artists', artistRoutes)
 app.use('/api/releases', releaseRoutes)
 app.use('/api/news', newsRoutes)
+app.use('/api/contact', contactRoutes)
+app.use('/api/newsletter', newsletterRoutes)
 
 export default app

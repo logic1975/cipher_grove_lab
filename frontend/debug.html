@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Layout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #000;
+            background: #fff;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+        }
+        
+        .main-nav {
+            padding: 15px 30px;
+            border-bottom: 1px solid #000;
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .main-nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+        
+        .content {
+            height: 2000px;
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">CIPHER GROVE LAB</div>
+            <nav>News Concerts Shop About Search</nav>
+        </div>
+    </header>
+    
+    <nav class="main-nav">
+        <ul>
+            <li>ARTISTS</li>
+            <li>RELEASES</li>
+            <li>SERIES</li>
+            <li>STORIES</li>
+            <li>SOUNDS</li>
+        </ul>
+    </nav>
+    
+    <div class="content">
+        <h1>Artists</h1>
+        <p>Scroll down to test sticky nav...</p>
+    </div>
+</body>
+</html>

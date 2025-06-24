@@ -146,7 +146,36 @@ npm install
 cd ../backend
 npm test
 
-# Start the development servers and watch the magic happen
+# Start the backend development server
+npm run dev
+
+# In a new terminal, start the frontend
+cd ../frontend
+npm run dev
+```
+
+## Development Server
+
+### Frontend Development
+To start the frontend development server:
+```bash
+cd frontend
+npm run dev
+```
+The server will:
+- Start on http://localhost:5173
+- Open your browser automatically
+- Provide hot module replacement (HMR)
+
+If you encounter port conflicts:
+```bash
+# Check what's using port 5173
+lsof -i :5173
+
+# Kill the process if needed
+kill -9 <PID>
+
+# Start fresh
 npm run dev
 ```
 

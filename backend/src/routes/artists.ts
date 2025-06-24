@@ -2,12 +2,17 @@ import { Router } from 'express'
 import { ArtistService } from '../services/artistService'
 import { ImageProcessingService } from '../services/imageProcessingService'
 import { singleImageUpload, handleMulterError } from '../middleware/multerConfig'
+import { createValidationMiddleware, artistSchemas } from '../middleware/validationMiddleware'
+import { asyncHandler } from '../middleware/errorHandlingMiddleware'
+import { apiRateLimit, uploadRateLimit } from '../middleware/rateLimitingMiddleware'
 
 const router = Router()
 
 // GET /api/artists - Get all artists with pagination and filtering
-router.get('/', async (req, res) => {
-  try {
+router.get('/', 
+  apiRateLimit,
+  createValidationMiddleware(artistSchemas.list),
+  asyncHandler(async (req, res) => {
     const page = parseInt(req.query.page as string) || 1
     const limit = parseInt(req.query.limit as string) || 10
     const featured = req.query.featured === 'true' ? true : undefined
@@ -28,21 +33,13 @@ router.get('/', async (req, res) => {
       pagination: result.pagination,
       timestamp: new Date().toISOString()
     })
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: {
-        code: 'INTERNAL_ERROR',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      },
-      timestamp: new Date().toISOString()
-    })
-  }
-})
+  })
+)
 
 // GET /api/artists/featured - Get featured artists
-router.get('/featured', async (req, res) => {
-  try {
+router.get('/featured', 
+  apiRateLimit,
+  asyncHandler(async (req, res) => {
     const artists = await ArtistService.getFeaturedArtists()
 
     res.json({
@@ -50,17 +47,8 @@ router.get('/featured', async (req, res) => {
       data: artists,
       timestamp: new Date().toISOString()
     })
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: {
-        code: 'INTERNAL_ERROR',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      },
-      timestamp: new Date().toISOString()
-    })
-  }
-})
+  })
+)
 
 // GET /api/artists/:id - Get artist by ID
 router.get('/:id', async (req, res) => {
@@ -287,8 +275,12 @@ router.delete('/:id', async (req, res) => {
 })
 
 // POST /api/artists/:id/image - Upload artist image
-router.post('/:id/image', singleImageUpload, handleMulterError, async (req, res) => {
-  try {
+router.post('/:id/image', 
+  uploadRateLimit,
+  createValidationMiddleware(artistSchemas.getById),
+  singleImageUpload, 
+  handleMulterError, 
+  asyncHandler(async (req, res) => {
     const id = parseInt(req.params.id)
 
     if (isNaN(id)) {
@@ -346,31 +338,7 @@ router.post('/:id/image', singleImageUpload, handleMulterError, async (req, res)
       message: 'Artist image uploaded successfully',
       timestamp: new Date().toISOString()
     })
-  } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes('Image processing failed') || 
-          error.message.includes('Invalid file type') ||
-          error.message.includes('File size exceeds')) {
-        return res.status(400).json({
-          success: false,
-          error: {
-            code: 'IMAGE_PROCESSING_ERROR',
-            message: error.message
-          },
-          timestamp: new Date().toISOString()
-        })
-      }
-    }
-
-    res.status(500).json({
-      success: false,
-      error: {
-        code: 'INTERNAL_ERROR',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      },
-      timestamp: new Date().toISOString()
-    })
-  }
-})
+  })
+)
 
 export default router

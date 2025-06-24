@@ -92,6 +92,8 @@ export const cleanupTestDatabase = async (): Promise<void> => {
     await prisma.release.deleteMany();
     await prisma.artist.deleteMany();
     await prisma.news.deleteMany();
+    await prisma.contact.deleteMany();
+    await prisma.newsletter.deleteMany();
     console.log('✅ Test database cleaned up');
   } catch (error) {
     console.error('❌ Error cleaning up test database:', error);

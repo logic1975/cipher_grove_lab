@@ -19,7 +19,17 @@
       "Bash(mv:*)",
       "Bash(npx ts-node:*)",
       "Bash(node:*)",
-      "Bash(eza:*)"
+      "Bash(eza:*)",
+      "Bash(npm run:*)",
+      "Bash(npx prisma migrate dev:*)",
+      "Bash(timeout 3 npm run dev)",
+      "Bash(git commit:*)",
+      "Bash(npx tailwindcss init:*)",
+      "Bash(rm:*)",
+      "Bash(curl:*)",
+      "Bash(cp:*)",
+      "Bash(npx vite:*)",
+      "Bash(kill:*)"
     ],
     "deny": []
   }

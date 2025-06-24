@@ -25,15 +25,56 @@ This workflow is designed for AI-assisted development where Claude implements fe
 - Consistent API response formats
 - Proper error handling patterns
 
-### 4. Git Operations
+### 4. Documentation Update (MANDATORY)
+After each subtask completion, update relevant `.claude/` files:
+
+**Always Update:**
+- `development-plan.md` - Mark subtask [x] complete, update progress status
+- `CLAUDE.md` - Update current status and test counts
+
+**Update If Changed:**
+- `api-specification.md` - If API endpoints/contracts changed
+- `database-schema.md` - If schema or data structures changed  
+- `security-model.md` - If security features/middleware added
+- `testing-strategy.md` - If testing approaches evolved
+- `troubleshooting.md` - If new issues/solutions discovered
+
+**Documentation Principles:**
+- Reflect actual implementation vs planned design
+- Update test counts and status accurately
+- Document any lessons learned or deviations
+- Ensure documentation could guide a new developer
+
+### 5. Full Regression Testing (MANDATORY)
 ```bash
-# Branch creation for features
-git checkout -b feature/component-name
+# Run complete test suite to ensure no breaking changes
+cd backend && npm test
+cd frontend && npm test
 
-# Conventional commits
-git commit -m "feat: implement artist profile with tests"
+# Fix any regressions before proceeding
+# All tests must pass before commit
+```
 
-# Merge to main after validation
+### 6. Git Operations (MANDATORY)
+```bash
+# Branch creation for features (if not already created)
+git checkout -b feature/subtask-name
+
+# Stage all changes including documentation updates
+git add .
+
+# Conventional commits with subtask reference
+git commit -m "feat: complete Phase X.Y - [subtask description]
+
+- Implementation details
+- Tests: X passing
+- Documentation: updated .claude/file.md
+- Status: ready for next subtask"
+
+# Push to remote for backup
+git push origin feature/subtask-name
+
+# Merge to main after validation (or continue on branch)
 ```
 
 ## Project Structure Management
@@ -51,18 +92,25 @@ git commit -m "feat: implement artist profile with tests"
 
 ## Quality Gates
 
-### Per Substep
+### Per Subtask (MANDATORY - ALL MUST BE COMPLETE)
 - [ ] Tests written before implementation
-- [ ] All tests pass (100%)
-- [ ] Coverage exceeds 90%
+- [ ] All subtask tests pass (100%)
+- [ ] Coverage exceeds 90% for new code
 - [ ] No TypeScript errors
 - [ ] Code follows project standards
+- [ ] **Documentation updated in relevant `.claude/` files**
+- [ ] **Full regression test suite passes (backend + frontend)**
+- [ ] **Changes committed to Git with descriptive message**
+- [ ] Subtask marked [x] complete in development-plan.md
 
 ### Per Phase
-- [ ] All substeps completed and tested
+- [ ] All subtasks completed with quality gates met
 - [ ] Integration between components verified
 - [ ] Performance targets met
 - [ ] Security requirements satisfied
+- [ ] **All documentation reflects actual implementation**
+- [ ] **Complete test suite passes with no regressions**
+- [ ] **Phase completion committed and tagged in Git**
 
 ## Database Operations
 ```bash
@@ -77,7 +125,14 @@ npm run db:seed          # Load test data
 # Service startup
 brew services start postgresql  # Database
 cd backend && npm run dev       # API server
-cd frontend && npm run dev      # React app
+
+# Frontend (in new terminal)
+cd frontend && npm run dev      # React app (auto-opens browser)
+
+# If port conflicts occur:
+lsof -i :5173                  # Check what's using the port
+kill -9 <PID>                  # Kill the process if needed
+npm run dev                    # Start fresh
 ```
 
 ## Documentation Maintenance

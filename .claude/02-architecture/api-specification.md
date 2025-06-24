@@ -4,6 +4,8 @@
 **Production URL**: `https://api.musiclabel.com/api`  
 **API Version**: v1  
 **Authentication**: None required for public endpoints  
+**Middleware**: ✅ Validation, Error Handling, Rate Limiting (Phase 3.3)  
+**Contact/Newsletter**: ✅ Complete API implementation (Phase 3.4)  
 
 ## Response Format
 
@@ -104,6 +106,27 @@ interface StreamingPlatformLinks {
   // 5 platforms: spotify, appleMusic, youtube, bandcamp, soundcloud  
   // See database-schema.md for URL format examples
 }
+
+// Contact and Newsletter types (Phase 3.4)
+interface Contact {
+  id: number;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  type: 'demo' | 'business' | 'general' | 'press';
+  processed: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Newsletter {
+  id: number;
+  email: string;
+  isActive: boolean;
+  subscribedAt: Date;
+  unsubscribedAt: Date | null;
+}
 ```
 
 ## Artists Endpoints
@@ -202,6 +225,94 @@ interface StreamingPlatformLinks {
 **Sizes**: small (300x300), medium (600x600), large (1200x1200)  
 **Headers**: Cache-Control, Content-Type
 
+## Contact Endpoints (Phase 3.4)
+
+### POST /api/contact
+**Status**: ✅ IMPLEMENTED  
+**Rate Limit**: 5/15min per IP  
+**Body**: `{name, email, subject, message, type}`  
+**Validation**: name(2-100), email(valid), subject(5-200), message(10-2000), type(demo/business/general/press)  
+**Response**: Success message + contact ID  
+**Business Rules**: Max 3 submissions per email per 24h, spam detection  
+**Errors**: 400 validation, 429 rate limit/spam protection
+
+### GET /api/contact
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Query**: `page?, limit?, type?, processed?, search?`  
+**Response**: `PaginatedResponse<Contact>`  
+**Features**: Filtering by type/status, search across all fields
+
+### GET /api/contact/stats
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Response**: `{total, processed, unprocessed, byType, thisWeek, thisMonth}`
+
+### GET /api/contact/unprocessed
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Query**: `limit?` (max 50)  
+**Response**: Recent unprocessed contacts for dashboard
+
+### GET /api/contact/:id
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Response**: `ApiResponse<Contact>`  
+**Errors**: 404 if not found
+
+### PUT /api/contact/:id
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Body**: `{processed: boolean}`  
+**Response**: Updated contact with processing status
+
+### DELETE /api/contact/:id
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Response**: Success confirmation  
+**Errors**: 404 if not found
+
+## Newsletter Endpoints (Phase 3.4)
+
+### POST /api/newsletter/subscribe
+**Status**: ✅ IMPLEMENTED  
+**Rate Limit**: 3/10min per IP  
+**Body**: `{email}`  
+**Features**: Email normalization, reactivation of unsubscribed emails  
+**Business Rules**: Blocked domain detection, duplicate prevention  
+**Response**: Subscription confirmation with subscriber data  
+**Errors**: 400 invalid email, 409 already subscribed, 429 rate limit
+
+### POST /api/newsletter/unsubscribe
+**Status**: ✅ IMPLEMENTED  
+**Body**: `{email}`  
+**Response**: Unsubscription confirmation  
+**Errors**: 404 if not subscribed
+
+### GET /api/newsletter/subscribers
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Query**: `page?, limit?, isActive?, search?`  
+**Response**: `PaginatedResponse<Newsletter>`  
+**Features**: Filter by active status, email search
+
+### GET /api/newsletter/stats
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Response**: `{totalSubscribers, activeSubscribers, unsubscribedCount, subscriptionsThisWeek, subscriptionsThisMonth, unsubscriptionsThisWeek, unsubscriptionsThisMonth, growthRate}`
+
+### GET /api/newsletter/active
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Response**: All active subscribers for email campaigns  
+**Use Case**: Export for email marketing platforms
+
+### GET /api/newsletter/subscriber/:email
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Response**: `ApiResponse<Newsletter>`  
+**Errors**: 404 if not found
+
+### DELETE /api/newsletter/subscriber/:email
+**Status**: ✅ IMPLEMENTED (Admin - GDPR)  
+**Response**: Permanent deletion confirmation  
+**Use Case**: GDPR compliance, right to be forgotten
+
+### GET /api/newsletter/check/:email
+**Status**: ✅ IMPLEMENTED (Public)  
+**Response**: `{email, eligible, reason?}`  
+**Features**: Pre-subscription validation, eligibility checking
+
 ## Health Check Endpoints
 
 ### GET /api/health
@@ -225,7 +336,7 @@ interface StreamingPlatformLinks {
 
 ## Implementation Status (June 18, 2025)
 
-### ✅ COMPLETED: Phase 3.1-3.2 - Full REST API + Image Upload Implementation (270 tests passing)
+### ✅ COMPLETED: Phase 3.1-3.3 - Full REST API + Image Upload + Middleware Implementation (333 tests passing)
 ```typescript
 // ArtistService - 25 comprehensive tests
 class ArtistService {
@@ -358,6 +469,125 @@ export const imageUpload = multer({
 })
 ```
 
-### 🔄 NEXT: Phase 3.3-3.4 - API Middleware & Contact Forms
-- API validation and error handling middleware
-- Contact/Newsletter API endpoints with rate limiting
+### ✅ COMPLETED: Phase 3.3 - API Middleware Implementation (63 new tests)
+```typescript
+// Validation Middleware (21 tests ✅)
+export const createValidationMiddleware = (schemas: ValidationSchemas) => middleware
+export const artistSchemas = { list, create, update, getById }
+export const releaseSchemas = { list, create, update, getById }  
+export const newsSchemas = { list, create, update, getById, getBySlug }
+
+// Error Handling Middleware (15 tests ✅)  
+export const asyncHandler = (fn: Function) => middleware
+export const errorHandler = (error, req, res, next) => standardErrorResponse
+export const notFoundHandler = (req, res, next) => 404Response
+
+// Rate Limiting Middleware (19 tests ✅)
+export const apiRateLimit = 100/15min           // General API endpoints
+export const contactRateLimit = 5/15min         // Contact form protection  
+export const newsletterRateLimit = 3/10min      // Newsletter signup protection
+export const uploadRateLimit = 10/hour          // File upload protection
+export const searchRateLimit = 30/min           // Search endpoint protection
+
+// Integrated Middleware Stack
+router.use(rateLimit, validation, asyncHandler, errorHandler)
+```
+
+### ✅ COMPLETED: Enhanced API Security & Validation
+- **Input Validation**: Comprehensive Joi schemas for all endpoints
+- **Error Standardization**: Consistent error responses with proper HTTP codes
+- **Rate Protection**: Multi-tier rate limiting (API/Contact/Newsletter/Upload)
+- **Type Safety**: Full TypeScript integration with Prisma validation
+- **Async Safety**: All route handlers wrapped with error-catching middleware
+- **Express-rate-limit v7**: Latest version with standardized headers (ratelimit-*)
+
+### ✅ COMPLETED: Phase 3.4 - Contact/Newsletter API Implementation (58 new tests)
+```typescript
+// ContactService - 26 comprehensive tests
+class ContactService {
+  static async createContact(data: { name, email, subject, message, type })
+  static async getContacts(options: { page?, limit?, type?, processed?, search? })
+  static async getContactById(id: number): Promise<Contact | null>
+  static async updateContact(id: number, data: { processed: boolean })
+  static async deleteContact(id: number): Promise<void>
+  static async getContactStats(): Promise<ContactStats>
+  static async getUnprocessedContacts(limit: number): Promise<Contact[]>
+  // Business Rules: Max 3 submissions per email per 24h, XSS prevention, spam detection
+}
+
+// NewsletterService - 32 comprehensive tests  
+class NewsletterService {
+  static async subscribe(data: { email }): Promise<Newsletter>
+  static async unsubscribe(email: string): Promise<Newsletter>
+  static async getSubscribers(options: { page?, limit?, isActive?, search? })
+  static async getSubscriberByEmail(email: string): Promise<Newsletter | null>
+  static async getActiveSubscribers(): Promise<Newsletter[]>
+  static async getNewsletterStats(): Promise<NewsletterStats>
+  static async deleteSubscriber(email: string): Promise<void>
+  static async validateSubscriptionEligibility(email: string)
+  // Features: Email normalization, domain blocking, GDPR compliance, reactivation
+}
+```
+
+### ✅ COMPLETED: Contact API Endpoints (25 tests)
+- `POST /api/contact` - Contact form submission with spam protection (5/15min rate limit)
+- `GET /api/contact` - Admin: List contacts with filtering and search
+- `GET /api/contact/stats` - Admin: Contact statistics (total, processed, by type)  
+- `GET /api/contact/unprocessed` - Admin: Recent unprocessed contacts
+- `GET /api/contact/:id` - Admin: Get contact by ID
+- `PUT /api/contact/:id` - Admin: Update contact processing status
+- `DELETE /api/contact/:id` - Admin: Delete contact
+
+### ✅ COMPLETED: Newsletter API Endpoints (33 tests)
+- `POST /api/newsletter/subscribe` - Newsletter subscription (3/10min rate limit)
+- `POST /api/newsletter/unsubscribe` - Newsletter unsubscription
+- `GET /api/newsletter/subscribers` - Admin: List subscribers with filtering
+- `GET /api/newsletter/stats` - Admin: Newsletter statistics and growth metrics
+- `GET /api/newsletter/active` - Admin: All active subscribers for campaigns
+- `GET /api/newsletter/subscriber/:email` - Admin: Get subscriber by email
+- `DELETE /api/newsletter/subscriber/:email` - Admin: GDPR deletion
+- `GET /api/newsletter/check/:email` - Public: Check subscription eligibility
+
+### ✅ COMPLETED: Enhanced Database Schema (Phase 3.4)
+```sql
+-- Contact model with enum type and indexing
+model Contact {
+  id        Int         @id @default(autoincrement())
+  name      String      @db.VarChar(100)
+  email     String      @db.VarChar(255)
+  subject   String      @db.VarChar(200)
+  message   String      @db.Text
+  type      ContactType @default(general)
+  processed Boolean     @default(false)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([email])
+  @@index([processed])
+  @@index([type])
+  @@index([createdAt])
+}
+
+-- Newsletter model with unique email constraint
+model Newsletter {
+  id             Int       @id @default(autoincrement())
+  email          String    @unique @db.VarChar(255)
+  isActive       Boolean   @default(true)
+  subscribedAt   DateTime  @default(now())
+  unsubscribedAt DateTime?
+
+  @@index([isActive])
+  @@index([subscribedAt])
+}
+```
+
+### ✅ COMPLETED: Enhanced Middleware Integration
+- **Contact Validation**: name(2-100), email(valid), subject(5-200), message(10-2000), type enum
+- **Newsletter Validation**: email normalization, blocked domain detection
+- **Rate Limiting**: Environment-aware (strict production, lenient test), express-rate-limit v7
+- **Business Rules**: Contact spam protection, newsletter duplicate prevention, GDPR features
+- **Security**: XSS prevention, email sanitization, IP-based rate limiting
+
+### 🔄 NEXT: Phase 4.1 - Frontend Layout Components
+- Header, Footer, Layout with Zustand state management
+- Enhanced UI components with music industry features

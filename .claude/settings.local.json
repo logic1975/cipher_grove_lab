@@ -29,7 +29,8 @@
       "Bash(curl:*)",
       "Bash(cp:*)",
       "Bash(npx vite:*)",
-      "Bash(kill:*)"
+      "Bash(kill:*)",
+      "Bash(docker --version)"
     ],
     "deny": []
   }

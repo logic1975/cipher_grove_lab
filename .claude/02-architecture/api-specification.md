@@ -132,19 +132,40 @@ interface Newsletter {
 ## Artists Endpoints
 
 ### GET /api/artists
-**Query**: `page?, limit?, featured?, search?`  
+**Query**: `page?, limit?, featured?, search?, includeReleases?`  
 **Response**: `PaginatedResponse<Artist>`  
 **Type Safety**: Prisma-generated Artist type
+**Features**: Pagination, search by name/bio, filter by featured status
+
+### GET /api/artists/featured
+**Status**: ✅ IMPLEMENTED  
+**Response**: `ApiResponse<Artist[]>`  
+**Description**: Returns only featured artists (max 6)
 
 ### GET /api/artists/:id  
 **Path**: Artist ID  
-**Response**: `ApiResponse<Artist & { releases: Release[] }>`  
+**Query**: `includeReleases?` (boolean)
+**Response**: `ApiResponse<Artist & { releases?: Release[] }>`  
 **Errors**: 404 if not found
 
 ### POST /api/artists
 **Status**: ✅ IMPLEMENTED  
 **Body**: Joi validation with Prisma types
 **Response**: `ApiResponse<Artist>`
+**Validation**: Name uniqueness, featured limit (max 6), social links format
+
+### PUT /api/artists/:id
+**Status**: ✅ IMPLEMENTED  
+**Body**: Partial artist data for update
+**Response**: `ApiResponse<Artist>`
+**Validation**: Name uniqueness, featured limit, social links format
+**Errors**: 404 if not found, 400 if validation fails
+
+### DELETE /api/artists/:id
+**Status**: ✅ IMPLEMENTED  
+**Response**: `ApiResponse<{ message: string }>`
+**Note**: Cascades delete to associated releases
+**Errors**: 404 if not found
 
 ### POST /api/artists/:id/image
 **Status**: ✅ IMPLEMENTED (Phase 3.2)  
@@ -158,17 +179,50 @@ interface Newsletter {
 ## Releases Endpoints
 
 ### GET /api/releases
-**Query**: `page?, limit?, artist_id?, type?, release_date?, sort?`  
+**Query**: `page?, limit?, artistId?, type?, releaseDate?, sort?`  
 **Response**: `PaginatedResponse<Release & { artist: Artist }>`  
 **Type Safety**: Prisma relation with include
+**Features**: Filter by artist, type (album/single/ep), date range, sorting
+
+### GET /api/releases/latest
+**Status**: ✅ IMPLEMENTED  
+**Query**: `limit?` (default 10)
+**Response**: `ApiResponse<Release[]>`
+**Description**: Returns most recent releases sorted by release date
+
+### GET /api/releases/stats
+**Status**: ✅ IMPLEMENTED  
+**Response**: `ApiResponse<{ total: number, byType: { album: number, single: number, ep: number }, thisYear: number }>`
+**Description**: Release statistics and counts
+
+### GET /api/releases/type/:type
+**Status**: ✅ IMPLEMENTED  
+**Path**: Release type (album, single, or ep)
+**Query**: `page?, limit?`
+**Response**: `PaginatedResponse<Release & { artist: Artist }>`
 
 ### GET /api/releases/:id
 **Response**: `ApiResponse<Release & { artist: Artist }>`  
 **Type Safety**: Full type inference
+**Errors**: 404 if not found
 
-### GET /api/artists/:id/releases  
-**Query**: Same as `/api/releases` except `artist_id`  
-**Response**: `PaginatedResponse<Release>`
+### POST /api/releases
+**Status**: ✅ IMPLEMENTED  
+**Body**: Joi validation with release data
+**Response**: `ApiResponse<Release>`
+**Validation**: Artist exists, valid type, release date, streaming links format
+
+### PUT /api/releases/:id
+**Status**: ✅ IMPLEMENTED  
+**Body**: Partial release data for update
+**Response**: `ApiResponse<Release>`
+**Validation**: Type, date, streaming links format
+**Errors**: 404 if not found, 400 if validation fails
+
+### DELETE /api/releases/:id
+**Status**: ✅ IMPLEMENTED  
+**Response**: `ApiResponse<{ message: string }>`
+**Errors**: 404 if not found
 
 ### POST /api/releases/:id/cover-art
 **Status**: ✅ IMPLEMENTED (Phase 3.2)  
@@ -182,17 +236,79 @@ interface Newsletter {
 ## News Endpoints
 
 ### GET /api/news
-**Query**: `page?, limit?, published?`  
+**Query**: `page?, limit?, published?, search?`  
 **Response**: `PaginatedResponse<News>`  
 **Filtering**: Only published articles when `published=true`
+**Features**: Pagination, search in title/content, published filter
+
+### GET /api/news/published
+**Status**: ✅ IMPLEMENTED  
+**Query**: `page?, limit?`
+**Response**: `PaginatedResponse<News>`
+**Description**: Returns only published articles sorted by publish date
+
+### GET /api/news/drafts
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Query**: `page?, limit?`
+**Response**: `PaginatedResponse<News>`
+**Description**: Returns only draft articles (publishedAt is null)
+
+### GET /api/news/latest
+**Status**: ✅ IMPLEMENTED  
+**Query**: `limit?` (default 10)
+**Response**: `ApiResponse<News[]>`
+**Description**: Returns most recent published articles
+
+### GET /api/news/stats
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Response**: `ApiResponse<{ total: number, published: number, drafts: number, thisMonth: number }>`
+**Description**: News statistics and counts
+
+### GET /api/news/search
+**Status**: ✅ IMPLEMENTED  
+**Query**: `q` (search query), `published?`, `page?, limit?`
+**Response**: `PaginatedResponse<News>`
+**Description**: Full-text search in title and content
 
 ### GET /api/news/:id
 **Response**: `ApiResponse<News>`  
 **Type Safety**: Prisma-generated News type
+**Errors**: 404 if not found
 
 ### GET /api/news/slug/:slug  
 **Response**: `ApiResponse<News>`  
 **Validation**: Slug format validation
+**Errors**: 404 if not found
+
+### POST /api/news
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Body**: Joi validation with news data
+**Response**: `ApiResponse<News>`
+**Features**: Auto-generates slug from title if not provided
+
+### PUT /api/news/:id
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Body**: Partial news data for update
+**Response**: `ApiResponse<News>`
+**Validation**: Title, content length, slug uniqueness
+**Errors**: 404 if not found, 400 if validation fails
+
+### PUT /api/news/:id/publish
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Response**: `ApiResponse<News>`
+**Description**: Sets publishedAt to current timestamp
+**Errors**: 404 if not found, 400 if already published
+
+### PUT /api/news/:id/unpublish
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Response**: `ApiResponse<News>`
+**Description**: Sets publishedAt to null
+**Errors**: 404 if not found, 400 if already draft
+
+### DELETE /api/news/:id
+**Status**: ✅ IMPLEMENTED (Admin)  
+**Response**: `ApiResponse<{ message: string }>`
+**Errors**: 404 if not found
 
 ## Contact Endpoints
 
@@ -315,8 +431,10 @@ interface Newsletter {
 
 ## Health Check Endpoints
 
-### GET /api/health
+### GET /health
+**Status**: ✅ IMPLEMENTED  
 **Response**: `{status: "healthy", timestamp, version, uptime, database: "connected", storage: "accessible"}`
+**Note**: Implemented at `/health` (not `/api/health`)
 
 ## Error Codes & Rate Limiting
 

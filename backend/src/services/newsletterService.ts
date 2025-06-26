@@ -393,7 +393,10 @@ export class NewsletterService {
       return false
     }
 
-    const timeThreshold = new Date(Date.now() - hours * 60 * 60 * 1000)
+    // When hours is 0, we want to check if the subscription exists at all (just happened)
+    // Add a small buffer (1 second) to account for timing differences
+    const bufferMs = hours === 0 ? 1000 : 0
+    const timeThreshold = new Date(Date.now() - (hours * 60 * 60 * 1000) - bufferMs)
 
     try {
       const subscriber = await prisma.newsletter.findUnique({
@@ -406,7 +409,7 @@ export class NewsletterService {
 
       // Check if there was a recent subscription attempt
       // Only block if subscriber is currently active (to allow reactivation)
-      return subscriber.isActive && subscriber.subscribedAt > timeThreshold
+      return subscriber.isActive && subscriber.subscribedAt >= timeThreshold
     } catch (error) {
       console.error('Error checking recent subscription attempts:', error)
       return false

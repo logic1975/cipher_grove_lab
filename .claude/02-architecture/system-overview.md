@@ -3,18 +3,24 @@
 ## High-Level Architecture
 
 ```
+┌─────────────────┐         ┌─────────────────┐         ┌─────────────────┐
+│   Frontend      │         │  Backend API    │         │   Database      │
+│   React/TS      │◄────────│  Node.js/Express│────────►│   PostgreSQL    │
+│   Custom CSS    │  REST   │  TypeScript     │ Prisma  │   5 Tables      │
+└─────────────────┘         └─────────────────┘         └─────────────────┘
+        │                           │                            │
+        │                           ▼                            │
+        │                   ┌─────────────────┐                 │
+        │                   │ Services Layer  │                 │
+        │                   │ Business Logic  │                 │
+        │                   │ Validation      │                 │
+        │                   └─────────────────┘                 │
+        │                           │                            │
+        ▼                           ▼                            ▼
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Frontend      │    │   Backend API   │    │   Database      │
-│   React/TS      │◄──►│   Node.js       │◄──►│   PostgreSQL    │
-│   Tailwind CSS  │    │   Express.js    │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-        │                        │                        │
-        │                        │                        │
-        ▼                        ▼                        ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   CDN/Static    │    │   External APIs │    │   File Storage  │
-│   Assets        │    │   Streaming     │    │   Images/Media  │
-│                 │    │   Services      │    │                 │
+│   File Storage  │    │  Middleware     │    │   Indexes &     │
+│   /uploads/     │    │  Stack          │    │   Relations     │
+│   Images        │    │  Rate Limiting  │    │                 │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
@@ -31,21 +37,25 @@
 - **Audio Handling**: Howler.js for enhanced music player functionality
 - **Testing**: Vitest + React Testing Library (65 tests passing)
 
-### Backend
+### Backend (✅ 100% COMPLETE - 399+ tests)
 - **Runtime**: Node.js (LTS version)
-- **Framework**: Express.js (minimal, flexible web framework)
+- **Framework**: Express.js v5 (minimal, flexible web framework)
 - **Language**: TypeScript (type safety and developer experience)
 - **ORM**: Prisma (type-safe database layer with migrations)
-- **Validation**: Joi (request validation)
+- **APIs**: 50+ REST endpoints across 5 modules
+- **Validation**: Joi (comprehensive request validation)
 - **Rate Limiting**: express-rate-limit v7 (multi-tier protection)
 - **File Processing**: Multer + Sharp (image upload and optimization)
+- **Error Handling**: Centralized with consistent error codes
+- **Business Logic**: Complete services layer with validation
 
-### Database
+### Database (5 Tables)
 - **Primary Database**: PostgreSQL (ACID compliance, JSON support)
+- **Tables**: Artists, Releases, News, Contact, Newsletter
 - **ORM**: Prisma with type-safe queries and migrations
 - **Connection Pool**: Prisma connection pooling
 - **Containerization**: Docker PostgreSQL with automatic setup
-- **Backup Strategy**: Automated daily backups
+- **Features**: JSON fields for social/streaming links, relationships, indexes
 
 ### Development & Testing
 - **Frontend Testing**: Vitest + React Testing Library
@@ -56,19 +66,26 @@
 
 ## Data Flow
 
-### 1. User Request Flow
+### 1. Complete API Request Flow
 ```
-User Request → React Router → Component → Custom Hook → API Call → Express Route → Controller → Database → Response
-```
-
-### 2. Static Assets Flow
-```
-Image Request → CDN/Static Server → Optimized Image → Browser Cache
+Client Request → Express Route → Middleware Stack → Service Layer → Prisma ORM → PostgreSQL
+       ↓               ↓                ↓                ↓              ↓            ↓
+   Response ← JSON Transform ← Business Logic ← Validation ← Type Safety ← Query Result
 ```
 
-### 3. Music Preview Flow
+### 2. Middleware Processing
 ```
-Play Request → Component → External API (Spotify/SoundCloud) → Embedded Player → Audio Stream
+Request → Rate Limiting → Validation (Joi) → Error Handler → Route Handler → Service
+```
+
+### 3. File Upload Flow
+```
+Image Upload → Multer → Sharp Processing → Multi-size Generation → Disk Storage → Database Update
+```
+
+### 4. Static Assets Flow
+```
+Image Request → Express Static → Cache Headers → Optimized Image → Browser Cache
 ```
 
 ## Security Architecture

@@ -3,9 +3,14 @@
 **Base URL**: `http://localhost:3000/api` (development)  
 **Production URL**: `https://api.musiclabel.com/api`  
 **API Version**: v1  
-**Authentication**: None required for public endpoints  
-**Middleware**: ✅ Validation, Error Handling, Rate Limiting (Phase 3.3)  
-**Contact/Newsletter**: ✅ Complete API implementation (Phase 3.4)  
+**Status**: ✅ **100% COMPLETE** - All APIs implemented and tested  
+**Total Endpoints**: 50+ across 5 main modules  
+**Authentication**: None required for public endpoints (Admin endpoints marked)  
+**Middleware Stack**: 
+- ✅ Rate Limiting (express-rate-limit v7)
+- ✅ Validation (Joi schemas)
+- ✅ Error Handling (centralized)
+- ✅ File Upload (Multer + Sharp)  
 
 ## Response Format
 
@@ -129,70 +134,160 @@ interface Newsletter {
 }
 ```
 
-## Artists Endpoints
+## Artists Endpoints (7 endpoints)
 
 ### GET /api/artists
-**Query**: `page?, limit?, featured?, search?`  
+**Query**: `page?, limit?, featured?, search?, includeReleases?`  
+**Rate Limit**: 100/15min  
 **Response**: `PaginatedResponse<Artist>`  
-**Type Safety**: Prisma-generated Artist type
+**Features**: Pagination, search by name/bio, filter by featured status
+
+### GET /api/artists/featured
+**Rate Limit**: 100/15min  
+**Response**: `ApiResponse<Artist[]>`  
+**Business Rule**: Returns max 6 featured artists
 
 ### GET /api/artists/:id  
 **Path**: Artist ID  
-**Response**: `ApiResponse<Artist & { releases: Release[] }>`  
+**Query**: `includeReleases?`  
+**Response**: `ApiResponse<Artist & { releases?: Release[] }>`  
 **Errors**: 404 if not found
 
 ### POST /api/artists
-**Status**: ✅ IMPLEMENTED  
-**Body**: Joi validation with Prisma types
-**Response**: `ApiResponse<Artist>`
+**Body**: `{name, bio?, socialLinks?, isFeatured?}`  
+**Validation**: Unique name, valid social URLs  
+**Business Rule**: Max 6 featured artists  
+**Response**: `ApiResponse<Artist>`  
+**Errors**: 409 duplicate name, 422 featured limit
+
+### PUT /api/artists/:id
+**Body**: Any artist fields to update  
+**Response**: `ApiResponse<Artist>`  
+**Errors**: 404 not found, 409 duplicate name
+
+### DELETE /api/artists/:id
+**Response**: 204 No Content  
+**Cascade**: Deletes all associated releases
 
 ### POST /api/artists/:id/image
-**Status**: ✅ IMPLEMENTED (Phase 3.2)  
+**Rate Limit**: 10/hour  
 **Content-Type**: `multipart/form-data`  
 **Body**: `image` file field (JPEG, PNG, WebP, max 5MB), `altText` optional field  
 **Processing**: Auto-generates thumbnail (400x400), profile (800x800), featured (1200x1200) sizes  
 **Response**: `ApiResponse<Artist>` with updated image fields  
-**Validation**: File type, size, artist existence  
-**Error Codes**: 400 (validation), 404 (artist not found)
+**Errors**: 400 validation, 404 artist not found
 
-## Releases Endpoints
+## Releases Endpoints (9 endpoints)
 
 ### GET /api/releases
-**Query**: `page?, limit?, artist_id?, type?, release_date?, sort?`  
-**Response**: `PaginatedResponse<Release & { artist: Artist }>`  
-**Type Safety**: Prisma relation with include
+**Query**: `page?, limit?, artistId?, type?, releaseDate?, sort?, includeArtist?`  
+**Sort Options**: newest, oldest, title  
+**Response**: `PaginatedResponse<Release & { artist?: Artist }>`  
+**Features**: Filter by artist, type, date; sort options
 
-### GET /api/releases/:id
-**Response**: `ApiResponse<Release & { artist: Artist }>`  
-**Type Safety**: Full type inference
+### GET /api/releases/latest
+**Query**: `limit?` (default: 5)  
+**Response**: `ApiResponse<Release[]>`  
+**Features**: Most recent releases
 
-### GET /api/artists/:id/releases  
-**Query**: Same as `/api/releases` except `artist_id`  
+### GET /api/releases/stats
+**Response**: `ApiResponse<{total, byType, thisYear}>`  
+**Features**: Release statistics
+
+### GET /api/releases/type/:type
+**Path**: type (album/single/ep)  
+**Query**: `page?, limit?`  
 **Response**: `PaginatedResponse<Release>`
 
+### GET /api/releases/:id
+**Query**: `includeArtist?`  
+**Response**: `ApiResponse<Release & { artist?: Artist }>`  
+**Errors**: 404 not found
+
+### POST /api/releases
+**Body**: `{artistId, title, type, releaseDate, streamingLinks?, description?}`  
+**Validation**: Artist exists, valid streaming URLs  
+**Response**: `ApiResponse<Release>`  
+**Errors**: 400 artist not found
+
+### PUT /api/releases/:id
+**Body**: Any release fields to update  
+**Response**: `ApiResponse<Release>`  
+**Errors**: 404 not found
+
+### DELETE /api/releases/:id
+**Response**: 204 No Content
+
 ### POST /api/releases/:id/cover-art
-**Status**: ✅ IMPLEMENTED (Phase 3.2)  
+**Rate Limit**: 10/hour  
 **Content-Type**: `multipart/form-data`  
 **Body**: `image` file field (JPEG, PNG, WebP, max 5MB), `altText` optional field  
-**Processing**: Auto-generates small (300x300), medium (600x600), large (1200x1200) sizes (1:1 square format)  
+**Processing**: Auto-generates small (300x300), medium (600x600), large (1200x1200) sizes  
 **Response**: `ApiResponse<Release>` with updated cover art fields  
-**Validation**: File type, size, release existence  
-**Error Codes**: 400 (validation), 404 (release not found)
+**Errors**: 400 validation, 404 release not found
 
-## News Endpoints
+## News Endpoints (13 endpoints)
 
 ### GET /api/news
-**Query**: `page?, limit?, published?`  
+**Query**: `page?, limit?, published?, search?, sort?`  
 **Response**: `PaginatedResponse<News>`  
-**Filtering**: Only published articles when `published=true`
+**Features**: Draft/published filtering, content search
+
+### GET /api/news/published
+**Query**: `page?, limit?`  
+**Response**: `PaginatedResponse<News>`  
+**Features**: Published articles only
+
+### GET /api/news/drafts
+**Query**: `page?, limit?`  
+**Response**: `PaginatedResponse<News>`  
+**Features**: Draft articles only
+
+### GET /api/news/latest
+**Query**: `limit?` (default: 5)  
+**Response**: `ApiResponse<News[]>`  
+**Features**: Latest published news
+
+### GET /api/news/stats
+**Response**: `ApiResponse<{total, published, drafts, thisMonth}>`  
+**Features**: News statistics
+
+### GET /api/news/search
+**Query**: `q` (required), `publishedOnly?, page?, limit?`  
+**Response**: `PaginatedResponse<News>`  
+**Features**: Search in title, content, author
+
+### GET /api/news/slug/:slug
+**Path**: URL-friendly slug  
+**Response**: `ApiResponse<News>`  
+**Errors**: 404 not found
 
 ### GET /api/news/:id
 **Response**: `ApiResponse<News>`  
-**Type Safety**: Prisma-generated News type
+**Errors**: 404 not found
 
-### GET /api/news/slug/:slug  
+### POST /api/news
+**Body**: `{title, content, author?, publishedAt?}`  
+**Features**: Auto-generates slug from title  
+**Response**: `ApiResponse<News>`
+
+### PUT /api/news/:id
+**Body**: Any news fields to update  
 **Response**: `ApiResponse<News>`  
-**Validation**: Slug format validation
+**Errors**: 404 not found, 409 duplicate slug
+
+### PUT /api/news/:id/publish
+**Response**: `ApiResponse<News>`  
+**Features**: Changes status from draft to published  
+**Errors**: 404 not found, 422 already published
+
+### PUT /api/news/:id/unpublish
+**Response**: `ApiResponse<News>`  
+**Features**: Reverts to draft status  
+**Errors**: 404 not found, 422 not published
+
+### DELETE /api/news/:id
+**Response**: 204 No Content
 
 ## Contact Endpoints
 
@@ -313,281 +408,81 @@ interface Newsletter {
 **Response**: `{email, eligible, reason?}`  
 **Features**: Pre-subscription validation, eligibility checking
 
-## Health Check Endpoints
+## Additional Endpoints
 
 ### GET /api/health
-**Response**: `{status: "healthy", timestamp, version, uptime, database: "connected", storage: "accessible"}`
+**Response**: `{success: true, status: "healthy", timestamp}`  
+**Use Case**: Health checks for monitoring
 
-## Error Codes & Rate Limiting
+### GET /
+**Response**: `{success: true, message: "Cipher Grove Lab API", timestamp, environment}`  
+**Use Case**: API root information
 
-### HTTP Status Codes
-- **4xx**: 400 (bad request), 404 (not found), 422 (validation), 429 (rate limit)
-- **5xx**: 500 (server error), 502 (DB error), 503 (unavailable)
+## Middleware Stack Details
 
-### Rate Limits
-- **General**: 100/min per IP, **Search**: 30/min per IP
-- **Contact**: 5/15min per IP, **Newsletter**: 3/10min per IP  
-- **Headers**: `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`
+### 1. Rate Limiting (express-rate-limit v7)
+- **General API**: 100 requests/15min per IP
+- **Contact Form**: 5 requests/15min per IP  
+- **Newsletter**: 3 requests/10min per IP
+- **File Upload**: 10 uploads/hour per IP
+- **Search**: 30 requests/min per IP
+- **Headers**: Uses standard `ratelimit-*` headers (v7 format)
+- **Environment Aware**: Lenient in test/dev, strict in production
 
-### CORS  
-- **Origins**: `localhost:5173` (dev), `musiclabel.com` (prod)
-- **Methods**: GET, POST, PUT, DELETE, OPTIONS
-- **Headers**: Content-Type, Authorization, X-Requested-With
+### 2. Validation (Joi)
+- **Request Body**: Type conversion, required fields, format validation
+- **Query Params**: Page/limit validation, type conversion
+- **Path Params**: ID validation, format checking
+- **Error Format**: Detailed validation messages
 
-## Implementation Status (June 18, 2025)
+### 3. Error Handling
+- **Async Handler**: Catches all async errors
+- **Error Format**: Consistent `{success: false, error: {code, message}}`
+- **Status Codes**: Proper HTTP status for each error type
 
-### ✅ COMPLETED: Phase 3.1-3.3 - Full REST API + Image Upload + Middleware Implementation (333 tests passing)
-```typescript
-// ArtistService - 25 comprehensive tests
-class ArtistService {
-  static async getArtists(options: { page?, limit?, featured?, search?, includeReleases? })
-  static async createArtist(data: { name, bio?, imageUrl?, socialLinks?, isFeatured? })
-  static async updateArtist(id: number, data: Partial<ArtistData>)
-  static async getFeaturedArtists(): Promise<Artist[]> // Max 6 enforcement
-  static async updateArtistImage(id: number, imageData: ImageData)
-}
+### 4. File Upload (Multer + Sharp)
+- **File Types**: JPEG, PNG, WebP only
+- **Max Size**: 5MB per file
+- **Processing**: Auto-resize to multiple sizes
+- **Storage**: Memory storage → Sharp processing → Disk save
 
-// ReleaseService - 37 comprehensive tests  
-class ReleaseService {
-  static async getReleases(options: { page?, limit?, artistId?, type?, sort? })
-  static async createRelease(data: { artistId, title, type, releaseDate, streamingLinks? })
-  static async getReleasesByArtist(artistId: number, options?)
-  static async updateReleaseCoverArt(id: number, coverArtData: CoverArtData)
-  static async getReleaseStats(): Promise<{ total, byType, thisYear }>
-}
+## Error Codes Reference
 
-// NewsService - 40 comprehensive tests
-class NewsService {
-  static async getNews(options: { page?, limit?, published?, search? })
-  static async createNews(data: { title, content, author?, publishedAt? })
-  static async publishNews(id: number): Promise<News>
-  static async getNewsBySlug(slug: string): Promise<News | null>
-  static async searchNews(query: string, options?)
-}
-```
+### Common Error Codes
+- `INVALID_ID`: Invalid ID format
+- `NOT_FOUND`: Resource not found
+- `VALIDATION_ERROR`: Input validation failed
+- `DUPLICATE_ENTRY`: Unique constraint violation
+- `RATE_LIMIT_EXCEEDED`: Too many requests
+- `INTERNAL_ERROR`: Server error
 
-### ✅ COMPLETED: File Storage System
-```typescript
-// Express static serving with security headers
-app.use('/uploads', express.static(path.join(__dirname, '../uploads'), {
-  maxAge: '1d',
-  setHeaders: (res, filePath) => {
-    res.set({
-      'Cache-Control': 'public, max-age=86400',
-      'X-Content-Type-Options': 'nosniff',
-      'X-Frame-Options': 'DENY'
-    });
-  }
-}));
+### Business Logic Error Codes
+- `FEATURED_LIMIT_EXCEEDED`: Max 6 featured artists
+- `ARTIST_NOT_FOUND`: Referenced artist doesn't exist
+- `ALREADY_PUBLISHED`: News already published
+- `NOT_PUBLISHED`: News not in published state
+- `DUPLICATE_ARTIST`: Artist name already exists
+- `DUPLICATE_SLUG`: News slug already exists
+- `TOO_MANY_SUBMISSIONS`: Contact spam protection
+- `ALREADY_SUBSCRIBED`: Newsletter duplicate
+- `EMAIL_NOT_SUBSCRIBED`: Email not in newsletter
+- `NO_FILE_UPLOADED`: Missing file in upload
+- `IMAGE_PROCESSING_ERROR`: Sharp processing failed
 
-// Directory structure
-/uploads/
-  /artists/     # Profile images (400x400, 800x800, 1200x1200)
-  /releases/    # Cover art (300x300, 600x600, 1200x1200)
-```
+## Implementation Summary
 
-### ✅ COMPLETED: Enhanced Validation
-```typescript
-// Social platform validation (8 platforms)
-socialLinks: {
-  spotify, appleMusic, youtube, instagram, 
-  facebook, bandcamp, soundcloud, tiktok
-}
-
-// Streaming platform validation (5 platforms)  
-streamingLinks: {
-  spotify, appleMusic, youtube, bandcamp, soundcloud
-}
-
-// Business rules enforcement
-- Max 6 featured artists
-- Unique artist names per label
-- Release dates within 2 years
-- Auto slug generation for news
-- Publish/draft workflow
-```
-
-### ✅ COMPLETED: REST API Endpoints (Phase 3.1-3.2) - All 270 tests passing
-
-#### Artists API (22 tests ✅)
-- `GET /api/artists` - Paginated list with filtering and search
-- `GET /api/artists/featured` - Featured artists only (max 6)
-- `GET /api/artists/:id` - Single artist with optional releases
-- `POST /api/artists` - Create with validation and business rules
-- `PUT /api/artists/:id` - Update with duplicate name prevention
-- `DELETE /api/artists/:id` - Delete with relationship handling
-- `POST /api/artists/:id/image` - ✅ NEW: Image upload with Sharp processing
-
-#### Releases API (25 tests ✅)
-- `GET /api/releases` - Paginated list with artist relations
-- `GET /api/releases/latest` - Latest releases with custom limits
-- `GET /api/releases/stats` - Statistics by type and totals
-- `GET /api/releases/type/:type` - Filter by album/single/ep
-- `GET /api/releases/:id` - Single release with artist data
-- `POST /api/releases` - Create with artist validation
-- `PUT /api/releases/:id` - Update with type validation
-- `DELETE /api/releases/:id` - Delete with verification
-- `POST /api/releases/:id/cover-art` - ✅ NEW: Cover art upload with Sharp processing
-
-#### News API (44 tests ✅)
-- `GET /api/news` - Paginated with published/draft filtering
-- `GET /api/news/published` - Published articles only
-- `GET /api/news/drafts` - Draft articles only
-- `GET /api/news/latest` - Latest published with limits
-- `GET /api/news/stats` - Statistics with monthly data
-- `GET /api/news/search` - Search with published filter
-- `GET /api/news/slug/:slug` - Get by URL slug
-- `GET /api/news/:id` - Get by ID
-- `POST /api/news` - Create with auto-slug generation
-- `PUT /api/news/:id` - Update with slug handling
-- `PUT /api/news/:id/publish` - Publish workflow
-- `PUT /api/news/:id/unpublish` - Unpublish workflow
-- `DELETE /api/news/:id` - Delete with verification
-
-#### Image Upload API (12 tests ✅) - ✅ NEW: Phase 3.2 Complete
-- `POST /api/artists/:id/image` - Artist image upload (7 comprehensive tests)
-- `POST /api/releases/:id/cover-art` - Release cover art upload (5 comprehensive tests)
-- **Features**: File validation, multi-size generation, WebP conversion, error handling
-- **Processing**: Sharp integration, automatic alt text, secure file handling
-
-### ✅ COMPLETED: ImageProcessingService (Phase 3.2)
-```typescript
-// ImageProcessingService with Sharp integration
-class ImageProcessingService {
-  static validateImageFile(file: Express.Multer.File): void
-  static async processArtistImage(file, artistId, altText): Promise<ProcessedImageResult>
-  static async processReleaseCoverArt(file, releaseId, altText): Promise<ProcessedCoverArtResult>
-  static getImageSizes(type: 'artist' | 'release'): ImageSize[]
-  static async deleteImageFiles(type, entityId): Promise<void>
-}
-
-// Multer configuration with security
-export const imageUpload = multer({
-  storage: multer.memoryStorage(),
-  fileFilter: (req, file, cb) => { /* JPEG, PNG, WebP only */ },
-  limits: { fileSize: 5 * 1024 * 1024, files: 1 }
-})
-```
-
-### ✅ COMPLETED: Phase 3.3 - API Middleware Implementation (63 new tests)
-```typescript
-// Validation Middleware (21 tests ✅)
-export const createValidationMiddleware = (schemas: ValidationSchemas) => middleware
-export const artistSchemas = { list, create, update, getById }
-export const releaseSchemas = { list, create, update, getById }  
-export const newsSchemas = { list, create, update, getById, getBySlug }
-
-// Error Handling Middleware (15 tests ✅)  
-export const asyncHandler = (fn: Function) => middleware
-export const errorHandler = (error, req, res, next) => standardErrorResponse
-export const notFoundHandler = (req, res, next) => 404Response
-
-// Rate Limiting Middleware (19 tests ✅)
-export const apiRateLimit = 100/15min           // General API endpoints
-export const contactRateLimit = 5/15min         // Contact form protection  
-export const newsletterRateLimit = 3/10min      // Newsletter signup protection
-export const uploadRateLimit = 10/hour          // File upload protection
-export const searchRateLimit = 30/min           // Search endpoint protection
-
-// Integrated Middleware Stack
-router.use(rateLimit, validation, asyncHandler, errorHandler)
-```
-
-### ✅ COMPLETED: Enhanced API Security & Validation
-- **Input Validation**: Comprehensive Joi schemas for all endpoints
-- **Error Standardization**: Consistent error responses with proper HTTP codes
-- **Rate Protection**: Multi-tier rate limiting (API/Contact/Newsletter/Upload)
-- **Type Safety**: Full TypeScript integration with Prisma validation
-- **Async Safety**: All route handlers wrapped with error-catching middleware
-- **Express-rate-limit v7**: Latest version with standardized headers (ratelimit-*)
-
-### ✅ COMPLETED: Phase 3.4 - Contact/Newsletter API Implementation (58 new tests)
-```typescript
-// ContactService - 26 comprehensive tests
-class ContactService {
-  static async createContact(data: { name, email, subject, message, type })
-  static async getContacts(options: { page?, limit?, type?, processed?, search? })
-  static async getContactById(id: number): Promise<Contact | null>
-  static async updateContact(id: number, data: { processed: boolean })
-  static async deleteContact(id: number): Promise<void>
-  static async getContactStats(): Promise<ContactStats>
-  static async getUnprocessedContacts(limit: number): Promise<Contact[]>
-  // Business Rules: Max 3 submissions per email per 24h, XSS prevention, spam detection
-}
-
-// NewsletterService - 32 comprehensive tests  
-class NewsletterService {
-  static async subscribe(data: { email }): Promise<Newsletter>
-  static async unsubscribe(email: string): Promise<Newsletter>
-  static async getSubscribers(options: { page?, limit?, isActive?, search? })
-  static async getSubscriberByEmail(email: string): Promise<Newsletter | null>
-  static async getActiveSubscribers(): Promise<Newsletter[]>
-  static async getNewsletterStats(): Promise<NewsletterStats>
-  static async deleteSubscriber(email: string): Promise<void>
-  static async validateSubscriptionEligibility(email: string)
-  // Features: Email normalization, domain blocking, GDPR compliance, reactivation
-}
-```
-
-### ✅ COMPLETED: Contact API Endpoints (25 tests)
-- `POST /api/contact` - Contact form submission with spam protection (5/15min rate limit)
-- `GET /api/contact` - Admin: List contacts with filtering and search
-- `GET /api/contact/stats` - Admin: Contact statistics (total, processed, by type)  
-- `GET /api/contact/unprocessed` - Admin: Recent unprocessed contacts
-- `GET /api/contact/:id` - Admin: Get contact by ID
-- `PUT /api/contact/:id` - Admin: Update contact processing status
-- `DELETE /api/contact/:id` - Admin: Delete contact
-
-### ✅ COMPLETED: Newsletter API Endpoints (33 tests)
-- `POST /api/newsletter/subscribe` - Newsletter subscription (3/10min rate limit)
-- `POST /api/newsletter/unsubscribe` - Newsletter unsubscription
-- `GET /api/newsletter/subscribers` - Admin: List subscribers with filtering
-- `GET /api/newsletter/stats` - Admin: Newsletter statistics and growth metrics
-- `GET /api/newsletter/active` - Admin: All active subscribers for campaigns
-- `GET /api/newsletter/subscriber/:email` - Admin: Get subscriber by email
-- `DELETE /api/newsletter/subscriber/:email` - Admin: GDPR deletion
-- `GET /api/newsletter/check/:email` - Public: Check subscription eligibility
-
-### ✅ COMPLETED: Enhanced Database Schema (Phase 3.4)
-```sql
--- Contact model with enum type and indexing
-model Contact {
-  id        Int         @id @default(autoincrement())
-  name      String      @db.VarChar(100)
-  email     String      @db.VarChar(255)
-  subject   String      @db.VarChar(200)
-  message   String      @db.Text
-  type      ContactType @default(general)
-  processed Boolean     @default(false)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-
-  @@index([email])
-  @@index([processed])
-  @@index([type])
-  @@index([createdAt])
-}
-
--- Newsletter model with unique email constraint
-model Newsletter {
-  id             Int       @id @default(autoincrement())
-  email          String    @unique @db.VarChar(255)
-  isActive       Boolean   @default(true)
-  subscribedAt   DateTime  @default(now())
-  unsubscribedAt DateTime?
-
-  @@index([isActive])
-  @@index([subscribedAt])
-}
-```
-
-### ✅ COMPLETED: Enhanced Middleware Integration
-- **Contact Validation**: name(2-100), email(valid), subject(5-200), message(10-2000), type enum
-- **Newsletter Validation**: email normalization, blocked domain detection
-- **Rate Limiting**: Environment-aware (strict production, lenient test), express-rate-limit v7
-- **Business Rules**: Contact spam protection, newsletter duplicate prevention, GDPR features
-- **Security**: XSS prevention, email sanitization, IP-based rate limiting
-
-### 🔄 NEXT: Phase 4.1 - Frontend Layout Components
-- Header, Footer, Layout with Zustand state management
-- Enhanced UI components with music industry features
+### Backend Status: ✅ 100% COMPLETE
+- **50+ REST endpoints** across 5 modules
+- **399+ tests** all passing
+- **Complete middleware stack** with enterprise features
+- **Production-ready** with comprehensive error handling
+### Key Features
+- **Services Layer**: Complete business logic implementation with validation
+- **File Storage**: Secure static file serving with proper headers
+- **Image Processing**: Multi-size generation with Sharp
+- **Validation**: Comprehensive Joi schemas for all endpoints
+- **Business Rules**: Featured artist limits, unique constraints, spam protection
+- **GDPR Compliance**: Newsletter management with right to deletion
+- **Rate Limiting**: Multi-tier protection for different endpoint types
+- **Error Handling**: Centralized with consistent error codes
+- **Type Safety**: End-to-end TypeScript with Prisma

@@ -348,9 +348,13 @@ describe('NewsletterService', () => {
       
       await NewsletterService.subscribe({ email })
 
-      // Check with very short time window (should be true as subscription just happened and subscriber is active)
-      const hasRecent = await NewsletterService.checkRecentSubscriptionAttempts(email, 0)
+      // Check with 1 hour window (should be true as subscription just happened)
+      const hasRecent = await NewsletterService.checkRecentSubscriptionAttempts(email, 1)
       expect(hasRecent).toBe(true)
+      
+      // Check with 0 hours (immediate) - should be false as subscribedAt can't be > Date.now()
+      const hasImmediate = await NewsletterService.checkRecentSubscriptionAttempts(email, 0)
+      expect(hasImmediate).toBe(false)
     })
   })
 

@@ -286,7 +286,8 @@ export const jsonErrorHandler = (
       timestamp: new Date().toISOString()
     }
     
-    return res.status(400).json(errorResponse)
+    res.status(400).json(errorResponse)
+    return
   }
   
   next(error)

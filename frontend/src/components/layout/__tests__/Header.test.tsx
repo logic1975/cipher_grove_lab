@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import { Header } from '../Header';
 import { useNavigationStore } from '../../../stores';
 import { vi } from 'vitest';
+import { RouterWrapper } from '../../../test-helpers';
 
 // Mock the navigation store
 vi.mock('../../../stores', () => ({
@@ -28,11 +28,7 @@ describe('Header Component', () => {
   });
 
   it('renders logo with correct text', () => {
-    render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
+    render(<Header />, { wrapper: RouterWrapper });
 
     const logo = screen.getByText('CIPHER GROVE LAB');
     expect(logo).toBeInTheDocument();
@@ -40,11 +36,7 @@ describe('Header Component', () => {
   });
 
   it('renders desktop navigation links', () => {
-    render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
+    render(<Header />, { wrapper: RouterWrapper });
 
     // Check desktop nav links
     const desktopNav = screen.getByRole('banner').querySelector('.header-nav');
@@ -58,11 +50,7 @@ describe('Header Component', () => {
   });
 
   it('renders mobile menu button', () => {
-    render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
+    render(<Header />, { wrapper: RouterWrapper });
 
     const mobileButton = screen.getByLabelText('Toggle menu');
     expect(mobileButton).toBeInTheDocument();
@@ -70,11 +58,7 @@ describe('Header Component', () => {
   });
 
   it('toggles mobile menu when button is clicked', () => {
-    render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
+    render(<Header />, { wrapper: RouterWrapper });
 
     const mobileButton = screen.getByLabelText('Toggle menu');
     fireEvent.click(mobileButton);
@@ -86,22 +70,14 @@ describe('Header Component', () => {
     const openStore = { ...mockStore, isMobileMenuOpen: true };
     (useNavigationStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue(openStore);
 
-    const { container } = render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
+    const { container } = render(<Header />, { wrapper: RouterWrapper });
 
     const hamburger = container.querySelector('.hamburger');
     expect(hamburger).toHaveClass('active');
   });
 
   it('renders mobile navigation with correct links', () => {
-    const { container } = render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
+    const { container } = render(<Header />, { wrapper: RouterWrapper });
 
     const mobileNav = container.querySelector('.mobile-nav');
     expect(mobileNav).toBeInTheDocument();
@@ -114,22 +90,14 @@ describe('Header Component', () => {
     const openStore = { ...mockStore, isMobileMenuOpen: true };
     (useNavigationStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue(openStore);
 
-    const { container } = render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
+    const { container } = render(<Header />, { wrapper: RouterWrapper });
 
     const mobileNav = container.querySelector('.mobile-nav');
     expect(mobileNav).toHaveClass('active');
   });
 
   it('closes mobile menu when logo is clicked', () => {
-    render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
+    render(<Header />, { wrapper: RouterWrapper });
 
     const logo = screen.getByText('CIPHER GROVE LAB');
     fireEvent.click(logo);
@@ -138,11 +106,7 @@ describe('Header Component', () => {
   });
 
   it('closes mobile menu when mobile nav link is clicked', () => {
-    render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
+    render(<Header />, { wrapper: RouterWrapper });
 
     // Click the second "News" link (mobile nav)
     const newsLinks = screen.getAllByText('News');
@@ -152,11 +116,7 @@ describe('Header Component', () => {
   });
 
   it('adds scrolled class when page is scrolled', () => {
-    const { container } = render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
+    const { container } = render(<Header />, { wrapper: RouterWrapper });
 
     const header = container.querySelector('.header');
     expect(header).not.toHaveClass('scrolled');
@@ -175,11 +135,7 @@ describe('Header Component', () => {
     Object.defineProperty(window, 'innerHeight', { value: 800, writable: true });
     Object.defineProperty(window, 'scrollY', { value: 600, writable: true });
 
-    render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
+    render(<Header />, { wrapper: RouterWrapper });
 
     fireEvent.scroll(window);
 
@@ -190,11 +146,7 @@ describe('Header Component', () => {
   it('cleans up scroll event listener on unmount', () => {
     const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
 
-    const { unmount } = render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
+    const { unmount } = render(<Header />, { wrapper: RouterWrapper });
 
     unmount();
 

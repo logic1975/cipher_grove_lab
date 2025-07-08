@@ -8,10 +8,10 @@
 | Need to Find | Go To |
 |--------------|-------|
 | **Project Overview** | `../CLAUDE.md` |
-| **Current Status** | Backend complete (399+ tests), Frontend in progress |
+| **Current Status** | Backend complete (450 tests passing, 3 skipped), Frontend in progress (65 tests all passing) |
 | **Technology Stack** | `02-architecture/system-overview.md#technology-stack` |
 | **Database Schema** | `02-architecture/database-schema.md` (5 tables) |
-| **API Endpoints** | `02-architecture/api-specification.md` (50+ endpoints) |
+| **API Endpoints** | `02-architecture/api-specification.md` (46 endpoints) |
 | **Testing Strategy** | `03-development/testing-strategy.md` |
 | **Development Plan** | `03-development/development-plan.md` |
 | **Test Helpers** | `03-development/test-helpers.md` |
@@ -22,7 +22,7 @@
 ### Core System Design
 - **`02-architecture/system-overview.md`** - Complete architecture with data flow diagrams
 - **`02-architecture/database-schema.md`** - 5 tables (Artists, Releases, News, Contact, Newsletter)
-- **`02-architecture/api-specification.md`** - ✅ 50+ REST endpoints fully documented
+- **`02-architecture/api-specification.md`** - ✅ 46 REST endpoints fully documented
 - **`02-architecture/security-model.md`** - Enterprise security practices and implementation
 
 ## 🔧 Development Resources
@@ -63,12 +63,12 @@
 ## ✅ Backend Implementation Summary
 
 ### Complete Features (Phase 1-3)
-- **REST APIs**: 50+ endpoints across Artists, Releases, News, Contact, Newsletter
+- **REST APIs**: 46 endpoints across Artists, Releases, News, Contact, Newsletter
 - **Middleware Stack**: Rate limiting, validation (Joi), error handling, file upload
 - **Services Layer**: Complete business logic with 90%+ test coverage
 - **Database**: 5 tables with relationships, indexes, and constraints
 - **File Storage**: Image upload with multi-size processing (Sharp)
-- **Testing**: 399+ tests all passing
+- **Testing**: 453 tests (450 passing, 3 skipped)
 
 ### API Modules
 1. **Artists API** (7 endpoints) - CRUD + image upload + featured management

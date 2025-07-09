@@ -31,7 +31,9 @@
       "Bash(npx vite:*)",
       "Bash(kill:*)",
       "WebFetch(domain:ecmrecords.com)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(git pull:*)",
+      "Bash(git config:*)"
     ],
     "deny": []
   }

@@ -39,19 +39,19 @@
 - Copyright compliance required for all media
 - Proper attribution for collaborations
 
-## News and Content Rules
+## Concert Management Rules (Planned)
 
-### Publication Standards
-- All news articles require editorial review
-- Publication schedule: maximum 2 articles per week
-- Article length: 200-2000 words
-- Images required for all articles
+### Concert Listings
+- All concerts must be associated with signed artists
+- Concert dates must be in the future
+- Venue information required (name, city, country)
+- Ticket links optional but recommended
 
-### Content Approval Process
-1. Draft creation by content manager
-2. Editorial review for accuracy
-3. Management approval for public statements
-4. SEO optimization before publication
+### Concert Updates
+- Changes require 48-hour notice minimum
+- Cancellations must be prominently displayed
+- Sold-out status updated in real-time
+- Past concerts archived for historical reference
 
 ## Contact and Communication Rules
 

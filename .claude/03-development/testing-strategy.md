@@ -70,47 +70,36 @@ describe('useArtists', () => {
 
 #### Zustand Store Testing
 ```javascript
-// musicPlayerStore.test.ts
+// navigationStore.test.ts
 import { renderHook, act } from '@testing-library/react';
-import { useMusicPlayerStore } from '../stores/musicPlayerStore';
+import { useNavigationStore } from '../stores/navigationStore';
 
-describe('Music Player Store', () => {
+describe('Navigation Store', () => {
   beforeEach(() => {
-    useMusicPlayerStore.setState({ isPlaying: false, currentTrack: null });
+    useNavigationStore.setState({ isMobileMenuOpen: false, scrollProgress: 0 });
   });
 
-  it('plays and pauses tracks', () => {
-    const { result } = renderHook(() => useMusicPlayerStore());
+  it('toggles mobile menu', () => {
+    const { result } = renderHook(() => useNavigationStore());
     
     act(() => {
-      result.current.play({ id: 1, title: 'Test Track', url: 'test.mp3' });
+      result.current.toggleMobileMenu();
     });
     
-    expect(result.current.isPlaying).toBe(true);
-    expect(result.current.currentTrack?.title).toBe('Test Track');
+    expect(result.current.isMobileMenuOpen).toBe(true);
   });
 });
-```
 
-#### Howler.js Audio Testing
-```javascript
-// MusicPlayer.test.tsx
-import { vi } from 'vitest';
-
-// Mock Howler
-vi.mock('howler', () => ({
-  Howl: vi.fn().mockImplementation(() => ({
-    play: vi.fn(),
-    pause: vi.fn(),
-    stop: vi.fn(),
-    on: vi.fn()
-  }))
-}));
-
-describe('MusicPlayer Component', () => {
-  it('initializes audio player correctly', () => {
-    render(<MusicPlayer track={{ url: 'test.mp3', title: 'Test' }} />);
-    // Test audio controls, progress, error handling
+// filterStore.test.ts
+describe('Filter Store', () => {
+  it('manages filter state', () => {
+    const { result } = renderHook(() => useFilterStore());
+    
+    act(() => {
+      result.current.setFilter('artistId', 1);
+    });
+    
+    expect(result.current.filters.artistId).toBe(1);
   });
 });
 ```

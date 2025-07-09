@@ -1,10 +1,16 @@
 # Database Schema Design
 
+## Current Status
+- **Implemented**: 5 tables (Artists, Releases, News*, Contact, Newsletter)
+- **Planned**: Concerts table (Phase 4.3)
+
+*Note: News table was fully implemented but is not exposed in the frontend per updated project scope
+
 ## Entity Relationship Diagram
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│     Artists     │    │    Releases     │    │      News       │
+│     Artists     │    │    Releases     │    │   News (*)      │
 ├─────────────────┤    ├─────────────────┤    ├─────────────────┤
 │ id (PK)         │◄──┐│ id (PK)         │    │ id (PK)         │
 │ name            │   └│ artist_id (FK)  │    │ title           │
@@ -14,9 +20,21 @@
 │ image_sizes     │    │ cover_art_url   │    │ created_at      │
 │ social_links    │    │ cover_art_alt   │    │ updated_at      │
 │ is_featured     │    │ cover_art_sizes │    └─────────────────┘
-│ created_at      │    │ streaming_links │
+│ created_at      │    │ streaming_links │    (*) Not in active use
 │ updated_at      │    │ created_at      │
 └─────────────────┘    │ updated_at      │
+        ▲              └─────────────────┘
+        │
+        │              ┌─────────────────┐
+        │              │ Concerts (Plan) │
+        │              ├─────────────────┤
+        └──────────────│ id (PK)         │
+                       │ artist_id (FK)  │
+                       │ venue           │
+                       │ date            │
+                       │ ticket_link     │
+                       │ created_at      │
+                       │ updated_at      │
                        └─────────────────┘
 
 ┌─────────────────┐    ┌─────────────────┐
@@ -89,7 +107,9 @@ CREATE INDEX idx_releases_type ON releases(type);
 CREATE INDEX idx_releases_created_at ON releases(created_at DESC);
 ```
 
-### News Table
+### News Table (Not in Active Use)
+> **Note**: This table was fully implemented but is not exposed in the frontend. It remains available for potential admin interfaces or future use.
+
 ```sql
 CREATE TABLE news (
     id SERIAL PRIMARY KEY,
@@ -143,6 +163,32 @@ CREATE TABLE newsletter (
 CREATE INDEX idx_newsletter_email ON newsletter(email);
 CREATE INDEX idx_newsletter_is_active ON newsletter(is_active);
 CREATE INDEX idx_newsletter_subscribed_at ON newsletter(subscribed_at DESC);
+```
+
+### Concerts Table (Planned - Phase 4.3)
+```sql
+CREATE TABLE concerts (
+    id SERIAL PRIMARY KEY,
+    artist_id INTEGER NOT NULL REFERENCES artists(id) ON DELETE CASCADE,
+    venue VARCHAR(255) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    country VARCHAR(100) NOT NULL,
+    date DATE NOT NULL,
+    time TIME,
+    ticket_link VARCHAR(500),
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes
+CREATE INDEX idx_concerts_artist_id ON concerts(artist_id);
+CREATE INDEX idx_concerts_date ON concerts(date);
+CREATE INDEX idx_concerts_city ON concerts(city);
+CREATE INDEX idx_concerts_created_at ON concerts(created_at DESC);
+
+-- Constraints
+ALTER TABLE concerts ADD CONSTRAINT chk_concert_date CHECK (date >= CURRENT_DATE);
 ```
 
 ## JSON Field Structures

@@ -13,9 +13,8 @@ describe('MainNav Component', () => {
 
     expect(screen.getByText('Artists')).toBeInTheDocument();
     expect(screen.getByText('Releases')).toBeInTheDocument();
-    expect(screen.getByText('Series')).toBeInTheDocument();
-    expect(screen.getByText('Stories')).toBeInTheDocument();
-    expect(screen.getByText('Sounds')).toBeInTheDocument();
+    expect(screen.getByText('Concerts')).toBeInTheDocument();
+    expect(screen.getByText('About')).toBeInTheDocument();
   });
 
   it('renders navigation with correct structure', () => {
@@ -32,7 +31,7 @@ describe('MainNav Component', () => {
     expect(ul).toBeInTheDocument();
     
     const listItems = ul?.querySelectorAll('li');
-    expect(listItems).toHaveLength(5);
+    expect(listItems).toHaveLength(4);
   });
 
   it('renders links with correct paths', () => {
@@ -48,14 +47,11 @@ describe('MainNav Component', () => {
     const releasesLink = screen.getByText('Releases').closest('a');
     expect(releasesLink).toHaveAttribute('href', '/releases');
 
-    const seriesLink = screen.getByText('Series').closest('a');
-    expect(seriesLink).toHaveAttribute('href', '/series');
+    const concertsLink = screen.getByText('Concerts').closest('a');
+    expect(concertsLink).toHaveAttribute('href', '/concerts');
 
-    const storiesLink = screen.getByText('Stories').closest('a');
-    expect(storiesLink).toHaveAttribute('href', '/stories');
-
-    const soundsLink = screen.getByText('Sounds').closest('a');
-    expect(soundsLink).toHaveAttribute('href', '/sounds');
+    const aboutLink = screen.getByText('About').closest('a');
+    expect(aboutLink).toHaveAttribute('href', '/about');
   });
 
   it('applies active class to current route', () => {

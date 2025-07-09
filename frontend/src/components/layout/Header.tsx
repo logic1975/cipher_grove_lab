@@ -32,9 +32,7 @@ export const Header: React.FC = () => {
 
           {/* Desktop Navigation */}
           <nav className="header-nav">
-            <Link to="/news">News</Link>
             <Link to="/concerts">Concerts</Link>
-            <Link to="/shop">Shop</Link>
             <Link to="/about">About</Link>
             <span className="search-toggle">Search</span>
           </nav>
@@ -56,14 +54,8 @@ export const Header: React.FC = () => {
 
       {/* Mobile Navigation */}
       <nav className={`mobile-nav ${isMobileMenuOpen ? 'active' : ''}`}>
-        <Link to="/news" className="mobile-nav-link" onClick={closeMobileMenu}>
-          News
-        </Link>
         <Link to="/concerts" className="mobile-nav-link" onClick={closeMobileMenu}>
           Concerts
-        </Link>
-        <Link to="/shop" className="mobile-nav-link" onClick={closeMobileMenu}>
-          Shop
         </Link>
         <Link to="/about" className="mobile-nav-link" onClick={closeMobileMenu}>
           About

@@ -21,9 +21,11 @@
 
 ### Core System Design
 - **`02-architecture/system-overview.md`** - Complete architecture with data flow diagrams
-- **`02-architecture/database-schema.md`** - 5 tables (Artists, Releases, News, Contact, Newsletter)
-- **`02-architecture/api-specification.md`** - ✅ 46 REST endpoints fully documented
+- **`02-architecture/database-schema.md`** - 5 tables (Artists, Releases, News*, Contact, Newsletter) + Concerts planned
+- **`02-architecture/api-specification.md`** - ✅ 46 REST endpoints fully documented (News API built but not in active use)
 - **`02-architecture/security-model.md`** - Enterprise security practices and implementation
+
+*Note: News functionality was fully implemented but is not exposed in the frontend per updated project scope
 
 ## 🔧 Development Resources
 
@@ -73,9 +75,10 @@
 ### API Modules
 1. **Artists API** (7 endpoints) - CRUD + image upload + featured management
 2. **Releases API** (9 endpoints) - CRUD + cover art + statistics
-3. **News API** (13 endpoints) - CRUD + publish workflow + search
+3. **News API** (13 endpoints) - Fully implemented but not exposed in frontend
 4. **Contact API** (7 endpoints) - Submissions + admin management
 5. **Newsletter API** (8 endpoints) - Subscriptions + GDPR compliance
+6. **Concerts API** (planned) - To be implemented in Phase 4.4
 
 ## 🔄 Documentation Principles
 

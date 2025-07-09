@@ -6,22 +6,23 @@
 ## 🎯 Music Label Specific Context
 
 ### Business Domain
-- **Industry**: Music label showcasing artists, releases, and news
+- **Industry**: Music label showcasing artists, releases, and concerts
 - **Target Users**: Music fans, industry professionals, potential artists
 - **Core Value**: Artist discovery and music streaming integration
 
 ### Key Entities
 - **Artists**: Label roster with profiles, bios, social links, featured status
 - **Releases**: Albums/singles/EPs with streaming platform integration  
-- **News**: Label updates and announcements with publication workflow
+- **Concerts**: Upcoming performances and tour dates
+- **About/Contact**: Label information, demo submissions, newsletter signup
 
 ## 🛠️ Project-Specific Tech Decisions
 
 ### Enhanced Technology Stack
 - **Frontend State**: Zustand (lightweight, TypeScript-first) + TanStack Query (API caching)
 - **Backend ORM**: Prisma (type-safe database layer with migrations)
-- **Audio Handling**: Howler.js for enhanced music player functionality
 - **Type Safety**: End-to-end TypeScript with Prisma-generated types
+- **Styling**: Custom CSS with ECM-inspired minimal design (Tailwind removed)
 
 ### Testing Strategy (Deviates from ~/CLAUDE.md defaults)
 - **Frontend**: Vitest + React Testing Library (faster than Jest with Vite)
@@ -30,10 +31,10 @@
 - **Rationale**: Optimized for each environment with enhanced type safety
 
 ### Music Industry Integrations
-- **Streaming APIs**: Spotify Web API (preview URLs), Apple Music, YouTube Music
+- **Streaming APIs**: Spotify, Apple Music, YouTube Music (direct links)
 - **Social Platforms**: Instagram, Twitter, Facebook, TikTok integration
-- **Audio Engine**: Howler.js player with waveforms, cross-browser compatibility
-- **Music Previews**: Advanced audio controls with background playback
+- **Platform Links**: Direct navigation to streaming services
+- **Future Enhancement**: Audio preview functionality (not in current scope)
 
 ### Design System (Dark Mode Focus)
 - **Theme**: Dark mode with vibrant orange accent (#ff6b35)
@@ -145,19 +146,21 @@ Client Request → API Route → Service Layer → Prisma ORM → PostgreSQL Dat
                 Response ← Business Logic ← Type Safety ← Query Results
 ```
 
-### Database Schema (5 Tables)
+### Database Schema (5 Tables + Concerts planned)
 - **Artists**: Profile data, `social_links` JSON (8 platforms), featured status
 - **Releases**: Albums/singles/EPs, `streaming_links` JSON (5 platforms), artist relationship
-- **News**: Articles with draft/published workflow, auto-generated slugs
+- **News**: Articles with draft/published workflow (built but not in active use)
 - **Contact**: Form submissions with spam protection, type categorization
 - **Newsletter**: Subscriptions with GDPR compliance, active/inactive status
+- **Concerts** (planned): Upcoming performances, venues, dates, artist relationships
 
-### Complete API Implementation (46 Endpoints)
+### Complete API Implementation (46 Endpoints + Concerts planned)
 - **Artists API**: 7 endpoints including image upload
 - **Releases API**: 9 endpoints with cover art upload
-- **News API**: 13 endpoints with publish/unpublish workflow
+- **News API**: 13 endpoints (implemented but not exposed in frontend)
 - **Contact API**: 7 endpoints with admin management
 - **Newsletter API**: 8 endpoints with subscription management
+- **Concerts API** (planned): CRUD operations, filtering by date/artist
 
 ### Middleware Stack
 1. **Rate Limiting**: Environment-aware limits (100/15min general, 5/15min contact, 3/10min newsletter)
@@ -180,18 +183,17 @@ Client Request → API Route → Service Layer → Prisma ORM → PostgreSQL Dat
 
 ### Component Hierarchy
 - **ArtistCard**: Photo + name + featured status
-- **ReleaseCard**: Cover art + title + streaming links + play button
-- **MusicPlayer**: Simple preview with play/pause/progress
-- **NewsCard**: Title + excerpt + publication date
+- **ReleaseCard**: Cover art + title + streaming links
+- **ConcertItem** (planned): Date + venue + artist + ticket link
+- **ContactForm**: Demo submissions + business inquiries
 
 ### Navigation Structure
 ```
 Homepage (featured artists + latest releases)
 ├── /artists (roster grid → individual profiles)
 ├── /releases (catalog with filters)
-├── /news (blog-style articles)
-├── /about (label history)
-└── /contact (demo submissions + business inquiries)
+├── /concerts (upcoming performances)
+└── /about (label history + contact form + newsletter)
 ```
 
 ## 📚 Key Project Documents
@@ -224,8 +226,8 @@ Homepage (featured artists + latest releases)
 ### Content Management
 - Max 6 featured artists at any time
 - All releases require artist association (foreign key constraint)
-- News articles support draft/published workflow
-- Demo submissions via contact form with file upload support
+- Concerts require artist association and future dates
+- Demo submissions via contact form
 
 ### Data Validation
 - Artist names must be unique across label

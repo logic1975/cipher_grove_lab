@@ -5,9 +5,8 @@ export const MainNav: React.FC = () => {
   const navItems = [
     { path: '/artists', label: 'Artists' },
     { path: '/releases', label: 'Releases' },
-    { path: '/series', label: 'Series' },
-    { path: '/stories', label: 'Stories' },
-    { path: '/sounds', label: 'Sounds' },
+    { path: '/concerts', label: 'Concerts' },
+    { path: '/about', label: 'About' },
   ];
 
   return (

@@ -4,8 +4,12 @@
 **Production URL**: `https://api.musiclabel.com/api`  
 **API Version**: v1  
 **Status**: ✅ **100% COMPLETE** - All APIs implemented and tested  
-**Total Endpoints**: 46 across 5 main modules  
+**Total Endpoints**: 46 across 5 main modules + Concerts API planned  
 **Authentication**: None required for public endpoints (Admin endpoints marked)  
+
+## Important Note on News API
+The News API (13 endpoints) was fully implemented and tested but is **not exposed in the frontend** per updated project scope. The API remains functional for potential future use or admin interfaces.
+
 **Middleware Stack**: 
 - ✅ Rate Limiting (express-rate-limit v7)
 - ✅ Validation (Joi schemas)
@@ -226,7 +230,9 @@ interface Newsletter {
 **Response**: `ApiResponse<Release>` with updated cover art fields  
 **Errors**: 400 validation, 404 release not found
 
-## News Endpoints (13 endpoints)
+## News Endpoints (13 endpoints) - NOT IN ACTIVE USE
+
+> **Note**: These endpoints are fully implemented and tested but are not exposed in the frontend. They remain available for potential admin interfaces or future use.
 
 ### GET /api/news
 **Query**: `page?, limit?, published?, search?, sort?`  
@@ -407,6 +413,24 @@ interface Newsletter {
 **Status**: ✅ IMPLEMENTED (Public)  
 **Response**: `{email, eligible, reason?}`  
 **Features**: Pre-subscription validation, eligibility checking
+
+## Concerts Endpoints (PLANNED - Phase 4.4)
+
+> **Status**: To be implemented in Phase 4.4 of development
+
+### Planned Endpoints
+- `GET /api/concerts` - List all concerts with pagination and filtering
+- `GET /api/concerts/upcoming` - Get upcoming concerts only
+- `GET /api/concerts/:id` - Get concert details
+- `POST /api/concerts` - Create new concert (admin)
+- `PUT /api/concerts/:id` - Update concert (admin)
+- `DELETE /api/concerts/:id` - Delete concert (admin)
+
+### Planned Features
+- Filter by date range, artist, venue
+- Sort by date (ascending/descending)
+- Include artist details in response
+- Venue information and ticket links
 
 ## Additional Endpoints
 

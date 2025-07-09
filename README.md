@@ -9,7 +9,7 @@
 Welcome to my musical coding adventure! I'm building a modern music label website from scratch, and documenting every stumble, breakthrough, and "oh THAT'S what a function does" moment along the way.
 
 ### The Dream 🌟
-A sleek, dark-themed website showcasing artists, releases, and news for an indie music label. Think Spotify meets your favorite underground label's aesthetic.
+A sleek, dark-themed website showcasing artists, releases, and concerts for an indie music label. Think ECM Records meets modern web design.
 
 ### The Reality 😅
 Me asking Claude things like:
@@ -22,58 +22,58 @@ Me asking Claude things like:
 - **Frontend**: React + TypeScript + Vite (because apparently TypeScript prevents me from breaking things)
 - **Backend**: Node.js + Express + Prisma ORM (the server that serves... servers?)
 - **Database**: PostgreSQL + Docker (it stores data in containers and doesn't judge my queries)
-- **Testing**: Jest + Vitest + Supertest (because Claude insists good code needs tests - and wow, 258 tests!)
+- **Testing**: Jest + Vitest + Supertest (because Claude insists good code needs tests - and wow, 518 tests!)
 - **File Storage**: Express static serving with security headers (images now have a home!)
 - **Validation**: Joi schemas (because users can't be trusted with form inputs)
 - **Business Logic**: Enhanced services layer (I actually understand what this means now!)
-- **Styling**: Tailwind CSS (utility classes that make me feel like a CSS wizard)
+- **Styling**: Custom CSS with ECM-inspired design (Tailwind was removed - too many conflicts!)
 - **Dev Environment**: Docker containers (because apparently everything lives in boxes now)
 
 ## Features (Planned vs. Reality)
 
-### ✅ What's Working (Phase 3.1 Complete - Full REST API Built!)
+### ✅ What's Working (Backend Complete + Frontend in Progress!)
 - [x] Project setup that doesn't immediately explode
-- [x] **Comprehensive test infrastructure (ALL 258 tests passing ✅)**
+- [x] **Comprehensive test infrastructure (518 total tests - 453 backend + 65 frontend)**
 - [x] Docker PostgreSQL database with real data
 - [x] **Enhanced database schema with image fields and platform support:**
   - [x] Artists table with 8 social platforms (Instagram, Spotify, YouTube, etc.)
   - [x] Releases table with 5 streaming platforms (Spotify, Apple Music, etc.)
-  - [x] News table with publish/draft workflow and auto-slug generation
+  - [x] News table (built but not exposed in frontend)
+  - [x] Contact & Newsletter tables with GDPR compliance
 - [x] Prisma ORM for type-safe database operations
-- [x] Sample data: 3 artists, 4 releases, 3 news articles seeded
-- [x] **File storage system with Express static serving + security headers**
-- [x] **Business logic services layer (the heart of the system!):**
-  - [x] ArtistService - Featured artist limits (max 6), social platform validation
-  - [x] ReleaseService - Streaming platform validation, artist relationships
-  - [x] NewsService - Publishing workflow, slug generation, search functionality
-- [x] **Advanced validation with Joi schemas for all 13 platforms**
-- [x] **Business rule enforcement across the entire system**
-- [x] **✅ COMPLETE REST API (91 new tests!):**
-  - [x] **Artists API** - 22 tests covering full CRUD, featured limits, validation
-  - [x] **Releases API** - 25 tests covering filtering, statistics, type validation
-  - [x] **News API** - 44 tests covering publish workflow, search, slug handling
+- [x] **Complete Backend REST API (46 endpoints across 5 modules):**
+  - [x] **Artists API** - CRUD + image upload + featured management
+  - [x] **Releases API** - CRUD + cover art + filtering/sorting
+  - [x] **News API** - Built but not in active use (available for admin)
+  - [x] **Contact API** - Form submissions with rate limiting
+  - [x] **Newsletter API** - Subscriptions with GDPR compliance
+- [x] **Image processing with Sharp** - Multi-size generation for uploads
+- [x] **Comprehensive middleware stack** - Rate limiting, validation, error handling
+- [x] **Frontend layout components** - Header, Footer, MainNav with ECM design
+- [x] **State management** - Zustand stores for navigation and filtering
 - [x] Security headers and CORS configuration
-- [x] Comprehensive API testing with Supertest
 - [x] Error handling that doesn't just crash everything
 - [x] Documentation that actually helps future-me
-- [x] Git commits that tell a coherent story
 
-### 🚀 Current Priority (Phase 3.2 - Image Processing Next!)
-- [ ] **Image upload processing with multer + sharp (make those artist photos shine!)**
-- [ ] **Contact/Newsletter API endpoints with rate limiting**
-- [ ] **Enhanced API middleware and validation**
-- [ ] Image processing tests with file upload validation
-- [ ] Multi-size image generation (thumbnails, profiles, featured)
+### 🚀 Current Priority (Phase 4 - Frontend Foundation)
+- [ ] **Navigation updates** - Remove News/Shop, add Concerts
+- [ ] **Concerts database table** - Schema and migrations
+- [ ] **Concerts API** - CRUD endpoints with date/artist filtering
+- [ ] **Enhanced artist components** - ArtistCard, ArtistGrid, ArtistProfile
+- [ ] **Page components** - PageHeader, FilterBar, LoadMore
 
-### 🌈 What I Dream About (Phase 4+)
-- [ ] **Frontend components that look professional (not like a 90s website)**
-- [ ] **Music player with Howler.js that actually plays music**
-- [ ] **Artist profiles with all those social platform links working**
-- [ ] Contact forms that don't just vanish into the digital void
-- [ ] Spotify integration that actually works
-- [ ] Animations that don't make people dizzy
-- [ ] Code so clean it sparks joy
-- [ ] Zero console errors (ambitious, I know)
+### 🌈 Next Up (Phase 5 - Design Mockups)
+- [ ] **Artist page mockups** - 3 variations with ECM aesthetic
+- [ ] **Releases page mockups** - Grid layout with filters
+- [ ] **Concerts page mockups** - Chronological listing
+- [ ] **About page mockups** - Label story + contact form
+
+### 🎯 The Vision (Phase 6-7)
+- [ ] **Page implementation** - Artist detail, Releases catalog, Concerts, About
+- [ ] **Data integration** - TanStack Query for API calls
+- [ ] **Performance optimization** - Image lazy loading, code splitting
+- [ ] **Accessibility** - WCAG 2.1 AA compliance
+- [ ] **Deployment** - Production-ready build
 
 ## My Learning Journey 📚
 
@@ -88,7 +88,9 @@ Me asking Claude things like:
 **Week 9**: "Honest assessment: 36 tests failing, but the services layer is solid!"  
 **Week 10**: "Documentation accuracy matters - fixed all the progress tracking!"  
 **Week 11**: "BREAKTHROUGH: Fixed all test issues! 165 tests passing - full TDD compliance!"  
-**Week 12**: "PHASE 3.1 COMPLETE! Built a full REST API with 91 new tests - 258 total tests passing!"  
+**Week 12**: "PHASE 3 COMPLETE! Built a full REST API with 453 backend tests!"  
+**Week 13**: "Frontend underway - layout components done, 65 tests passing!"  
+**Week 14**: "Documentation alignment - News descoped, Concerts added to roadmap!"  
 
 ## Development Philosophy
 
@@ -226,8 +228,8 @@ MIT License - Feel free to use this code, laugh at my comments, or learn from my
 
 *"The best way to learn is to build something real, even if you have no idea what you're doing."* - Probably someone wise, definitely how I feel right now.
 
-**Current Status**: 🎉 Phase 3.1 COMPLETE! Built a full REST API with comprehensive testing. ALL 258 TESTS PASSING - Ready for Phase 3.2 Image Processing! 🎉
+**Current Status**: 🎯 Backend 100% Complete | Frontend Phase 4 In Progress | 518 Total Tests! 🎯
 
-**Latest Achievement**: MASSIVE MILESTONE! Completed full REST API implementation with 91 new comprehensive tests covering Artists, Releases, and News endpoints. Added CRUD operations, pagination, search, filtering, publish workflows, and robust error handling! 🚀
+**Latest Achievement**: Successfully aligned entire project documentation with new scope! News functionality built but descoped from frontend, Concerts feature added to roadmap, navigation simplified to Artists/Releases/Concerts/About. All tests passing! 🚀
 
-**What's Actually Working**: Complete REST API (22 Artists + 25 Releases + 44 News tests), file uploads, 13 platform validations, featured artist limits, auto-slug generation, publish/draft workflows, enterprise documentation, complete learning resources, AND a bulletproof 258-test suite! Ready for Phase 3.2 image processing! 🎵
+**What's Actually Working**: Complete backend API (46 endpoints), image processing, file uploads, rate limiting, validation middleware, frontend layout components with ECM design, state management with Zustand, and a rock-solid test suite (453 backend + 65 frontend tests)! 🎵

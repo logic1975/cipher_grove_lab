@@ -12,26 +12,41 @@ describe('App Component', () => {
   it('renders header navigation', () => {
     render(<App />)
     // Check for header navigation links
+    // Note: Artists appears in header (desktop + mobile) and main nav
+    const artistsLinks = screen.getAllByRole('link', { name: 'Artists' })
+    expect(artistsLinks.length).toBeGreaterThanOrEqual(3)
+    
+    // Note: Releases appears in header (desktop + mobile) and main nav
+    const releasesLinks = screen.getAllByRole('link', { name: 'Releases' })
+    expect(releasesLinks.length).toBeGreaterThanOrEqual(3)
+    
     // Note: Concerts appears in header (desktop + mobile) and main nav
     const concertsLinks = screen.getAllByRole('link', { name: 'Concerts' })
-    expect(concertsLinks.length).toBeGreaterThanOrEqual(2)
+    expect(concertsLinks.length).toBeGreaterThanOrEqual(3)
     
     // About appears in header, main nav, and footer
     const aboutLinks = screen.getAllByRole('link', { name: 'About' })
-    expect(aboutLinks.length).toBeGreaterThanOrEqual(2)
+    expect(aboutLinks.length).toBeGreaterThanOrEqual(3)
   })
 
   it('renders main navigation', () => {
     render(<App />)
     // Check for main navigation links
-    expect(screen.getByRole('link', { name: 'Artists' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Releases' })).toBeInTheDocument()
-    // Note: there are multiple "Concerts" links (header + main nav)
+    // Note: there are multiple Artists links (header + mobile nav + main nav)
+    const artistsLinks = screen.getAllByRole('link', { name: 'Artists' })
+    expect(artistsLinks.length).toBeGreaterThanOrEqual(3)
+    
+    // Note: there are multiple Releases links (header + mobile nav + main nav)
+    const releasesLinks = screen.getAllByRole('link', { name: 'Releases' })
+    expect(releasesLinks.length).toBeGreaterThanOrEqual(3)
+    
+    // Note: there are multiple "Concerts" links (header + mobile nav + main nav)
     const concertsLinks = screen.getAllByRole('link', { name: 'Concerts' })
-    expect(concertsLinks.length).toBeGreaterThan(0)
-    // Note: there are multiple "About" links (header + main nav + footer)
+    expect(concertsLinks.length).toBeGreaterThanOrEqual(3)
+    
+    // Note: there are multiple "About" links (header + mobile nav + main nav + footer)
     const aboutLinks = screen.getAllByRole('link', { name: 'About' })
-    expect(aboutLinks.length).toBeGreaterThan(0)
+    expect(aboutLinks.length).toBeGreaterThanOrEqual(3)
   })
 
   it('renders layout structure', () => {

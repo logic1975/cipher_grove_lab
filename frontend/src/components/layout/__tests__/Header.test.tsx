@@ -42,6 +42,8 @@ describe('Header Component', () => {
     const desktopNav = screen.getByRole('banner').querySelector('.header-nav');
     expect(desktopNav).toBeInTheDocument();
     
+    expect(screen.getAllByText('Artists')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Releases')[0]).toBeInTheDocument();
     expect(screen.getAllByText('Concerts')[0]).toBeInTheDocument();
     expect(screen.getAllByText('About')[0]).toBeInTheDocument();
     expect(screen.getByText('Search')).toBeInTheDocument();
@@ -81,7 +83,7 @@ describe('Header Component', () => {
     expect(mobileNav).toBeInTheDocument();
     
     const mobileLinks = mobileNav?.querySelectorAll('.mobile-nav-link');
-    expect(mobileLinks).toHaveLength(2);
+    expect(mobileLinks).toHaveLength(4);
   });
 
   it('applies active class to mobile nav when menu is open', () => {
@@ -106,9 +108,9 @@ describe('Header Component', () => {
   it('closes mobile menu when mobile nav link is clicked', () => {
     render(<Header />, { wrapper: RouterWrapper });
 
-    // Click the second "Concerts" link (mobile nav)
-    const concertsLinks = screen.getAllByText('Concerts');
-    fireEvent.click(concertsLinks[1]);
+    // Click on Artists link in mobile nav
+    const artistsLinks = screen.getAllByText('Artists');
+    fireEvent.click(artistsLinks[1]); // Second one is in mobile nav
 
     expect(mockStore.closeMobileMenu).toHaveBeenCalledTimes(1);
   });

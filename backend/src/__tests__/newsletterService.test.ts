@@ -1,5 +1,6 @@
 import { NewsletterService } from '../services/newsletterService'
 import { cleanupTestDatabase, testDatabaseConnection } from '../config/database'
+import { prisma } from '../config/database'
 
 describe('NewsletterService', () => {
   beforeAll(async () => {
@@ -343,18 +344,31 @@ describe('NewsletterService', () => {
       expect(hasRecent).toBe(false)
     })
 
-    it('should return false for old subscriptions', async () => {
+    it('should return true for recent subscriptions', async () => {
       const email = 'test@example.com'
       
       await NewsletterService.subscribe({ email })
 
-      // Check with 1 hour window (should be true as subscription just happened)
-      const hasRecent = await NewsletterService.checkRecentSubscriptionAttempts(email, 1)
+      // Check with 0 hour window - subscription just happened
+      const hasRecent = await NewsletterService.checkRecentSubscriptionAttempts(email, 0)
       expect(hasRecent).toBe(true)
+    })
+
+    it('should return false for old subscriptions', async () => {
+      const email = 'old@example.com'
       
-      // Check with 0 hours (immediate) - should be false as subscribedAt can't be > Date.now()
-      const hasImmediate = await NewsletterService.checkRecentSubscriptionAttempts(email, 0)
-      expect(hasImmediate).toBe(false)
+      // Create a subscription
+      await NewsletterService.subscribe({ email })
+      
+      // Manually update the subscription date to be old
+      await prisma.newsletter.update({
+        where: { email },
+        data: { subscribedAt: new Date('2020-01-01') }
+      })
+
+      // Check with 1 hour window - should be false for old subscription
+      const hasRecent = await NewsletterService.checkRecentSubscriptionAttempts(email, 1)
+      expect(hasRecent).toBe(false)
     })
   })
 

@@ -31,6 +31,7 @@ model Artist {
 
   // Relationships
   releases Release[]
+  concerts Concert[]
 
   @@index([name])
   @@index([isFeatured], map: "idx_artists_featured")
@@ -111,6 +112,29 @@ model Newsletter {
   @@index([isActive], map: "idx_newsletter_active")
   @@index([subscribedAt(sort: Desc)], map: "idx_newsletter_subscribed_at")
   @@map("newsletter_subscribers")
+}
+
+model Concert {
+  id         Int      @id @default(autoincrement())
+  artistId   Int      @map("artist_id")
+  venue      String   @db.VarChar(255)
+  city       String   @db.VarChar(100)
+  country    String   @db.VarChar(100)
+  date       DateTime @db.Date
+  time       DateTime? @db.Time
+  ticketLink String?  @map("ticket_link") @db.VarChar(500)
+  notes      String?  @db.Text
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relationships
+  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@index([artistId], map: "idx_concerts_artist_id")
+  @@index([date], map: "idx_concerts_date")
+  @@index([city], map: "idx_concerts_city")
+  @@index([createdAt(sort: Desc)], map: "idx_concerts_created_at")
+  @@map("concerts")
 }
 
 // Enums

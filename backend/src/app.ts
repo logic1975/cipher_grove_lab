@@ -8,6 +8,7 @@ import releaseRoutes from './routes/releases'
 import newsRoutes from './routes/news'
 import contactRoutes from './routes/contact'
 import newsletterRoutes from './routes/newsletter'
+import concertRoutes from './routes/concerts'
 
 // Load environment variables
 dotenv.config()
@@ -64,5 +65,6 @@ app.use('/api/releases', releaseRoutes)
 app.use('/api/news', newsRoutes)
 app.use('/api/contact', contactRoutes)
 app.use('/api/newsletter', newsletterRoutes)
+app.use('/api/concerts', concertRoutes)
 
 export default app

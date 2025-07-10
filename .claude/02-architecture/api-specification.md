@@ -4,7 +4,7 @@
 **Production URL**: `https://api.musiclabel.com/api`  
 **API Version**: v1  
 **Status**: ✅ **100% COMPLETE** - All APIs implemented and tested  
-**Total Endpoints**: 46 across 5 main modules + Concerts API planned  
+**Total Endpoints**: 52 across 6 main modules  
 **Authentication**: None required for public endpoints (Admin endpoints marked)  
 
 ## Important Note on News API
@@ -414,13 +414,15 @@ interface Newsletter {
 **Response**: `{email, eligible, reason?}`  
 **Features**: Pre-subscription validation, eligibility checking
 
-## Concerts Endpoints (PLANNED - Phase 4.4)
+## Concerts Endpoints (8 endpoints) ✅ **COMPLETE**
 
-> **Status**: To be implemented in Phase 4.4 of development
+> **Status**: ✅ IMPLEMENTED - Phase 4.4 completed
 
-### Planned Endpoints
+### Implemented Endpoints
 - `GET /api/concerts` - List all concerts with pagination and filtering
 - `GET /api/concerts/upcoming` - Get upcoming concerts only
+- `GET /api/concerts/stats` - Get concert statistics
+- `GET /api/concerts/artist/:artistId` - Get concerts by artist
 - `GET /api/concerts/:id` - Get concert details
 - `POST /api/concerts` - Create new concert (admin)
 - `PUT /api/concerts/:id` - Update concert (admin)

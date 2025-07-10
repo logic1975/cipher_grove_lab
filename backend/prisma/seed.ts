@@ -219,6 +219,96 @@ Look for Crimson Valley on tour this fall, with dates being announced soon. Thei
   ])
 
   console.log(`✅ Created ${news.length} news articles`)
+
+  // Create sample concerts
+  const concerts = await Promise.all([
+    prisma.concert.create({
+      data: {
+        artistId: artists[0].id,
+        venue: 'Crystal Ballroom',
+        city: 'Portland',
+        country: 'USA',
+        date: new Date('2025-07-15'),
+        time: new Date('1970-01-01T20:00:00'),
+        ticketLink: 'https://tickets.crystalballroom.com/midnight-echo',
+        notes: 'World tour kickoff show. VIP packages available.'
+      }
+    }),
+    prisma.concert.create({
+      data: {
+        artistId: artists[0].id,
+        venue: 'The Fillmore',
+        city: 'San Francisco',
+        country: 'USA',
+        date: new Date('2025-07-18'),
+        time: new Date('1970-01-01T21:00:00'),
+        ticketLink: 'https://thefillmore.com/events/midnight-echo',
+        notes: 'Special guest: Local indie band'
+      }
+    }),
+    prisma.concert.create({
+      data: {
+        artistId: artists[0].id,
+        venue: 'Paradiso',
+        city: 'Amsterdam',
+        country: 'Netherlands',
+        date: new Date('2025-08-10'),
+        time: new Date('1970-01-01T20:30:00'),
+        ticketLink: 'https://paradiso.nl/midnight-echo',
+        notes: 'European tour leg begins'
+      }
+    }),
+    prisma.concert.create({
+      data: {
+        artistId: artists[1].id,
+        venue: 'Dreamscape Festival',
+        city: 'Los Angeles',
+        country: 'USA',
+        date: new Date('2025-08-20'),
+        time: new Date('1970-01-01T18:00:00'),
+        ticketLink: 'https://dreamscapefest.com/lineup',
+        notes: 'Main stage performance'
+      }
+    }),
+    prisma.concert.create({
+      data: {
+        artistId: artists[1].id,
+        venue: 'Electronic Paradise',
+        city: 'Miami',
+        country: 'USA',
+        date: new Date('2025-09-05'),
+        time: new Date('1970-01-01T19:30:00'),
+        ticketLink: 'https://electronicparadise.com/tickets',
+        notes: 'Late night set at the Nebula Stage'
+      }
+    }),
+    prisma.concert.create({
+      data: {
+        artistId: artists[2].id,
+        venue: 'The Bluebird Cafe',
+        city: 'Nashville',
+        country: 'USA',
+        date: new Date('2025-10-12'),
+        time: new Date('1970-01-01T19:00:00'),
+        ticketLink: null,
+        notes: 'Intimate acoustic show. Limited seating, first come first served.'
+      }
+    }),
+    prisma.concert.create({
+      data: {
+        artistId: artists[2].id,
+        venue: 'Folk & Harmony Festival',
+        city: 'Austin',
+        country: 'USA',
+        date: new Date('2025-10-25'),
+        time: new Date('1970-01-01T16:00:00'),
+        ticketLink: 'https://folkharmonyfest.com',
+        notes: 'Afternoon set at the Riverside Stage'
+      }
+    })
+  ])
+
+  console.log(`✅ Created ${concerts.length} concerts`)
   console.log('🎉 Database seeded successfully!')
 }
 

@@ -89,6 +89,7 @@ export const cleanupTestDatabase = async (): Promise<void> => {
   
   try {
     // Delete all data in reverse order of dependencies to avoid foreign key conflicts
+    await prisma.concert.deleteMany();
     await prisma.release.deleteMany();
     await prisma.artist.deleteMany();
     await prisma.news.deleteMany();

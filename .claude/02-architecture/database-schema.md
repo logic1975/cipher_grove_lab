@@ -1,8 +1,8 @@
 # Database Schema Design
 
 ## Current Status
-- **Implemented**: 5 tables (Artists, Releases, News*, Contact, Newsletter)
-- **Planned**: Concerts table (Phase 4.3)
+- **Implemented**: 6 tables (Artists, Releases, News*, Contact, Newsletter, Concerts)
+- **News**: Fully implemented but not exposed in the frontend per updated project scope
 
 *Note: News table was fully implemented but is not exposed in the frontend per updated project scope
 
@@ -26,13 +26,17 @@
         ▲              └─────────────────┘
         │
         │              ┌─────────────────┐
-        │              │ Concerts (Plan) │
+        │              │    Concerts     │
         │              ├─────────────────┤
         └──────────────│ id (PK)         │
                        │ artist_id (FK)  │
                        │ venue           │
+                       │ city            │
+                       │ country         │
                        │ date            │
+                       │ time            │
                        │ ticket_link     │
+                       │ notes           │
                        │ created_at      │
                        │ updated_at      │
                        └─────────────────┘
@@ -165,7 +169,7 @@ CREATE INDEX idx_newsletter_is_active ON newsletter(is_active);
 CREATE INDEX idx_newsletter_subscribed_at ON newsletter(subscribed_at DESC);
 ```
 
-### Concerts Table (Planned - Phase 4.3)
+### Concerts Table
 ```sql
 CREATE TABLE concerts (
     id SERIAL PRIMARY KEY,
@@ -264,6 +268,16 @@ ALTER TABLE concerts ADD CONSTRAINT chk_concert_date CHECK (date >= CURRENT_DATE
 - `slug`: Optional, URL-safe string, auto-generated from title
 - `published_at`: Optional, if null then draft status
 
+### Concerts
+- `artist_id`: Required, must reference existing artist
+- `venue`: Required, 1-255 characters
+- `city`: Required, 1-100 characters
+- `country`: Required, 1-100 characters
+- `date`: Required, must be current date or future
+- `time`: Optional, time of the concert
+- `ticket_link`: Optional, valid URL for ticket purchase
+- `notes`: Optional, additional information about the concert
+
 ## Migration Strategy
 
 ### Initial Migration (001_create_tables.sql)
@@ -275,10 +289,15 @@ ALTER TABLE concerts ADD CONSTRAINT chk_concert_date CHECK (date >= CURRENT_DATE
 -- Insert sample data for development
 ```
 
+### Completed Migrations
+- `001_init_enhanced_schema.sql`: Initial tables with enhanced fields
+- `002_add_contact_newsletter_tables.sql`: Contact and Newsletter tables
+- `003_add_concerts_table.sql`: Concerts table with artist relationships
+
 ### Future Migrations
-- `002_add_genres.sql`: Add genres table and many-to-many relationship
-- `003_add_tracks.sql`: Add tracks table for individual songs
-- `004_add_media.sql`: Add media table for photos/videos
+- `add_genres.sql`: Add genres table and many-to-many relationship
+- `add_tracks.sql`: Add tracks table for individual songs
+- `add_media.sql`: Add media table for photos/videos
 
 ## Backup and Recovery
 
@@ -359,6 +378,32 @@ ALTER TABLE concerts ADD CONSTRAINT chk_concert_date CHECK (date >= CURRENT_DATE
       "bandcamp": "https://midnightecho.bandcamp.com/album/neon-dreams"
     },
     "description": "A journey through midnight cityscapes and electric emotions"
+  }
+]
+```
+
+### Sample Concerts
+```json
+[
+  {
+    "artist_id": 1,
+    "venue": "Crystal Ballroom",
+    "city": "Portland",
+    "country": "USA",
+    "date": "2025-07-15",
+    "time": "20:00:00",
+    "ticket_link": "https://tickets.crystalballroom.com/midnight-echo",
+    "notes": "World tour kickoff show. VIP packages available."
+  },
+  {
+    "artist_id": 2,
+    "venue": "Dreamscape Festival",
+    "city": "Los Angeles",
+    "country": "USA",
+    "date": "2025-08-20",
+    "time": "18:00:00",
+    "ticket_link": "https://dreamscapefest.com/lineup",
+    "notes": "Main stage performance"
   }
 ]
 ```

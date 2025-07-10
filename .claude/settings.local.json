@@ -33,7 +33,9 @@
       "WebFetch(domain:ecmrecords.com)",
       "Bash(git restore:*)",
       "Bash(git pull:*)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(npx prisma migrate create:*)"
     ],
     "deny": []
   }

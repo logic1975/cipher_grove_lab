@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArtistCard } from './ArtistCard';
-import { ArtistDisplay, SimpleArtist } from '../../types';
+import type { ArtistDisplay, SimpleArtist } from '../../types';
 
 interface ArtistGridProps {
   artists: (SimpleArtist | ArtistDisplay)[];

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArtistDisplay, SimpleArtist, isEnhancedArtist } from '../../types';
+import type { ArtistDisplay, SimpleArtist } from '../../types';
+import { isEnhancedArtist } from '../../types';
 import { getBestImageUrl } from '../../utils/typeConverters';
 
 interface ArtistCardProps {

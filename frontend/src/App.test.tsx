@@ -12,41 +12,41 @@ describe('App Component', () => {
   it('renders header navigation', () => {
     render(<App />)
     // Check for header navigation links
-    // Note: Artists appears in header (desktop + mobile) and main nav
+    // Note: Artists appears in header (desktop + mobile)
     const artistsLinks = screen.getAllByRole('link', { name: 'Artists' })
-    expect(artistsLinks.length).toBeGreaterThanOrEqual(3)
+    expect(artistsLinks.length).toBeGreaterThanOrEqual(2)
     
-    // Note: Releases appears in header (desktop + mobile) and main nav
+    // Note: Releases appears in header (desktop + mobile)
     const releasesLinks = screen.getAllByRole('link', { name: 'Releases' })
-    expect(releasesLinks.length).toBeGreaterThanOrEqual(3)
+    expect(releasesLinks.length).toBeGreaterThanOrEqual(2)
     
-    // Note: Concerts appears in header (desktop + mobile) and main nav
+    // Note: Concerts appears in header (desktop + mobile)
     const concertsLinks = screen.getAllByRole('link', { name: 'Concerts' })
-    expect(concertsLinks.length).toBeGreaterThanOrEqual(3)
+    expect(concertsLinks.length).toBeGreaterThanOrEqual(2)
     
-    // About appears in header, main nav, and footer
+    // About appears in header (desktop + mobile)
     const aboutLinks = screen.getAllByRole('link', { name: 'About' })
-    expect(aboutLinks.length).toBeGreaterThanOrEqual(3)
+    expect(aboutLinks.length).toBeGreaterThanOrEqual(2)
   })
 
   it('renders main navigation', () => {
     render(<App />)
-    // Check for main navigation links
-    // Note: there are multiple Artists links (header + mobile nav + main nav)
+    // Check for navigation links in header (desktop + mobile)
+    // Note: Navigation is cleanly handled in header only
     const artistsLinks = screen.getAllByRole('link', { name: 'Artists' })
-    expect(artistsLinks.length).toBeGreaterThanOrEqual(3)
+    expect(artistsLinks.length).toBeGreaterThanOrEqual(2)
     
-    // Note: there are multiple Releases links (header + mobile nav + main nav)
+    // Note: Releases appears in header (desktop + mobile)
     const releasesLinks = screen.getAllByRole('link', { name: 'Releases' })
-    expect(releasesLinks.length).toBeGreaterThanOrEqual(3)
+    expect(releasesLinks.length).toBeGreaterThanOrEqual(2)
     
-    // Note: there are multiple "Concerts" links (header + mobile nav + main nav)
+    // Note: Concerts appears in header (desktop + mobile)
     const concertsLinks = screen.getAllByRole('link', { name: 'Concerts' })
-    expect(concertsLinks.length).toBeGreaterThanOrEqual(3)
+    expect(concertsLinks.length).toBeGreaterThanOrEqual(2)
     
-    // Note: there are multiple "About" links (header + mobile nav + main nav + footer)
+    // Note: About appears in header (desktop + mobile)
     const aboutLinks = screen.getAllByRole('link', { name: 'About' })
-    expect(aboutLinks.length).toBeGreaterThanOrEqual(3)
+    expect(aboutLinks.length).toBeGreaterThanOrEqual(2)
   })
 
   it('renders layout structure', () => {

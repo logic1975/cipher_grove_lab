@@ -85,8 +85,8 @@ export const ArtistsPage: React.FC = () => {
         filterOptions={['All', 'Rock', 'Electronic', 'Ambient', 'Experimental']}
         currentSort={artistsSortBy}
         currentFilter={artistsFilterBy}
-        onSortChange={setArtistsSortBy}
-        onFilterChange={setArtistsFilterBy}
+        onSortChange={(sort) => setArtistsSortBy(sort as any)}
+        onFilterChange={(filter) => setArtistsFilterBy(filter as any)}
       />
 
       <div className="artists-container">

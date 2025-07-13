@@ -15,10 +15,6 @@ vi.mock('../Header', () => ({
   Header: () => <div data-testid="header">Header</div>
 }));
 
-vi.mock('../MainNav', () => ({
-  MainNav: () => <nav data-testid="main-nav">MainNav</nav>
-}));
-
 vi.mock('../Footer', () => ({
   Footer: () => <footer data-testid="footer">Footer</footer>
 }));
@@ -47,8 +43,8 @@ describe('Layout Component', () => {
     );
 
     expect(screen.getByTestId('header')).toBeInTheDocument();
-    expect(screen.getByTestId('main-nav')).toBeInTheDocument();
     expect(screen.getByTestId('footer')).toBeInTheDocument();
+    // Note: MainNav not included - navigation handled cleanly in Header
   });
 
   it('renders outlet for child routes', () => {
